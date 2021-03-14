@@ -74,7 +74,9 @@ public class HomeActivity extends AppCompatActivity {
 
     private void initData() {
         Log.i("hcccc", "initdata");
-        Call<ResponseBody> data = DBConnector.dao.executeGet("getStatistics.php");
+//        Call<ResponseBody> data = DBConnector.dao.executeGet("getStatistics.php");
+       Call<ResponseBody> data = DBConnector.dao.executeGet("hello");
+
         data.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

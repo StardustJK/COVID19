@@ -33,4 +33,17 @@ public class JsonUtils {
         Log.d("lyjDBData", rows.toString());
         return rows;
     }
+
+    public static String inputStream2String(InputStream in) throws IOException{
+        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+        StringBuilder sb = new StringBuilder();
+        String line = null;
+        while ((line = br.readLine()) != null) {
+            sb.append(line).append("\n");
+        }
+
+        String outline = sb.toString();
+        return outline;
+
+    }
 }

@@ -20,16 +20,18 @@ import retrofit2.Retrofit;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class DBConnector {
-    private static String host = "http://47.103.5.100/";
+    private static String host = "http://192.168.0.117:3030/";
     private static Retrofit retrofit=new Retrofit.Builder()
-            .baseUrl("http://47.103.5.100/")
+            .baseUrl("http://192.168.0.117:3030/")
             .addConverterFactory(ScalarsConverterFactory.create())
             .build();
+
     public static DAO dao =retrofit.create(DAO.class);
 
     private static JsonArray executeGET(String url) {
         HttpURLConnection conn = null;
         InputStream info = null;
+        url="http://localhost:3030/hello";
         try {
             conn = (HttpURLConnection) new URL(url).openConnection();
             conn.setConnectTimeout(5000);
