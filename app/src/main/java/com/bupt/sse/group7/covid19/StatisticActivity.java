@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.bupt.sse.group7.covid19.fragment.StatisticGridView;
+import com.bupt.sse.group7.covid19.view.StatisticGridView;
 import com.bupt.sse.group7.covid19.interfaces.DAO;
 import com.bupt.sse.group7.covid19.utils.JsonUtils;
 import com.google.gson.JsonObject;

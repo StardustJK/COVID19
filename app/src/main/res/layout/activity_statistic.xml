@@ -38,7 +38,7 @@
                     android:textColor="#000000"
                     android:text="数据来源：国家及各地卫健委每日信息发布"/>
             </LinearLayout>
-            <com.bupt.sse.group7.covid19.fragment.StatisticGridView
+            <com.bupt.sse.group7.covid19.view.StatisticGridView
                 android:id="@+id/domestic_grid"
                 android:numColumns="3"
                 android:verticalSpacing="15dp"
@@ -48,7 +48,7 @@
                 android:layout_marginRight="20dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-            </com.bupt.sse.group7.covid19.fragment.StatisticGridView>
+            </com.bupt.sse.group7.covid19.view.StatisticGridView>
 
         </LinearLayout>
         <!-- 本市疫情-->
@@ -87,7 +87,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
             </RelativeLayout>
-                    <com.bupt.sse.group7.covid19.fragment.StatisticGridView
+                    <com.bupt.sse.group7.covid19.view.StatisticGridView
                         android:id="@+id/city_grid"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -97,7 +97,16 @@
                         android:layout_marginLeft="20dp"
                         android:layout_marginRight="20dp">
 
-                    </com.bupt.sse.group7.covid19.fragment.StatisticGridView>
+                    </com.bupt.sse.group7.covid19.view.StatisticGridView>
+        </LinearLayout>
+        <!-- 疫情地图-->
+        <LinearLayout
+            android:background="@drawable/bordernoline"
+            android:layout_width="match_parent"
+            android:layout_height="600dp">
+            <com.bupt.sse.group7.covid19.view.ChinaMapView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
         </LinearLayout>
     </LinearLayout>
 
