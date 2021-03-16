@@ -105,6 +105,7 @@
             android:layout_width="match_parent"
             android:layout_height="600dp">
             <com.bupt.sse.group7.covid19.view.ChinaMapView
+                android:id="@+id/china_map"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
         </LinearLayout>

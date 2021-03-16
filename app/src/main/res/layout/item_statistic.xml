@@ -24,13 +24,13 @@
         android:layout_gravity="center"
         android:text="531"
         android:textStyle="bold"
-        android:textSize="34sp"
+        android:textSize="28sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
     <TextView
         android:id="@+id/data_type"
         android:layout_gravity="center"
-        android:textSize="16sp"
+        android:textSize="14sp"
         android:textColor="#000000"
         android:text="现有确诊"
         android:letterSpacing="0.01"

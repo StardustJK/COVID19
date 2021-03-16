@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.bupt.sse.group7.covid19.view.ChinaMapView;
 import com.bupt.sse.group7.covid19.view.StatisticGridView;
 import com.bupt.sse.group7.covid19.interfaces.DAO;
 import com.bupt.sse.group7.covid19.utils.JsonUtils;
@@ -20,7 +21,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import okhttp3.ResponseBody;
@@ -57,6 +60,7 @@ public class StatisticActivity extends AppCompatActivity {
             Color.parseColor("#BE2121"),
             Color.parseColor("#339966")};
     private StatisticGridView city_gird;
+    private ChinaMapView chinaMapView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,8 +80,31 @@ public class StatisticActivity extends AppCompatActivity {
 
                     JsonObject jsonObject=(JsonObject) JsonParser.parseString(dataString);
                     JsonObject data=  (JsonObject) JsonParser.parseString(jsonObject.get("data").getAsString());
-                    Log.i(TAG,"data"+data.toString());
-                    initData();
+                    JsonObject chinaTotal=data.getAsJsonObject("chinaTotal");
+                    Log.i(TAG,"chinaTotal"+chinaTotal.toString());
+                    int[] domesticNumber=new int[6];
+                    domesticNumber[0]=chinaTotal.get("nowConfirm").getAsInt();
+                    domesticNumber[1]=chinaTotal.get("importedCase").getAsInt();
+                    domesticNumber[2]=chinaTotal.get("noInfect").getAsInt();
+                    domesticNumber[3]=chinaTotal.get("confirm").getAsInt();
+                    domesticNumber[4]=chinaTotal.get("heal").getAsInt();
+                    domesticNumber[5]=chinaTotal.get("dead").getAsInt();
+
+                    JsonObject chinaAdd=data.getAsJsonObject("chinaAdd");
+                    String[]domesticAdd=new String[6];
+                    domesticAdd[0]=chinaAdd.get("nowConfirm").getAsString();
+                    domesticAdd[1]=chinaAdd.get("importedCase").getAsString();
+                    domesticAdd[2]=chinaAdd.get("noInfect").getAsString();
+                    domesticAdd[3]=chinaAdd.get("confirm").getAsString();
+                    domesticAdd[4]=chinaAdd.get("heal").getAsString();
+                    domesticAdd[5]=chinaAdd.get("dead").getAsString();
+                    for(int i=0;i<domesticAdd.length;i++){
+                        if(!domesticAdd[i].contains("-")){
+                            domesticAdd[i]="+"+domesticAdd[i];
+                        }
+                    }
+
+                    initData(domesticNumber,domesticAdd);
                 } catch (IOException e) {
 
                     e.printStackTrace();
@@ -94,9 +121,7 @@ public class StatisticActivity extends AppCompatActivity {
 
     }
 
-    private void initData() {
-        String domestic_add_numbers[]={"+18","+1","-1","+0","+2","+3"};
-        int domestic_numbers[]={1,2,3,4,5,6};
+    private void initData(int  domestic_numbers[],String domestic_add_numbers[] ) {
         String city_add_numbers[]={"+18","+1","-1","+0"};
         int city_numbers[]={1,2,3,4};
         domestic_grid.setAdapter(new StatisticAdapter(domestic_add_numbers,domestic_numbers, domestic_colors, domestic_types,this));
@@ -110,6 +135,8 @@ public class StatisticActivity extends AppCompatActivity {
         domestic_grid.setSelector(new ColorDrawable(Color.TRANSPARENT));
         city_gird=findViewById(R.id.city_grid);
         city_gird.setSelector(new ColorDrawable(Color.TRANSPARENT));
+        chinaMapView=findViewById(R.id.china_map);
+        chinaMapView.setTest("test");
     };
 
 

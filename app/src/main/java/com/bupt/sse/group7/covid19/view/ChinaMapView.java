@@ -47,6 +47,10 @@ public class ChinaMapView extends View {
     private RectF totalRect;//中国地图的矩形范围
     private float scale = 1.0f;//中国地图的缩放比例
 
+    private String test;
+    public void setTest(String test){
+        this.test=test;
+    }
     public ChinaMapView(Context context) {
         this(context,null);
     }
@@ -110,7 +114,7 @@ public class ChinaMapView extends View {
                     @SuppressLint("RestrictedApi")
                     Path path = PathParser.createPathFromPathData(pathData);
                     ProvinceItem provinceItem = new ProvinceItem(path);//设置路径
-                    provinceItem.setProvince(province);//设置省份名字
+                    provinceItem.setProvince(test);//设置省份名字
                     provinceItem.setDrawColor(colorArray[i % 4]);//设置颜色
                     //取每个省的上下左右 最后拿出最小或者最大的来充当 总地图的上下左右
                     RectF rect = new RectF();
