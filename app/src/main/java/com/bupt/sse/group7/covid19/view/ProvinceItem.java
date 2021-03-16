@@ -7,8 +7,9 @@ import android.graphics.Path;
 import android.graphics.RectF;
 import android.graphics.Region;
 
-public class ProviceItem {
+public class ProvinceItem {
     private Path path;
+    private String province;
 
     /**
      * 绘制颜色
@@ -17,8 +18,11 @@ public class ProviceItem {
     public void setDrawColor(int drawColor){
         this.drawColor = drawColor;
     }
+    public void setProvince(String province){
+        this.province=province;
+    }
 
-    public ProviceItem(Path path) {
+    public ProvinceItem(Path path) {
         this.path = path;
     }
 
@@ -59,4 +63,7 @@ public class ProviceItem {
     }
 
 
+    public String getProvince() {
+        return province;
+    }
 }

@@ -3,12 +3,14 @@ package com.bupt.sse.group7.covid19.view;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -24,16 +26,24 @@ import org.w3c.dom.NodeList;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.CheckedOutputStream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 public class ChinaMapView extends View {
-    private int[] colorArray = new int[]{0xFF239BD7, 0xFF30A9E5, 0xFF80CBF1, 0xFFFFFFFF};//各省地图显示的颜色
+    private int[] colorArray = new int[]{Color.parseColor("#e2ebf4"),//0人
+            Color.parseColor("#ffe7b2"),//1-9人78
+            Color.parseColor("#ffcea0"),//10-99
+            Color.parseColor("#ffa577"),//100-499
+            Color.parseColor("#ff6341"),//500-999
+            Color.parseColor("#ff2736"),//1000-9999
+            Color.parseColor("#de1f05")//10000
+            };
     private Context context;//上下文
-    private List<ProviceItem> itemList;//各省地图列表 各省地图颜色 与路径
+    private List<ProvinceItem> itemList;//各省地图列表 各省地图颜色 与路径
     private Paint paint;    //初始化画笔
-    private ProviceItem select; //选中的省份
+    private ProvinceItem select; //选中的省份
     private RectF totalRect;//中国地图的矩形范围
     private float scale = 1.0f;//中国地图的缩放比例
 
@@ -91,14 +101,17 @@ public class ChinaMapView extends View {
                 float right = -1;
                 float top = -1;
                 float bottom = -1;
-                List<ProviceItem> list = new ArrayList<>();
+                List<ProvinceItem> list = new ArrayList<>();
                 for (int i = 0; i < items.getLength(); i++) {
                     Element element = (Element) items.item(i);
                     String pathData = element.getAttribute("android:pathData");
+                    String province=element.getAttribute("android:province");
+
                     @SuppressLint("RestrictedApi")
                     Path path = PathParser.createPathFromPathData(pathData);
-                    ProviceItem proviceItem = new ProviceItem(path);//设置路径
-                    proviceItem.setDrawColor(colorArray[i % 4]);//设置颜色
+                    ProvinceItem provinceItem = new ProvinceItem(path);//设置路径
+                    provinceItem.setProvince(province);//设置省份名字
+                    provinceItem.setDrawColor(colorArray[i % 4]);//设置颜色
                     //取每个省的上下左右 最后拿出最小或者最大的来充当 总地图的上下左右
                     RectF rect = new RectF();
                     path.computeBounds(rect, true);
@@ -106,7 +119,7 @@ public class ChinaMapView extends View {
                     right = right == -1 ? rect.right : Math.max(right, rect.right);
                     top = top == -1 ? rect.top : Math.min(top, rect.top);
                     bottom = bottom == -1 ? rect.bottom : Math.max(bottom, rect.bottom);
-                    list.add(proviceItem);
+                    list.add(provinceItem);
                 }
                 itemList = list;
                 totalRect = new RectF(left, top, right, bottom);//设置地图的上下左右位置
@@ -136,10 +149,10 @@ public class ChinaMapView extends View {
         if (itemList == null){
             return;
         }
-        ProviceItem selectItem = null;
-        for (ProviceItem proviceItem : itemList){
-            if (proviceItem.isTouch(x,y)){
-                selectItem = proviceItem;
+        ProvinceItem selectItem = null;
+        for (ProvinceItem provinceItem : itemList){
+            if (provinceItem.isTouch(x,y)){
+                selectItem = provinceItem;
             }
         }
         if (selectItem != null){
@@ -154,11 +167,13 @@ public class ChinaMapView extends View {
         if (itemList != null){
             canvas.save();
             canvas.scale(scale,scale);//把画布缩放匹配到本控件的宽高
-            for (ProviceItem proviceItem : itemList){
-                if (proviceItem != select){
-                    proviceItem.drawItem(canvas,paint,false);
+            for (ProvinceItem provinceItem : itemList){
+                if (provinceItem != select){
+                    provinceItem.drawItem(canvas,paint,false);
                 }else {
-                    proviceItem.drawItem(canvas,paint,true);
+                    provinceItem.drawItem(canvas,paint,true);
+                    Log.d("ChinaMapView", "省份"+provinceItem.getProvince());
+                    canvas.drawText(provinceItem.getProvince(),0,100,paint);
                 }
             }
         }
