@@ -211,7 +211,7 @@
 
                             <TextView
                                 style="@style/home_card_title"
-                                android:text="@string/hospitals"/>
+                                android:text="实时疫情"/>
 
                             <TextView
                                 style="@style/home_card_desc"
