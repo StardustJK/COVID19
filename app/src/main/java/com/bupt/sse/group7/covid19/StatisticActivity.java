@@ -19,6 +19,7 @@ import com.bupt.sse.group7.covid19.view.ChinaMapView;
 import com.bupt.sse.group7.covid19.view.StatisticGridView;
 import com.bupt.sse.group7.covid19.interfaces.DAO;
 import com.bupt.sse.group7.covid19.utils.JsonUtils;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -56,7 +57,7 @@ public class StatisticActivity extends AppCompatActivity {
             Color.parseColor("#339966"),
             Color.parseColor("#666666")};
 
-    private String[] city_types = {"新增确诊", "新增无症状", "累计确诊", "累计治愈"};
+    private String[] city_types = {"现有确诊", "本土无症状", "累计确诊", "累计治愈"};
     private int[] city_colors = {Color.parseColor("#E10000"),
             Color.parseColor("#AE3AC6"),
             Color.parseColor("#BE2121"),
@@ -64,6 +65,9 @@ public class StatisticActivity extends AppCompatActivity {
     private StatisticGridView city_gird;
     private ChinaMapView chinaMapView;
     private TextView tv_location;
+    private String currentProvince;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +87,8 @@ public class StatisticActivity extends AppCompatActivity {
 
                     JsonObject jsonObject = (JsonObject) JsonParser.parseString(dataString);
                     JsonObject data = (JsonObject) JsonParser.parseString(jsonObject.get("data").getAsString());
+                    Log.d(TAG, "data:" + data.toString());
+                    //国内总
                     JsonObject chinaTotal = data.getAsJsonObject("chinaTotal");
                     Log.i(TAG, "chinaTotal" + chinaTotal.toString());
                     int[] domesticNumber = new int[6];
@@ -93,6 +99,7 @@ public class StatisticActivity extends AppCompatActivity {
                     domesticNumber[4] = chinaTotal.get("heal").getAsInt();
                     domesticNumber[5] = chinaTotal.get("dead").getAsInt();
 
+                    //国内新增
                     JsonObject chinaAdd = data.getAsJsonObject("chinaAdd");
                     String[] domesticAdd = new String[6];
                     domesticAdd[0] = chinaAdd.get("nowConfirm").getAsString();
@@ -107,7 +114,28 @@ public class StatisticActivity extends AppCompatActivity {
                         }
                     }
 
-                    initData(domesticNumber, domesticAdd);
+                    //本地疫情
+                    JsonArray areaTree = data.getAsJsonArray("areaTree");
+                    JsonObject area = (JsonObject) areaTree.get(0);
+                    JsonArray children = area.getAsJsonArray("children");
+                    Map<String, Integer> cities = new HashMap<>();
+                    JsonObject local = null;
+                    for (int i = 0; i < children.size(); i++) {
+                        JsonObject child = (JsonObject) children.get(i);
+                        String province = child.get("name").getAsString();
+                        if (currentProvince.contains(province)) {
+                            local = child.getAsJsonObject("total");
+                        }
+                        JsonObject total = child.getAsJsonObject("total");
+                        int nowConfirm = total.get("nowConfirm").getAsInt();
+                        cities.put(province, nowConfirm);
+                    }
+                    chinaMapView = findViewById(R.id.china_map);
+                    chinaMapView.setData(cities);
+
+
+
+                    initData(domesticNumber, domesticAdd, local);
                 } catch (IOException e) {
 
                     e.printStackTrace();
@@ -124,11 +152,10 @@ public class StatisticActivity extends AppCompatActivity {
 
     }
 
-    private void initData(int domestic_numbers[], String domestic_add_numbers[]) {
-        String city_add_numbers[] = {"+18", "+1", "-1", "+0"};
-        int city_numbers[] = {1, 2, 3, 4};
+    private void initData(int domestic_numbers[], String domestic_add_numbers[], JsonObject local) {
+        int province_numbers[] = {local.get("nowConfirm").getAsInt(), local.get("suspect").getAsInt(), local.get("confirm").getAsInt(), local.get("heal").getAsInt()};
         domestic_grid.setAdapter(new StatisticAdapter(domestic_add_numbers, domestic_numbers, domestic_colors, domestic_types, this));
-        city_gird.setAdapter(new StatisticAdapter(city_add_numbers, city_numbers, city_colors, city_types, this));
+        city_gird.setAdapter(new StatisticAdapter(null, province_numbers, city_colors, city_types, this));
 
     }
 
@@ -138,21 +165,21 @@ public class StatisticActivity extends AppCompatActivity {
         domestic_grid.setSelector(new ColorDrawable(Color.TRANSPARENT));
         city_gird = findViewById(R.id.city_grid);
         city_gird.setSelector(new ColorDrawable(Color.TRANSPARENT));
-        chinaMapView = findViewById(R.id.china_map);
-        chinaMapView.setTest("test");
-        tv_location=findViewById(R.id.tv_location);
+        tv_location = findViewById(R.id.tv_location);
         MyApplication application = (MyApplication) getApplication();
-        String city=application.getCurrentCity();
-        Log.d(TAG, "current city" + city);
-        tv_location.setText(city);
+        currentProvince = application.getCurrentProvince();
+        Log.d(TAG, "current province" + currentProvince);
+        if(currentProvince==null){
+            currentProvince="北京市";
+        }
+        tv_location.setText(currentProvince);
 
     }
 
-    ;
 
 }
 
-class StatisticAdapter extends BaseAdapter{
+class StatisticAdapter extends BaseAdapter {
 
     private String[] add_number;//新增数字
     private int[] number;//数字
@@ -160,12 +187,12 @@ class StatisticAdapter extends BaseAdapter{
     private String[] type;//数据类型
     private LayoutInflater inflater;
 
-    public StatisticAdapter(String[] add_number, int[] number, int[] colors, String[] type,Context context) {
+    public StatisticAdapter(String[] add_number, int[] number, int[] colors, String[] type, Context context) {
         this.add_number = add_number;
         this.number = number;
         this.colors = colors;
         this.type = type;
-        this.inflater=LayoutInflater.from(context);
+        this.inflater = LayoutInflater.from(context);
     }
 
     @Override
@@ -185,19 +212,22 @@ class StatisticAdapter extends BaseAdapter{
 
     @Override
     public View getView(int position, View v, ViewGroup parent) {
-        v=inflater.inflate(R.layout.item_statistic,null);
-        TextView tv_add=v.findViewById(R.id.add_number);
-        tv_add.setText(add_number[position]);
-        tv_add.setTextColor(colors[position]);
-        TextView tv_number=v.findViewById(R.id.number);
-        tv_number.setText(number[position]+"");
-        tv_number.setTextColor(colors[position]);
-        TextView tv_type=v.findViewById(R.id.data_type);
-        tv_type.setText(type[position]);
-        LinearLayout linearLayout=v.findViewById(R.id.add_layout);
-        if (number.length==4){
+        v = inflater.inflate(R.layout.item_statistic, null);
+        TextView tv_add = v.findViewById(R.id.add_number);
+        if (add_number == null) {
+            LinearLayout linearLayout = v.findViewById(R.id.add_layout);
             linearLayout.setVisibility(View.GONE);
+        } else {
+            tv_add.setText(add_number[position]);
+
         }
+        tv_add.setTextColor(colors[position]);
+        TextView tv_number = v.findViewById(R.id.number);
+        tv_number.setText(number[position] + "");
+        tv_number.setTextColor(colors[position]);
+        TextView tv_type = v.findViewById(R.id.data_type);
+        tv_type.setText(type[position]);
+
         return v;
     }
 }

@@ -10,7 +10,7 @@ import com.baidu.location.LocationClientOption;
 public class MyApplication extends Application {
 
 
-    public String city="北京市";
+    public String province="北京市";
     public LocationClient mLocationClient=null;
     private MyLocationListener myLocationListener=new MyLocationListener();
 
@@ -24,6 +24,7 @@ public class MyApplication extends Application {
     }
 
 
+
     public void initLocation(){
         LocationClientOption option=new LocationClientOption();
         option.setIsNeedAddress(true);
@@ -35,16 +36,17 @@ public class MyApplication extends Application {
      * 获取当前城市
      * @return
      */
-    public String getCurrentCity(){
-        return city;
+    public String getCurrentProvince(){
+        return province;
     }
 
     public class MyLocationListener extends BDAbstractLocationListener{
 
         @Override
         public void onReceiveLocation(BDLocation bdLocation) {
-            city=bdLocation.getCity();
+            province=bdLocation.getProvince();
             mLocationClient.stop();
         }
     }
+
 }

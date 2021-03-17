@@ -26,20 +26,14 @@ import org.w3c.dom.NodeList;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.CheckedOutputStream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 public class ChinaMapView extends View {
-    private int[] colorArray = new int[]{Color.parseColor("#e2ebf4"),//0人
-            Color.parseColor("#ffe7b2"),//1-9人78
-            Color.parseColor("#ffcea0"),//10-99
-            Color.parseColor("#ffa577"),//100-499
-            Color.parseColor("#ff6341"),//500-999
-            Color.parseColor("#ff2736"),//1000-9999
-            Color.parseColor("#de1f05")//10000
-            };
+
     private Context context;//上下文
     private List<ProvinceItem> itemList;//各省地图列表 各省地图颜色 与路径
     private Paint paint;    //初始化画笔
@@ -47,9 +41,11 @@ public class ChinaMapView extends View {
     private RectF totalRect;//中国地图的矩形范围
     private float scale = 1.0f;//中国地图的缩放比例
 
-    private String test;
-    public void setTest(String test){
-        this.test=test;
+    private Map<String,Integer> data;
+    public void setData(Map<String,Integer> data){
+        this.data=data;
+        init(context);
+
     }
     public ChinaMapView(Context context) {
         this(context,null);
@@ -61,7 +57,7 @@ public class ChinaMapView extends View {
 
     public ChinaMapView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context);
+        this.context=context;
     }
 
 
@@ -114,8 +110,8 @@ public class ChinaMapView extends View {
                     @SuppressLint("RestrictedApi")
                     Path path = PathParser.createPathFromPathData(pathData);
                     ProvinceItem provinceItem = new ProvinceItem(path);//设置路径
-                    provinceItem.setProvince(test);//设置省份名字
-                    provinceItem.setDrawColor(colorArray[i % 4]);//设置颜色
+                    provinceItem.setProvince(province);//设置省份名字
+                    provinceItem.setConfirm(data.get(province));
                     //取每个省的上下左右 最后拿出最小或者最大的来充当 总地图的上下左右
                     RectF rect = new RectF();
                     path.computeBounds(rect, true);
@@ -142,6 +138,8 @@ public class ChinaMapView extends View {
             }
         }
     };
+
+
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {

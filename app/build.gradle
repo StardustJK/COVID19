@@ -4,6 +4,20 @@ android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
 
+    signingConfigs{
+        release{
+            storeFile file("src\\main\\res\\baiduMap.jks");
+            storePassword("123456")
+            keyAlias("key0")
+            keyPassword("123456")
+        }
+        debug{
+            storeFile file("src\\main\\res\\baiduMap.jks");
+            storePassword("123456")
+            keyAlias("key0")
+            keyPassword("123456")
+        }
+    }
     defaultConfig {
         applicationId "com.bupt.sse.group7.covid19"
         minSdkVersion 22

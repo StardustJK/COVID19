@@ -51,7 +51,7 @@
             </com.bupt.sse.group7.covid19.view.StatisticGridView>
 
         </LinearLayout>
-        <!-- 本市疫情-->
+        <!-- 本地疫情-->
         <LinearLayout
             android:layout_marginBottom="20dp"
             android:layout_marginLeft="5dp"
@@ -69,7 +69,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="本市疫情"
+                    android:text="本地疫情"
                     android:textSize="24sp"
                     android:textColor="#128676"/>/>
                 <ImageView
