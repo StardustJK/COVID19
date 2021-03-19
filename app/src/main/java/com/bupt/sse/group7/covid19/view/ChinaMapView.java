@@ -41,6 +41,15 @@ public class ChinaMapView extends View {
     private RectF totalRect;//中国地图的矩形范围
     private float scale = 1.0f;//中国地图的缩放比例
 
+    private int[] colorArray = new int[]{Color.parseColor("#e2ebf4"),//0人
+            Color.parseColor("#ffe7b2"),//1-9人78
+            Color.parseColor("#ffcea0"),//10-99
+            Color.parseColor("#ffa577"),//100-499
+            Color.parseColor("#ff6341"),//500-999
+            Color.parseColor("#ff2736"),//1000-9999
+            Color.parseColor("#de1f05")//10000
+    };
+
     private Map<String,Integer> data;
     public void setData(Map<String,Integer> data){
         this.data=data;
@@ -69,6 +78,7 @@ public class ChinaMapView extends View {
         paint.setAntiAlias(true);
         itemList = new ArrayList<>();
         loadThread.start();
+
 
     }
 
@@ -111,7 +121,9 @@ public class ChinaMapView extends View {
                     Path path = PathParser.createPathFromPathData(pathData);
                     ProvinceItem provinceItem = new ProvinceItem(path);//设置路径
                     provinceItem.setProvince(province);//设置省份名字
-                    provinceItem.setConfirm(data.get(province));
+                    int confirm=data.get(province);
+                    provinceItem.setConfirm(confirm);
+                    provinceItem.setDrawColor(getColor(confirm));
                     //取每个省的上下左右 最后拿出最小或者最大的来充当 总地图的上下左右
                     RectF rect = new RectF();
                     path.computeBounds(rect, true);
@@ -178,8 +190,43 @@ public class ChinaMapView extends View {
                     canvas.drawText(provinceItem.getProvince(),0,100,paint);
                 }
             }
+            float width= (totalRect.width()-20)/7;
+            float height=totalRect.height();
+            Paint textPaint=new Paint();
+            textPaint.setTextSize(18);
+            textPaint.setColor(Color.parseColor("#838383"));
+            String text[]={"0人","1-9人","10-99人","100-499人","500-999人","1000-9999人",">10000人"};
+            for(int i=0;i<7;i++){
+                paint.setColor(colorArray[i]);
+                canvas.drawRect(width*i+10,height+50,width*(i+1)+10,height+70,paint);
+                canvas.drawText(text[i],width*i+10,height+100,textPaint);
+            }
+
+
         }
     }
+    public int getColor(int number){
+        if (number==0){
+            return colorArray[0];
+        }
+        else if (number>=1&&number<10){
+            return colorArray[1];
+        }
+        else if (number>=10&&number<100){
+            return colorArray[2];
+        }
+        else if (number>=100&&number<500){
+            return colorArray[3];
+        }
+        else if (number>=500&&number<1000){
+            return colorArray[4];
+        }
+        else if(number>=1000&&number<10000){
+            return colorArray[5];
+        }
+        else return colorArray[6];
+    }
+
 }
 
 

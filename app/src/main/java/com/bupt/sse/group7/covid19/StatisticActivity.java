@@ -84,7 +84,6 @@ public class StatisticActivity extends AppCompatActivity {
                 try {
                     String dataString = JsonUtils.inputStream2String(response.body().byteStream());
                     Log.d(TAG, "dataString :" + dataString);
-
                     JsonObject jsonObject = (JsonObject) JsonParser.parseString(dataString);
                     JsonObject data = (JsonObject) JsonParser.parseString(jsonObject.get("data").getAsString());
                     Log.d(TAG, "data:" + data.toString());

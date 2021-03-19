@@ -53,9 +53,10 @@
         </LinearLayout>
         <!-- 本地疫情-->
         <LinearLayout
-            android:layout_marginBottom="20dp"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
+            android:layout_marginBottom="8dp"
+
             android:background="@drawable/bordernoline"
             android:orientation="vertical"
             android:layout_width="match_parent"
@@ -102,9 +103,14 @@
         <!-- 疫情地图-->
         <LinearLayout
             android:background="@drawable/bordernoline"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
             android:layout_width="match_parent"
             android:layout_height="600dp">
             <com.bupt.sse.group7.covid19.view.ChinaMapView
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="10dp"
                 android:id="@+id/china_map"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
