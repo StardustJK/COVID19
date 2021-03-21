@@ -1,12 +1,18 @@
 package com.bupt.sse.group7.covid19;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.app.Application;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +28,8 @@ import com.bupt.sse.group7.covid19.utils.JsonUtils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -66,7 +74,8 @@ public class StatisticActivity extends AppCompatActivity {
     private ChinaMapView chinaMapView;
     private TextView tv_location;
     private String currentProvince;
-
+    private Map<String, Integer>  cities_now_confirm;
+    private Map<String, Integer> cities_confirm;
 
 
     @Override
@@ -117,8 +126,11 @@ public class StatisticActivity extends AppCompatActivity {
                     JsonArray areaTree = data.getAsJsonArray("areaTree");
                     JsonObject area = (JsonObject) areaTree.get(0);
                     JsonArray children = area.getAsJsonArray("children");
-                    Map<String, Integer> cities = new HashMap<>();
+                    cities_now_confirm = new HashMap<>();
+                    cities_confirm = new HashMap<>();
+
                     JsonObject local = null;
+
                     for (int i = 0; i < children.size(); i++) {
                         JsonObject child = (JsonObject) children.get(i);
                         String province = child.get("name").getAsString();
@@ -127,11 +139,11 @@ public class StatisticActivity extends AppCompatActivity {
                         }
                         JsonObject total = child.getAsJsonObject("total");
                         int nowConfirm = total.get("nowConfirm").getAsInt();
-                        cities.put(province, nowConfirm);
+                        cities_now_confirm.put(province, nowConfirm);
+                        int confirm=total.get("confirm").getAsInt();
+                        cities_confirm.put(province,confirm);
                     }
-                    chinaMapView = findViewById(R.id.china_map);
-                    chinaMapView.setData(cities);
-
+                    chinaMapView.setData(cities_now_confirm);
 
 
                     initData(domesticNumber, domesticAdd, local);
@@ -172,6 +184,16 @@ public class StatisticActivity extends AppCompatActivity {
             currentProvince="北京市";
         }
         tv_location.setText(currentProvince);
+        chinaMapView = findViewById(R.id.china_map);
+
+        TextView tv_map=findViewById(R.id.tv_map);
+        tv_map.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("国内疫情","click");
+                chinaMapView.setData(cities_now_confirm);
+            }
+        });
 
     }
 
@@ -230,3 +252,5 @@ class StatisticAdapter extends BaseAdapter {
         return v;
     }
 }
+
+

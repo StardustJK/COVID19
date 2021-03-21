@@ -181,15 +181,6 @@ public class ChinaMapView extends View {
         if (itemList != null){
             canvas.save();
             canvas.scale(scale,scale);//把画布缩放匹配到本控件的宽高
-            for (ProvinceItem provinceItem : itemList){
-                if (provinceItem != select){
-                    provinceItem.drawItem(canvas,paint,false);
-                }else {
-                    provinceItem.drawItem(canvas,paint,true);
-                    Log.d("ChinaMapView", "省份"+provinceItem.getProvince());
-                    canvas.drawText(provinceItem.getProvince(),0,100,paint);
-                }
-            }
             float width= (totalRect.width()-20)/7;
             float height=totalRect.height();
             Paint textPaint=new Paint();
@@ -201,6 +192,19 @@ public class ChinaMapView extends View {
                 canvas.drawRect(width*i+10,height+50,width*(i+1)+10,height+70,paint);
                 canvas.drawText(text[i],width*i+10,height+100,textPaint);
             }
+            textPaint.setTextSize(40);
+            textPaint.setColor(getResources().getColor(R.color.cardGreen));
+            textPaint.setTextAlign(Paint.Align.CENTER);
+            for (ProvinceItem provinceItem : itemList){
+                if (provinceItem != select){
+                    provinceItem.drawItem(canvas,paint,false);
+                }else {
+                    provinceItem.drawItem(canvas,paint,true);
+                    Log.d("ChinaMapView", "省份"+provinceItem.getProvince());
+                    canvas.drawText(provinceItem.getProvince()+"现有确诊人数："+provinceItem.getConfirm()+"人",totalRect.centerX(),totalRect.height()+200,textPaint);
+                }
+            }
+
 
 
         }

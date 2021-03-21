@@ -17,6 +17,9 @@ public class ProvinceItem {
      * 绘制颜色
      * */
     private int drawColor;
+    public int getConfirm(){
+        return confirm;
+    }
 
     public void setDrawColor(int drawColor) {
         this.drawColor = drawColor;
