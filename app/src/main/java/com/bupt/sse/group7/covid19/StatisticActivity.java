@@ -37,6 +37,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import lecho.lib.hellocharts.gesture.ZoomType;
+import lecho.lib.hellocharts.model.Axis;
+import lecho.lib.hellocharts.model.AxisValue;
+import lecho.lib.hellocharts.model.Line;
+import lecho.lib.hellocharts.model.LineChartData;
+import lecho.lib.hellocharts.model.PointValue;
+import lecho.lib.hellocharts.model.ValueShape;
+import lecho.lib.hellocharts.model.Viewport;
+import lecho.lib.hellocharts.view.LineChartView;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -74,9 +83,12 @@ public class StatisticActivity extends AppCompatActivity {
     private ChinaMapView chinaMapView;
     private TextView tv_location;
     private String currentProvince;
-    private Map<String, Integer>  cities_now_confirm;
+    private Map<String, Integer> cities_now_confirm;
     private Map<String, Integer> cities_confirm;
 
+    private LineChartView lineChartView;
+    private List<AxisValue> axisValues = new ArrayList<>();
+    private List<PointValue> pointValues = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,8 +152,8 @@ public class StatisticActivity extends AppCompatActivity {
                         JsonObject total = child.getAsJsonObject("total");
                         int nowConfirm = total.get("nowConfirm").getAsInt();
                         cities_now_confirm.put(province, nowConfirm);
-                        int confirm=total.get("confirm").getAsInt();
-                        cities_confirm.put(province,confirm);
+                        int confirm = total.get("confirm").getAsInt();
+                        cities_confirm.put(province, confirm);
                     }
                     chinaMapView.setData(cities_now_confirm);
 
@@ -160,7 +172,51 @@ public class StatisticActivity extends AppCompatActivity {
             }
         });
 
+        initTrendData();
 
+
+    }
+
+    private void initTrendData() {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://api.inews.qq.com/newsqa/v1/query/inner/publish/modules/")
+                .addConverterFactory(ScalarsConverterFactory.create())
+                .build();
+
+        DAO dao = retrofit.create(DAO.class);
+        Map<String, String> param = new HashMap<>();
+        param.put("modules", "chinaDayList,chinaDayAddList");
+        Call<ResponseBody> data = dao.executeGet("list", param);
+        data.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                try {
+                    String dataString = JsonUtils.inputStream2String(response.body().byteStream());
+                    Log.d(TAG, "initTrendData onResponse: " + dataString);
+                    JsonObject jsonObject = (JsonObject) JsonParser.parseString(dataString);
+                    JsonObject data = jsonObject.get("data").getAsJsonObject();
+                    JsonArray chinaDayAddList = data.getAsJsonArray("chinaDayAddList");
+//                    for(int i=0;i<chinaDayAddList.size();i++){
+                    for (int i = 0; i < 7; i++) {
+
+                        JsonObject dayAdd = chinaDayAddList.get(i).getAsJsonObject();
+//                        axisValues.add(new AxisValue(i).setLabel(dayAdd.get("date").getAsString()));
+//                        pointValues.add(new PointValue(i,dayAdd.get("localConfirmadd").getAsInt()));
+                        axisValues.add(new AxisValue(i).setLabel(i + ""));
+                        pointValues.add(new PointValue(i, i));
+                    }
+                    initLineChart();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.i(TAG, "trend data get failed");
+            }
+        });
     }
 
     private void initData(int domestic_numbers[], String domestic_add_numbers[], JsonObject local) {
@@ -180,20 +236,54 @@ public class StatisticActivity extends AppCompatActivity {
         MyApplication application = (MyApplication) getApplication();
         currentProvince = application.getCurrentProvince();
         Log.d(TAG, "current province" + currentProvince);
-        if(currentProvince==null){
-            currentProvince="北京市";
+        if (currentProvince == null) {
+            currentProvince = "北京市";
         }
         tv_location.setText(currentProvince);
         chinaMapView = findViewById(R.id.china_map);
+        lineChartView = findViewById(R.id.line_chart);
 
-        TextView tv_map=findViewById(R.id.tv_map);
-        tv_map.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("国内疫情","click");
-                chinaMapView.setData(cities_now_confirm);
-            }
-        });
+    }
+
+    /**
+     * 疫情趋势
+     */
+    public void initLineChart() {
+        Line line = new Line(pointValues).setColor(Color.parseColor("#e57631"));
+        List<Line> lines = new ArrayList<>();
+        line.setShape(ValueShape.CIRCLE);//每个数据点的形状
+        line.setCubic(false);
+        line.setFilled(false);
+        line.setHasLabels(true);
+        line.setHasPoints(true);
+        lines.add(line);
+        LineChartData data = new LineChartData();
+        data.setLines(lines);
+
+        //坐标轴
+        Axis axisX = new Axis();
+        axisX.setHasTiltedLabels(true);
+        axisX.setTextColor(getResources().getColor(R.color.textGrey));
+        axisX.setTextSize(8);
+        axisX.setMaxLabelChars(axisValues.size());
+        axisX.setValues(axisValues);
+        axisX.setHasLines(true);
+        data.setAxisXBottom(axisX);
+
+        Axis axisY = new Axis();
+        axisY.setName("yname");
+        axisY.setTextSize(8);
+        data.setAxisYLeft(axisY);
+
+        lineChartView.setInteractive(true);
+        lineChartView.setZoomType(ZoomType.HORIZONTAL);
+        lineChartView.setMaxZoom(3);
+        lineChartView.setLineChartData(data);
+
+        Viewport viewport = new Viewport(lineChartView.getMaximumViewport());
+        viewport.left = 0;
+        viewport.right = axisValues.size();
+        lineChartView.setCurrentViewport(viewport);
 
     }
 
