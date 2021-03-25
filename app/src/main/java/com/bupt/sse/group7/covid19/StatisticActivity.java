@@ -89,6 +89,7 @@ public class StatisticActivity extends AppCompatActivity {
     private LineChartView lineChartView;
     private List<AxisValue> axisValues = new ArrayList<>();
     private List<PointValue> pointValues = new ArrayList<>();
+    private int showXSize=20;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -196,14 +197,12 @@ public class StatisticActivity extends AppCompatActivity {
                     JsonObject jsonObject = (JsonObject) JsonParser.parseString(dataString);
                     JsonObject data = jsonObject.get("data").getAsJsonObject();
                     JsonArray chinaDayAddList = data.getAsJsonArray("chinaDayAddList");
-//                    for(int i=0;i<chinaDayAddList.size();i++){
-                    for (int i = 0; i < 7; i++) {
+                    for (int i = 0; i < showXSize; i++) {
 
-                        JsonObject dayAdd = chinaDayAddList.get(i).getAsJsonObject();
-//                        axisValues.add(new AxisValue(i).setLabel(dayAdd.get("date").getAsString()));
-//                        pointValues.add(new PointValue(i,dayAdd.get("localConfirmadd").getAsInt()));
-                        axisValues.add(new AxisValue(i).setLabel(i + ""));
-                        pointValues.add(new PointValue(i, i));
+                        JsonObject dayAdd = chinaDayAddList.get(chinaDayAddList.size()-showXSize+i).getAsJsonObject();
+                        axisValues.add(new AxisValue(i).setLabel(dayAdd.get("date").getAsString()));
+
+                        pointValues.add(new PointValue(i, dayAdd.get("localConfirmadd").getAsInt()));
                     }
                     initLineChart();
                 } catch (IOException e) {
@@ -264,15 +263,15 @@ public class StatisticActivity extends AppCompatActivity {
         Axis axisX = new Axis();
         axisX.setHasTiltedLabels(true);
         axisX.setTextColor(getResources().getColor(R.color.textGrey));
-        axisX.setTextSize(8);
-        axisX.setMaxLabelChars(axisValues.size());
+        axisX.setTextSize(10);
         axisX.setValues(axisValues);
+        axisX.setMaxLabelChars(5);
         axisX.setHasLines(true);
         data.setAxisXBottom(axisX);
 
         Axis axisY = new Axis();
-        axisY.setName("yname");
         axisY.setTextSize(8);
+        axisY.setInside(true);
         data.setAxisYLeft(axisY);
 
         lineChartView.setInteractive(true);
@@ -282,7 +281,7 @@ public class StatisticActivity extends AppCompatActivity {
 
         Viewport viewport = new Viewport(lineChartView.getMaximumViewport());
         viewport.left = 0;
-        viewport.right = axisValues.size();
+        viewport.right = axisValues.size() - 1;
         lineChartView.setCurrentViewport(viewport);
 
     }

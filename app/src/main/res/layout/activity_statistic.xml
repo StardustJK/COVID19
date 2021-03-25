@@ -142,14 +142,19 @@
                 android:layout_marginLeft="25dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="疫情趋势"
+                android:text="新增本土病例"
                 android:textSize="24sp"
                 android:textColor="#128676"/>/>
 
+
             <lecho.lib.hellocharts.view.LineChartView
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="20dp"
                 android:id="@+id/line_chart"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"/>
+                android:layout_height="350dp"/>
 
         </LinearLayout>
     </LinearLayout>
