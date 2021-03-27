@@ -50,7 +50,7 @@ public class HomeActivity extends AppCompatActivity {
     private CardView diaryCard;
     private TextView mildTv, severeTv, curedTv, deadTv;
 
-    private Context context=this;
+    private Context context = this;
     private JsonObject statistics;
 
     @Override
@@ -75,7 +75,7 @@ public class HomeActivity extends AppCompatActivity {
     private void initData() {
         Log.i("hcccc", "initdata");
 //        Call<ResponseBody> data = DBConnector.dao.executeGet("getStatistics.php");
-       Call<ResponseBody> data = DBConnector.dao.executeGet("hello");
+        Call<ResponseBody> data = DBConnector.dao.executeGet("hello");
 
         data.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -111,7 +111,7 @@ public class HomeActivity extends AppCompatActivity {
         hospitalCard = findViewById(R.id.hospital_card);
         trackCard = findViewById(R.id.track_card);
         authCard = findViewById(R.id.auth_card);
-        diaryCard=findViewById(R.id.diary_card);
+        diaryCard = findViewById(R.id.diary_card);
         curedTv = findViewById(R.id.cured_statistic);
         deadTv = findViewById(R.id.dead_statistic);
         severeTv = findViewById(R.id.severe_statistic);
@@ -129,8 +129,16 @@ public class HomeActivity extends AppCompatActivity {
         authCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(HomeActivity.this, AuthenticateActivity.class);
+                //TODO 改成sharedPreference;
+                Intent intent;
+                if (CurrentUser.getCurrentUser() == null) {
+                    intent = new Intent(HomeActivity.this, AuthenticateActivity.class);
+                } else {
+                    intent = new Intent(HomeActivity.this, LogOutActivity.class);
+
+                }
                 startActivity(intent);
+
             }
         });
 

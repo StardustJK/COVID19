@@ -105,13 +105,19 @@ public class PatientAuthFragment extends Fragment {
             public void onResponse(Call<String> call, Response<String> response) {
                 returnedInfo = (JsonObject) JsonParser.parseString(response.body());
                 //登录成功
-                if(returnedInfo.get("success").getAsBoolean()){
-                 //TODO 修改当前用户
-                 getActivity().finish();
-                 Toast.makeText(getActivity(),returnedInfo.get("message").getAsString(),Toast.LENGTH_LONG).show();
-                }
-                else {
-                    Toast.makeText(getActivity(),returnedInfo.get("message").getAsString(),Toast.LENGTH_LONG).show();
+                if (returnedInfo.get("success").getAsBoolean()) {
+                    //TODO 修改当前用户
+                    JsonObject data = returnedInfo.get("data").getAsJsonObject();
+                    CurrentUser currentUser = new CurrentUser(data.get("id").getAsString(),
+                            data.get("phone").getAsString(),
+                            data.get("name").getAsString(),
+                            data.get("status").getAsInt(),
+                            data.get("role").getAsInt());
+                    CurrentUser.setCurrentUser(currentUser);
+                    getActivity().finish();
+                    Toast.makeText(getActivity(), returnedInfo.get("message").getAsString(), Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getActivity(), returnedInfo.get("message").getAsString(), Toast.LENGTH_LONG).show();
                 }
             }
 
