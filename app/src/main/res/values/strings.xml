@@ -29,8 +29,8 @@
     <string name="hospital_status">确诊情况</string>
 
     <string name="patient_auth">个人认证</string>
-    <string name="inputNo">请输入病案号</string>
-    <string name="inputTel">请输入手机</string>
+    <string name="inputNo">请输入用户名或手机号</string>
+    <string name="inputTel">请输入密码</string>
     <string name="setUsername">设置登录名</string>
 
     <string name="hospital_auth">医院认证</string>

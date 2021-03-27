@@ -11,16 +11,17 @@ import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.QueryMap;
+import retrofit2.http.Url;
 
 public interface DAO {
-    @GET("{php}")
-    Call<ResponseBody> executeGet(@Path("php") String php, @QueryMap Map<String, String> queryMap);
+    @GET
+    Call<ResponseBody> executeGet(@Url String url, @QueryMap Map<String, String> queryMap);
 
-    @GET("{php}")
-    Call<ResponseBody> executeGet(@Path("php") String php);
+    @GET
+    Call<ResponseBody> executeGet(@Url String url);
 
     @Headers({"Content-type:application/json;charset=UTF-8"})
-    @POST("{php}")
-    Call<String> executePost(@Path("php") String php, @Body RequestBody data);
+    @POST
+    Call<String> executePost(@Url String url, @Body RequestBody data);
 
 }

@@ -81,8 +81,8 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
-                    statistics = JsonUtils.parseInfo(response.body().byteStream()).get(0).getAsJsonObject();
-                    updateStatusView();
+                    statistics = JsonUtils.input2Json(response.body().byteStream());
+                    //updateStatusView();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

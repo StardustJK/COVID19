@@ -20,6 +20,18 @@ public class JsonUtils {
             return obj.get(arg).getAsString();
         }
     }
+    public static JsonObject input2Json(InputStream in) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+        StringBuilder sb = new StringBuilder();
+        String line = null;
+        while ((line = br.readLine()) != null) {
+            sb.append(line).append("\n");
+        }
+
+        JsonObject outline = (JsonObject) JsonParser.parseString(sb.toString());
+        Log.d("DBData", outline.toString());
+        return outline;
+    }
     public static JsonArray parseInfo(InputStream in) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
         StringBuilder sb = new StringBuilder();

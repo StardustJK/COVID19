@@ -48,8 +48,8 @@
                     android:layout_marginRight="10dp"/>
 
                 <EditText
-                    android:id="@+id/patient_auth_no"
-                    android:layout_width="150dp"
+                    android:id="@+id/patient_auth_tel"
+                    android:layout_width="180dp"
                     android:layout_height="50dp"
                     android:textSize="16dp"
                     android:hint="@string/inputNo" />
@@ -70,8 +70,8 @@
                     android:src="@drawable/tel"/>
 
                 <EditText
-                    android:id="@+id/patient_auth_tel"
-                    android:layout_width="150dp"
+                    android:id="@+id/patient_auth_pw"
+                    android:layout_width="180dp"
                     android:layout_height="50dp"
                     android:textSize="16dp"
                     android:hint="@string/inputTel"
