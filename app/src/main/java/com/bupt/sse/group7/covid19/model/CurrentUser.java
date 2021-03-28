@@ -1,5 +1,8 @@
 package com.bupt.sse.group7.covid19.model;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 /**
  * 当前登录用户
  * label取值范围 {"visitor", "hospital", "patient"}
@@ -46,6 +49,46 @@ public class CurrentUser {
         this.phone = phone;
         this.name = name;
         this.status = status;
+        this.role = role;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public int getRole() {
+        return role;
+    }
+
+    public void setRole(int role) {
         this.role = role;
     }
 }

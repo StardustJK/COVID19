@@ -3,6 +3,7 @@ package com.bupt.sse.group7.covid19;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -30,8 +31,11 @@ import com.bupt.sse.group7.covid19.utils.Constants;
 import com.bupt.sse.group7.covid19.utils.DBConnector;
 import com.bupt.sse.group7.covid19.utils.JsonUtils;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -43,6 +47,7 @@ import retrofit2.Response;
  * 主页
  */
 public class HomeActivity extends AppCompatActivity {
+    private static String TAG="HomeActivity";
     private CardView hospitalCard;
     private CardView authCard;
     private CardView trackCard;
@@ -70,6 +75,48 @@ public class HomeActivity extends AppCompatActivity {
         initView();
         initData();
         checkPermission();
+        initCurrentUser();
+    }
+
+    //初始化当前用户
+
+    private void initCurrentUser(){
+        SharedPreferences sharedPreferences=getSharedPreferences("Current_User",Context.MODE_PRIVATE);
+        String currentUserId=sharedPreferences.getString("userId",null);
+        //获取当前的用户对象
+        if(currentUserId!=null){
+            Map<String,String> param=new HashMap<>();
+            param.put("userId",currentUserId);
+            Call<ResponseBody> data = DBConnector.dao.executeGet("user/userInfo", param);
+            data.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    try {
+                        String dataString=JsonUtils.inputStream2String(response.body().byteStream());
+                        JsonObject data= (JsonObject) JsonParser.parseString(dataString);
+                        if(data.get("success").getAsBoolean()){
+                            JsonObject user=data.getAsJsonObject("data");
+                            CurrentUser currentUser=new CurrentUser(
+                                    user.get("id").getAsString(),
+                                    user.get("phone").getAsString(),
+                                    user.get("name").getAsString(),
+                                    user.get("status").getAsInt(),
+                                    user.get("role").getAsInt()
+                            );
+                            CurrentUser.setCurrentUser(currentUser);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.i(TAG,"getUserInfo failed");
+                }
+            });
+        }
+
     }
 
     private void initData() {
@@ -129,9 +176,10 @@ public class HomeActivity extends AppCompatActivity {
         authCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO 改成sharedPreference;
+
                 Intent intent;
-                if (CurrentUser.getCurrentUser() == null) {
+
+                if (CurrentUser.getCurrentUser()==null) {
                     intent = new Intent(HomeActivity.this, AuthenticateActivity.class);
                 } else {
                     intent = new Intent(HomeActivity.this, LogOutActivity.class);

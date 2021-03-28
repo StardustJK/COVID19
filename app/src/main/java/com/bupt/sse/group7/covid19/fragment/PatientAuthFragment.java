@@ -1,7 +1,9 @@
 package com.bupt.sse.group7.covid19.fragment;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -114,6 +116,10 @@ public class PatientAuthFragment extends Fragment {
                             data.get("status").getAsInt(),
                             data.get("role").getAsInt());
                     CurrentUser.setCurrentUser(currentUser);
+                    SharedPreferences sharedPreferences=getContext().getSharedPreferences("Current_User", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor=sharedPreferences.edit();
+                    editor.putString("userId",data.get("id").getAsString());
+                    editor.commit();
                     getActivity().finish();
                     Toast.makeText(getActivity(), returnedInfo.get("message").getAsString(), Toast.LENGTH_LONG).show();
                 } else {
