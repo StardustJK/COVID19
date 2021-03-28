@@ -3,10 +3,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center"
     tools:context=".LogOutActivity">
-    <TextView
+
+    <Button
+        android:id="@+id/btn_logout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="注销"/>
+        android:background="@drawable/border"
+        android:text="注销"
+        android:textColor="@color/cardBlue"
+        android:textSize="20sp" />
+
 
 </LinearLayout>
