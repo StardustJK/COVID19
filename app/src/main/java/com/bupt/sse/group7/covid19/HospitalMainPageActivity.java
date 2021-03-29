@@ -116,7 +116,7 @@ public class HospitalMainPageActivity extends AppCompatActivity implements IHosp
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_edit:
-                if (CurrentUser.getLabel().equals("hospital") && CurrentUser.getId() == hospital.getId()) {
+                if (CurrentUser.getLabel().equals("hospital") && CurrentUser.getId() == hospital.getId()+"") {
                     Intent intent = new Intent(this, EditHospitalActivity.class);
                     startActivity(intent);
                 } else {

@@ -158,7 +158,7 @@ public class PatientAuthFragment extends Fragment {
         if (status == 1) {
             if (returnedInfo.get("tel").getAsString().equals(tel)) {
                 Toast.makeText(getActivity(), "认证成功", Toast.LENGTH_SHORT).show();
-                CurrentUser.setId(returnedInfo.get("p_id").getAsInt());
+                CurrentUser.setId(returnedInfo.get("p_id").getAsString());
                 CurrentUser.setLabel("patient");
 
                 getActivity().finish();

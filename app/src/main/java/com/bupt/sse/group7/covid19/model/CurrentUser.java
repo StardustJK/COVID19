@@ -9,7 +9,7 @@ import android.content.SharedPreferences;
  */
 public class CurrentUser {
     private static String label;
-    private static int id;
+    private static String id;
 
     static {
         label = "visitor";
@@ -23,11 +23,11 @@ public class CurrentUser {
         label = newLabel;
     }
 
-    public static int getId() {
+    public static String getId() {
         return id;
     }
 
-    public static void setId(int newId) {
+    public static void setId(String newId) {
         id = newId;
     }
 

@@ -403,7 +403,7 @@ public class ShowMapActivity extends AppCompatActivity implements IAreaSelection
                 Log.i("hcccc", "marker onclicked");
                 Bundle bundle = marker.getExtraInfo();
                 int p_id = bundle.getInt("p_id");
-                PatientPresenter.getInstance().setPatientId(p_id);
+                PatientPresenter.getInstance().setPatientId(p_id+"");
                 Intent intent = new Intent(ShowMapActivity.this, PatientMainPageActivity.class);
                 startActivity(intent);
                 return false;
@@ -450,7 +450,7 @@ public class ShowMapActivity extends AppCompatActivity implements IAreaSelection
                 Bundle bundle = polyline.getExtraInfo();
                 int p_id = bundle.getInt("p_id");
                 Intent intent = new Intent(ShowMapActivity.this, PatientMainPageActivity.class);
-                PatientPresenter.getInstance().setPatientId(p_id);
+                PatientPresenter.getInstance().setPatientId(p_id+"");
                 startActivity(intent);
                 return false;
             }

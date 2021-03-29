@@ -102,7 +102,7 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
     BitmapDescriptor bitmap;
     private Context mContext = this;
     private static final String TAG = "EditTrackActivity";
-    int p_id = CurrentUser.getId();
+    String p_id = CurrentUser.getId();
     //int p_id=5;
     private MapView mapView;
     private BaiduMap baiduMap;
@@ -184,7 +184,7 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
                 baiduMap.clear();
                 allMarkers.clear();
                 Bundle bundle = new Bundle();
-                bundle.putInt("id", p_id);
+                bundle.putString("id", p_id);
                 Intent intent = new Intent(EditTrackActivity.this, PatientMainPageActivity.class);
                 intent.putExtras(bundle);
                 startActivity(intent);

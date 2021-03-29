@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Patient {
-    private int id;
+    private String id;
     private String h_name;
     private String username;
     private String status;
     private List<Status> statuses = new ArrayList<>();
     private List<TrackPoint> trackPoints = new ArrayList<>();
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -47,7 +47,7 @@ public class Patient {
         this.username = username;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 

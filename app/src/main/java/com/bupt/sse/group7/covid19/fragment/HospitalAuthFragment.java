@@ -82,7 +82,7 @@ public class HospitalAuthFragment extends Fragment {
         if (returnedInfo.get("status").getAsInt() == 1) {
             if (returnedInfo.get("password").getAsString().equals(password)) {
                 Toast.makeText(getActivity(), "认证成功", Toast.LENGTH_SHORT).show();
-                CurrentUser.setId(returnedInfo.get("h_id").getAsInt());
+                CurrentUser.setId(returnedInfo.get("h_id").getAsString());
                 CurrentUser.setLabel("hospital");
 
                 getActivity().finish();

@@ -47,7 +47,7 @@ import retrofit2.Response;
  * 主页
  */
 public class HomeActivity extends AppCompatActivity {
-    private static String TAG="HomeActivity";
+    private static String TAG = "HomeActivity";
     private CardView hospitalCard;
     private CardView authCard;
     private CardView trackCard;
@@ -80,23 +80,23 @@ public class HomeActivity extends AppCompatActivity {
 
     //初始化当前用户
 
-    private void initCurrentUser(){
-        SharedPreferences sharedPreferences=getSharedPreferences("Current_User",Context.MODE_PRIVATE);
-        String currentUserId=sharedPreferences.getString("userId",null);
+    private void initCurrentUser() {
+        SharedPreferences sharedPreferences = getSharedPreferences("Current_User", Context.MODE_PRIVATE);
+        String currentUserId = sharedPreferences.getString("userId", null);
         //获取当前的用户对象
-        if(currentUserId!=null){
-            Map<String,String> param=new HashMap<>();
-            param.put("userId",currentUserId);
+        if (currentUserId != null) {
+            Map<String, String> param = new HashMap<>();
+            param.put("userId", currentUserId);
             Call<ResponseBody> data = DBConnector.dao.executeGet("user/userInfo", param);
             data.enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     try {
-                        String dataString=JsonUtils.inputStream2String(response.body().byteStream());
-                        JsonObject data= (JsonObject) JsonParser.parseString(dataString);
-                        if(data.get("success").getAsBoolean()){
-                            JsonObject user=data.getAsJsonObject("data");
-                            CurrentUser currentUser=new CurrentUser(
+                        String dataString = JsonUtils.inputStream2String(response.body().byteStream());
+                        JsonObject data = (JsonObject) JsonParser.parseString(dataString);
+                        if (data.get("success").getAsBoolean()) {
+                            JsonObject user = data.getAsJsonObject("data");
+                            CurrentUser currentUser = new CurrentUser(
                                     user.get("id").getAsString(),
                                     user.get("phone").getAsString(),
                                     user.get("name").getAsString(),
@@ -112,7 +112,7 @@ public class HomeActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    Log.i(TAG,"getUserInfo failed");
+                    Log.i(TAG, "getUserInfo failed");
                 }
             });
         }
@@ -179,7 +179,7 @@ public class HomeActivity extends AppCompatActivity {
 
                 Intent intent;
 
-                if (CurrentUser.getCurrentUser()==null) {
+                if (CurrentUser.getCurrentUser() == null) {
                     intent = new Intent(HomeActivity.this, AuthenticateActivity.class);
                 } else {
                     intent = new Intent(HomeActivity.this, LogOutActivity.class);
@@ -202,24 +202,33 @@ public class HomeActivity extends AppCompatActivity {
         pageCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (CurrentUser.getLabel().equals("visitor")) {
+                if (CurrentUser.getCurrentUser() == null) {
                     Intent auth = new Intent(HomeActivity.this, AuthenticateActivity.class);
                     startActivity(auth);
-                    Toast.makeText(HomeActivity.this, "请先认证", Toast.LENGTH_LONG).show();
+                    Toast.makeText(HomeActivity.this, "请先登录", Toast.LENGTH_LONG).show();
                 } else {
-                    Class context;
-                    Intent intent;
-                    if (CurrentUser.getLabel().equals("patient")) {
-                        context = PatientMainPageActivity.class;
-                        PatientPresenter.getInstance().setPatientId(CurrentUser.getId());
-                        intent = new Intent(HomeActivity.this, context);
-                    } else {
-                        context = HospitalMainPageActivity.class;
-                        HospitalPresenter.getInstance().setID(CurrentUser.getId());
-                        intent = new Intent(HomeActivity.this, context);
-                    }
+                    Intent intent=new Intent(HomeActivity.this,PatientMainPageActivity.class);
+                    PatientPresenter.getInstance().setPatientId(CurrentUser.getCurrentUser().getUserId());
                     startActivity(intent);
                 }
+//                if (CurrentUser.getLabel().equals("visitor")) {
+//                    Intent auth = new Intent(HomeActivity.this, AuthenticateActivity.class);
+//                    startActivity(auth);
+//                    Toast.makeText(HomeActivity.this, "请先认证", Toast.LENGTH_LONG).show();
+//                } else {
+//                    Class context;
+//                    Intent intent;
+//                    if (CurrentUser.getLabel().equals("patient")) {
+//                        context = PatientMainPageActivity.class;
+//                        PatientPresenter.getInstance().setPatientId(CurrentUser.getId());
+//                        intent = new Intent(HomeActivity.this, context);
+//                    } else {
+//                        context = HospitalMainPageActivity.class;
+//                        HospitalPresenter.getInstance().setID(CurrentUser.getId());
+//                        intent = new Intent(HomeActivity.this, context);
+//                    }
+//                    startActivity(intent);
+//                }
             }
         });
 

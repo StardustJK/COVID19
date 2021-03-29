@@ -34,7 +34,7 @@ public class PatientMainPageActivity extends AppCompatActivity implements IPatie
     private StatusLineFragment statusLineFragment;
     private PatientTrackBlockFragment patientTrackBlockFragment;
     private NotAvailable notAvailable;
-    private int id;
+    private String id;
     public TextView busTrackTv;
     public LinearLayout busTrackLayout;
 

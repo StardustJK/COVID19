@@ -80,7 +80,7 @@ public class SetUsernameActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 Log.i(TAG, "用户名更新成功");
-                CurrentUser.setId(id);
+                CurrentUser.setId(id+"");
                 CurrentUser.setLabel("patient");
                 finish();
                 Toast.makeText(mContext, "设置成功", Toast.LENGTH_SHORT).show();

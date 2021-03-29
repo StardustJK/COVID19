@@ -64,7 +64,7 @@ public class PatientTrackFragment extends Fragment  {
     private static final String TAG = "PatientTrackFragment";
     private View view;
 
-    int mp_id;
+    String mp_id;
     MapView mapView;
     BaiduMap baiduMap;
     BitmapDescriptor bitmap;
@@ -158,7 +158,7 @@ public class PatientTrackFragment extends Fragment  {
                 .address(address));
     }
 
-    private void initData(int p_id) {
+    private void initData(String p_id) {
         
         initBusTrack();
         Thread thread = getTrackInfo(p_id);
@@ -344,9 +344,9 @@ public class PatientTrackFragment extends Fragment  {
     }
 
     //get all track by p_id
-    private Thread getTrackInfo(int p_id) {
+    private Thread getTrackInfo(String p_id) {
         final Map<String, String> args = new HashMap<>();
-        args.put("p_id", p_id + "");
+        args.put("p_id", p_id);
         Thread thread = new Thread(
                 new Runnable() {
                     @Override
@@ -360,7 +360,7 @@ public class PatientTrackFragment extends Fragment  {
     }
 
 
-    public void setMp_id(int mp_id) {
+    public void setMp_id(String mp_id) {
         this.mp_id = mp_id;
     }
 }

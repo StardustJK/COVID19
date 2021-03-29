@@ -194,7 +194,7 @@ public class PatientPresenter implements IDataBackCallBack {
         return instance;
     }
 
-    public void setPatientId(int id) {
+    public void setPatientId(String id) {
         this.patient.setId(id);
     }
 
