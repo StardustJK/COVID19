@@ -114,7 +114,8 @@ public class PatientAuthFragment extends Fragment {
                             data.get("phone").getAsString(),
                             data.get("name").getAsString(),
                             data.get("status").getAsInt(),
-                            data.get("role").getAsInt());
+                            data.get("role").getAsInt(),
+                            data.get("auth").getAsBoolean());
                     CurrentUser.setCurrentUser(currentUser);
                     SharedPreferences sharedPreferences=getContext().getSharedPreferences("Current_User", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor=sharedPreferences.edit();

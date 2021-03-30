@@ -54,8 +54,8 @@ public class PatientMainPageActivity extends AppCompatActivity implements IPatie
         patientPresenter = PatientPresenter.getInstance();
         patientPresenter.registerCallBack(this);
         patientPresenter.getPatientInfo();
-        busTrackLayout =findViewById(R.id.busTrackLayout);
-        busTrackTv=findViewById(R.id.busTrackTv);
+        busTrackLayout = findViewById(R.id.busTrackLayout);
+        busTrackTv = findViewById(R.id.busTrackTv);
     }
 
 
@@ -110,8 +110,13 @@ public class PatientMainPageActivity extends AppCompatActivity implements IPatie
 //        String desc = MessageFormat.format("{0}  |  {1}",
 //                Constants.statuses.get(patient.getStatus()),
 //                patient.getH_name());
-        String desc = MessageFormat.format("{0}  ",
-                Constants.statuses.get(patient.getStatus()));
+        String auth;
+        if (patient.isAuth()) {
+            auth = "已认证";
+        } else {
+            auth = "未认证";
+        }
+        String desc = MessageFormat.format("{0}  ", auth);
 
         ((TextView) this.findViewById(R.id.patient_name)).setText(patient.getUsername());
         ((TextView) this.findViewById(R.id.patient_desc)).setText(desc);

@@ -101,7 +101,8 @@ public class HomeActivity extends AppCompatActivity {
                                     user.get("phone").getAsString(),
                                     user.get("name").getAsString(),
                                     user.get("status").getAsInt(),
-                                    user.get("role").getAsInt()
+                                    user.get("role").getAsInt(),
+                                    user.get("auth").getAsBoolean()
                             );
                             CurrentUser.setCurrentUser(currentUser);
                         }

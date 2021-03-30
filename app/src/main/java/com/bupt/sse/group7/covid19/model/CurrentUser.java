@@ -43,13 +43,15 @@ public class CurrentUser {
     private String name;
     private int status;
     private int role;
+    private boolean auth;
 
-    public CurrentUser(String userId, String phone, String name, int status, int role) {
+    public CurrentUser(String userId, String phone, String name, int status, int role,boolean auth) {
         this.userId = userId;
         this.phone = phone;
         this.name = name;
         this.status = status;
         this.role = role;
+        this.auth=auth;
     }
 
     public String getUserId() {

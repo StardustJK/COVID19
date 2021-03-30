@@ -176,8 +176,7 @@ public class PatientPresenter implements IDataBackCallBack {
 
     private void processPatientResult() {
         this.patient.setUsername(patientResult.get("name").getAsString());
-        //TODO status没有转换成文字
-        this.patient.setStatus(patientResult.get("status").getAsString());
+        this.patient.setAuth(patientResult.get("auth").getAsBoolean());
 
     }
 
@@ -186,7 +185,6 @@ public class PatientPresenter implements IDataBackCallBack {
         if (pStatusResult.size() == 0) {
             SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
             String date=simpleDateFormat.format(new Date());
-            Log.d(TAG,"date  :"+date);
             this.patient.getStatuses().add(
                     new Status(date, 0)
             );

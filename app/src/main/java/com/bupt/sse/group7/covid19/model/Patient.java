@@ -6,7 +6,8 @@ import java.util.List;
 public class Patient {
     private String id;
     private String username;
-    private String status;
+    private int status;
+    private boolean auth;
     private List<Status> statuses = new ArrayList<>();
     private List<TrackPoint> trackPoints = new ArrayList<>();
 
@@ -22,12 +23,19 @@ public class Patient {
         this.trackPoints = trackPoints;
     }
 
+    public boolean isAuth() {
+        return auth;
+    }
 
-    public String getStatus() {
+    public void setAuth(boolean auth) {
+        this.auth = auth;
+    }
+
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(int status) {
         this.status = status;
     }
 
