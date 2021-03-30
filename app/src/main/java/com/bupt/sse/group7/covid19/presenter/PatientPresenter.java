@@ -14,9 +14,12 @@ import com.bupt.sse.group7.covid19.utils.JsonUtils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,17 +58,21 @@ public class PatientPresenter implements IDataBackCallBack {
 
     private void getPatientResult() {
         Map<String, String> args = new HashMap<>();
-        args.put("p_id", String.valueOf(patient.getId()));
-        Call<ResponseBody> data = DBConnector.dao.executeGet("getPatientById.php", args);
+        args.put("userId", patient.getId());
+        Call<ResponseBody> data = DBConnector.dao.executeGet("user/userInfo", args);
         data.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
-                    patientResult = JsonUtils.parseInfo(response.body().byteStream()).get(0).getAsJsonObject();
-                    processPatientResult();
-                    Log.i("hcccc", "processPatientResultDOwn");
+                    String dataString = JsonUtils.inputStream2String(response.body().byteStream());
+                    JsonObject rawData = (JsonObject) JsonParser.parseString(dataString);
+                    if (rawData.get("success").getAsBoolean()) {
+                        patientResult = rawData.getAsJsonObject("data");
+                        processPatientResult();
+                        Log.i("hcccc", "processPatientResultDOwn");
+                        onAllDataBack();
+                    }
 
-                    onAllDataBack();
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -89,17 +96,19 @@ public class PatientPresenter implements IDataBackCallBack {
 
     private void getStatusResult() {
         Map<String, String> args = new HashMap<>();
-        args.put("p_id", String.valueOf(patient.getId()));
-        Call<ResponseBody> data = DBConnector.dao.executeGet("getPStatusById.php", args);
+        args.put("userId", String.valueOf(patient.getId()));
+        Call<ResponseBody> data = DBConnector.dao.executeGet("user/status", args);
         data.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
-                    pStatusResult = JsonUtils.parseInfo(response.body().byteStream());
+                    String dataString = JsonUtils.inputStream2String(response.body().byteStream());
+                    JsonObject rawData = (JsonObject) JsonParser.parseString(dataString);
+                    pStatusResult = rawData.getAsJsonArray("data");
                     processStatusResult();
                     Log.i("hcccc", "processStatusResultDown");
-
                     onAllDataBack();
+
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -117,17 +126,21 @@ public class PatientPresenter implements IDataBackCallBack {
 
     private void getTrackResult() {
         Map<String, String> args = new HashMap<>();
-        args.put("p_id", String.valueOf(patient.getId()));
-        Call<ResponseBody> data = DBConnector.dao.executeGet("getPatientTrackById.php", args);
+        args.put("userId", String.valueOf(patient.getId()));
+        Call<ResponseBody> data = DBConnector.dao.executeGet("/track/trackInfo", args);
         data.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
-                    tracksResult = JsonUtils.parseInfo(response.body().byteStream());
+                    String dataString = JsonUtils.inputStream2String(response.body().byteStream());
+                    JsonObject rawData = (JsonObject) JsonParser.parseString(dataString);
+                    tracksResult = rawData.getAsJsonArray("data");
                     processTrackResults();
                     Log.i("hcccc", "processTrackResultsDown");
 
                     onAllDataBack();
+
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -162,19 +175,29 @@ public class PatientPresenter implements IDataBackCallBack {
 
 
     private void processPatientResult() {
-        this.patient.setH_name(patientResult.get("h_name").getAsString());
-        this.patient.setUsername(patientResult.get("username").getAsString());
+        this.patient.setUsername(patientResult.get("name").getAsString());
+        //TODO status没有转换成文字
         this.patient.setStatus(patientResult.get("status").getAsString());
 
     }
 
     private void processStatusResult() {
         this.patient.setStatuses(new ArrayList<>());
-        for (JsonElement je : pStatusResult) {
+        if (pStatusResult.size() == 0) {
+            SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
+            String date=simpleDateFormat.format(new Date());
+            Log.d(TAG,"date  :"+date);
             this.patient.getStatuses().add(
-                    new Status(je.getAsJsonObject().get("day").getAsString(),
-                            je.getAsJsonObject().get("status").getAsString()));
+                    new Status(date, 0)
+            );
+        } else {
+            for (JsonElement je : pStatusResult) {
+                this.patient.getStatuses().add(
+                        new Status(je.getAsJsonObject().get("day").getAsString(),
+                                je.getAsJsonObject().get("status").getAsInt()));
+            }
         }
+
 
     }
 
@@ -183,7 +206,7 @@ public class PatientPresenter implements IDataBackCallBack {
         this.patient.setTrackPoints(new ArrayList<>());
         for (JsonElement je : tracksResult) {
             this.patient.getTrackPoints().add(
-                    new TrackPoint(je.getAsJsonObject().get("date_time").getAsString(),
+                    new TrackPoint(je.getAsJsonObject().get("dateTime").getAsString(),
                             je.getAsJsonObject().get("location").getAsString(),
                             je.getAsJsonObject().get("description").getAsString()));
         }

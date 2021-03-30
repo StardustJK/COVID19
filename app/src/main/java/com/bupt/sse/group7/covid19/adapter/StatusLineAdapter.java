@@ -42,12 +42,12 @@ public class StatusLineAdapter extends RecyclerView.Adapter<StatusLineAdapter.St
     public void onBindViewHolder(@NonNull StatusHolder holder, int position) {
         String[] date = list.get(position).getDay().split("-");
         String day = date[1] + "/" + date[2];
-        String status = list.get(position).getStatus();
+        int status = list.get(position).getStatus();
         GradientDrawable drawable = (GradientDrawable) holder.dotView.getBackground();
 
         holder.dateView.setText(day);
         holder.infoView.setText(Constants.statuses.get(status));
-        switch (Integer.parseInt(status)) {
+        switch (status) {
             case Constants.HEALTHY:
                 drawable.setColor(context.getResources().getColor(R.color.healthy));
                 break;

@@ -58,6 +58,7 @@ public class PatientMainPageActivity extends AppCompatActivity implements IPatie
         busTrackTv=findViewById(R.id.busTrackTv);
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -106,9 +107,11 @@ public class PatientMainPageActivity extends AppCompatActivity implements IPatie
             notTran.commitAllowingStateLoss();
         }
 
-        String desc = MessageFormat.format("{0}  |  {1}",
-                Constants.statuses.get(patient.getStatus()),
-                patient.getH_name());
+//        String desc = MessageFormat.format("{0}  |  {1}",
+//                Constants.statuses.get(patient.getStatus()),
+//                patient.getH_name());
+        String desc = MessageFormat.format("{0}  ",
+                Constants.statuses.get(patient.getStatus()));
 
         ((TextView) this.findViewById(R.id.patient_name)).setText(patient.getUsername());
         ((TextView) this.findViewById(R.id.patient_desc)).setText(desc);

@@ -12,7 +12,7 @@ public class Constants {
     public static final int SEVERE = 3;
     public static final int DEAD = 4;
 
-    public static final Map<String, String> statuses;
+    public static final Map<Integer, String> statuses;
     static {
         statuses = new HashMap<>();
 
@@ -22,11 +22,11 @@ public class Constants {
 //        statuses.put("4", getResources().getString(R.string.dead));
 //        statuses.put("0", getResources().getString(R.string.cured));
 
-        statuses.put("1", "确诊");
-        statuses.put("2", "轻症");
-        statuses.put("3", "重症");
-        statuses.put("4", "死亡");
-        statuses.put("0", "已治愈");
+        statuses.put(1, "确诊");
+        statuses.put(2, "轻症");
+        statuses.put(3, "重症");
+        statuses.put(4, "死亡");
+        statuses.put(0, "健康");
     }
 
 }
