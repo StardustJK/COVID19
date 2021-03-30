@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.baidu.mapapi.model.LatLng;
 import com.bupt.sse.group7.covid19.interfaces.IDataBackCallBack;
 import com.bupt.sse.group7.covid19.interfaces.IPatientViewCallBack;
 import com.bupt.sse.group7.covid19.model.Patient;
@@ -48,6 +49,10 @@ public class PatientPresenter implements IDataBackCallBack {
         patient = new Patient();
     }
 
+
+    public Patient getPatient(){
+        return patient;
+    }
     public void getPatientInfo() {
         dataSize = 0;
         getPatientResult();
@@ -203,10 +208,14 @@ public class PatientPresenter implements IDataBackCallBack {
         // parse data and assign
         this.patient.setTrackPoints(new ArrayList<>());
         for (JsonElement je : tracksResult) {
+
+            LatLng latLng=new LatLng(je.getAsJsonObject().get("latitude").getAsDouble(),je.getAsJsonObject().get("longitude").getAsDouble());
             this.patient.getTrackPoints().add(
                     new TrackPoint(je.getAsJsonObject().get("dateTime").getAsString(),
                             je.getAsJsonObject().get("location").getAsString(),
-                            je.getAsJsonObject().get("description").getAsString()));
+                            je.getAsJsonObject().get("description").getAsString(),
+                            latLng,
+                            je.getAsJsonObject().get("userId").getAsString()));
         }
 
     }

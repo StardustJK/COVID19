@@ -42,6 +42,9 @@ import com.bupt.sse.group7.covid19.EditTrackActivity;
 import com.bupt.sse.group7.covid19.PatientMainPageActivity;
 import com.bupt.sse.group7.covid19.R;
 import com.bupt.sse.group7.covid19.model.BusTrack;
+import com.bupt.sse.group7.covid19.model.Patient;
+import com.bupt.sse.group7.covid19.model.TrackPoint;
+import com.bupt.sse.group7.covid19.presenter.PatientPresenter;
 import com.bupt.sse.group7.covid19.presenter.TrackAreaPresenter;
 import com.bupt.sse.group7.covid19.utils.DBConnector;
 import com.bupt.sse.group7.covid19.utils.DrawMarker;
@@ -84,6 +87,8 @@ public class PatientTrackFragment extends Fragment  {
 
     private Context context=getActivity();
 
+    private PatientPresenter patientPresenter;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -125,8 +130,16 @@ public class PatientTrackFragment extends Fragment  {
         drawMarker = new DrawMarker(baiduMap, getActivity().getApplicationContext());
         initLocation();
 
-        initData(mp_id);
-        drawMarker.drawAllWithNumber(tracklist);
+        patientPresenter=PatientPresenter.getInstance();
+        Patient patient=patientPresenter.getPatient();
+
+
+        //initBusTrack();
+
+        List<TrackPoint> trackPoints = patient.getTrackPoints();
+
+
+        drawMarker.drawAllWithNumber(trackPoints);
 
         locate();
 
@@ -158,16 +171,7 @@ public class PatientTrackFragment extends Fragment  {
                 .address(address));
     }
 
-    private void initData(String p_id) {
-        
-        initBusTrack();
-        Thread thread = getTrackInfo(p_id);
-        try {
-            thread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
+
 
     private void initBusTrack() {
         Map<String,String> args=new HashMap<>();
