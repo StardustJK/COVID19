@@ -88,6 +88,7 @@ public class PatientTrackFragment extends Fragment  {
     private Context context=getActivity();
 
     private PatientPresenter patientPresenter;
+    private Patient patient;
 
     @Nullable
     @Override
@@ -131,7 +132,7 @@ public class PatientTrackFragment extends Fragment  {
         initLocation();
 
         patientPresenter=PatientPresenter.getInstance();
-        Patient patient=patientPresenter.getPatient();
+        patient=patientPresenter.getPatient();
 
 
         //initBusTrack();
@@ -141,27 +142,29 @@ public class PatientTrackFragment extends Fragment  {
 
         drawMarker.drawAllWithNumber(trackPoints);
 
+        //TODO
         locate();
 
 
     }
 
+    //取其中一个点作为定位
     private void locate() {
-        if (tracklist == null || tracklist.size() == 0)
+        List<TrackPoint> trackPoints = patient.getTrackPoints();
+
+        if (trackPoints== null || trackPoints.size() == 0)
             return;
-        JsonArray track = tracklist.get(0);
-        if (track.size() == 0) {
-            return;
-        }
-        JsonObject object = track.get(0).getAsJsonObject();
-        city = object.get("city").getAsString();
-        String district = object.get("district").getAsString();
+
+        TrackPoint trackPoint=trackPoints.get(0);
+        city = trackPoint.getCity();
+        String district = trackPoint.getDistrict();
         String address = "";
         TrackAreaPresenter areaPresenter = TrackAreaPresenter.getInstance();
         if (areaPresenter.getPList(getResources().getXml(R.xml.cities)) != null) {
-            city = areaPresenter.cNameMap.get(city).getName();
-            district = areaPresenter.dNameMap.get(district).getName();
-            address = city + district + object.get("location");
+            //TODO 这里是数字转换成城市名???
+//            city = areaPresenter.cNameMap.get(city).getName();
+//            district = areaPresenter.dNameMap.get(district).getName();
+            address = city + district + trackPoint.getLocation();
         }
 
         Log.i(TAG, "city:" + city + "address" + address);
@@ -172,6 +175,7 @@ public class PatientTrackFragment extends Fragment  {
     }
 
 
+    //TODO
 
     private void initBusTrack() {
         Map<String,String> args=new HashMap<>();

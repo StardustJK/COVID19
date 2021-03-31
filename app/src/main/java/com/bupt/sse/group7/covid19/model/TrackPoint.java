@@ -8,17 +8,38 @@ public class TrackPoint {
     }
 
     private String date_time;
-    private String location;
-    private String description;
+    private String location;//街道地址
+    private String description;//地点描述
+    private String city;//市
+    private String district;//区
     private LatLng latLng;
     private String userId;
 
-    public TrackPoint(String date_time, String location, String description,LatLng latLng,String userId) {
+
+    public TrackPoint(String date_time, String location, String description,LatLng latLng,String userId,String city,String district) {
         this.date_time = date_time;
         this.location = location;
         this.description = description;
         this.latLng=latLng;
         this.userId=userId;
+        this.city=city;
+        this.district=district;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getDistrict() {
+        return district;
+    }
+
+    public void setDistrict(String district) {
+        this.district = district;
     }
 
     public String getDate_time() {

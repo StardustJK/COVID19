@@ -209,13 +209,16 @@ public class PatientPresenter implements IDataBackCallBack {
         this.patient.setTrackPoints(new ArrayList<>());
         for (JsonElement je : tracksResult) {
 
-            LatLng latLng=new LatLng(je.getAsJsonObject().get("latitude").getAsDouble(),je.getAsJsonObject().get("longitude").getAsDouble());
+            JsonObject jsonObject=je.getAsJsonObject();
+            LatLng latLng=new LatLng(jsonObject.get("latitude").getAsDouble(),jsonObject.get("longitude").getAsDouble());
             this.patient.getTrackPoints().add(
-                    new TrackPoint(je.getAsJsonObject().get("dateTime").getAsString(),
-                            je.getAsJsonObject().get("location").getAsString(),
-                            je.getAsJsonObject().get("description").getAsString(),
+                    new TrackPoint(jsonObject.get("dateTime").getAsString(),
+                            jsonObject.get("location").getAsString(),
+                            jsonObject.get("description").getAsString(),
                             latLng,
-                            je.getAsJsonObject().get("userId").getAsString()));
+                            jsonObject.get("userId").getAsString(),
+                            jsonObject.get("city").getAsString(),
+                            jsonObject.get("district").getAsString()));
         }
 
     }
