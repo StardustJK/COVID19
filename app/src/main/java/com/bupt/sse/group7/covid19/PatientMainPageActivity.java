@@ -53,7 +53,6 @@ public class PatientMainPageActivity extends AppCompatActivity implements IPatie
 
         patientPresenter = PatientPresenter.getInstance();
         patientPresenter.registerCallBack(this);
-        patientPresenter.getPatientInfo();
         busTrackLayout = findViewById(R.id.busTrackLayout);
         busTrackTv = findViewById(R.id.busTrackTv);
     }

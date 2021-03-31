@@ -1,6 +1,7 @@
 package com.bupt.sse.group7.covid19.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,18 +11,21 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bupt.sse.group7.covid19.R;
+import com.bupt.sse.group7.covid19.model.TrackPoint;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
+import java.util.List;
 
 /**
  * 病人轨迹轴的 RecyclerView Adapter
  */
 public class TrackLineAdapter extends RecyclerView.Adapter<TrackLineAdapter.TrackHolder> {
 
-    private JsonArray list;
+    private List<TrackPoint> list;
 
-    public TrackLineAdapter(JsonArray list, Context context) {
+    public TrackLineAdapter(List<TrackPoint> list, Context context) {
         this.list = list;
     }
 
@@ -35,13 +39,13 @@ public class TrackLineAdapter extends RecyclerView.Adapter<TrackLineAdapter.Trac
 
     @Override
     public void onBindViewHolder(@NonNull TrackHolder holder, int position) {
-        JsonObject obj = list.get(position).getAsJsonObject();
-        String[] dateTime = obj.get("date_time").getAsString().split(" ");
-        String location = obj.get("location").getAsString();
+        TrackPoint trackPoint=list.get(position);
+        String[] dateTime = trackPoint.getDate_time().split(" ");
+        Log.d("TrackLineAdapter","dateTime："+trackPoint.getDate_time());
+        String location =trackPoint.getLocation();
         String descrip = "";
-        JsonElement descObj = obj.get("description");
-        if (!descObj.isJsonNull()) {
-            descrip = descObj.getAsString();
+        if(trackPoint.getDescription()!=null){
+            descrip=trackPoint.getDescription();
         }
         holder.dateView.setText(dateTime[0]);
         holder.timeView.setText(dateTime[1].substring(0, 5));

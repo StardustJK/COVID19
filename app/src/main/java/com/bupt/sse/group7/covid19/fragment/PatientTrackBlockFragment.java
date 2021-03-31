@@ -57,11 +57,10 @@ public class PatientTrackBlockFragment extends Fragment {
         trackTranStatus.add(R.id.track_block, patientTrackFragment);
         trackTranStatus.commit();
 
-//        trackLineFragment = new TrackLineFragment();
-//        trackLineFragment.setTracks(this.tracks);
-//        FragmentTransaction trackLineTran = fragmentManager.beginTransaction();
-//        trackLineTran.add(R.id.track_block, trackLineFragment);
-//        trackLineTran.commit();
+        trackLineFragment = new TrackLineFragment();
+        FragmentTransaction trackLineTran = fragmentManager.beginTransaction();
+        trackLineTran.add(R.id.track_block, trackLineFragment);
+        trackLineTran.commit();
     }
 
     public void setId(String id) {

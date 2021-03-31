@@ -14,13 +14,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bupt.sse.group7.covid19.R;
 import com.bupt.sse.group7.covid19.adapter.TrackLineAdapter;
+import com.bupt.sse.group7.covid19.model.Patient;
+import com.bupt.sse.group7.covid19.presenter.PatientPresenter;
 import com.google.gson.JsonArray;
 
 /**
  * 病人主页 -> 轨迹卡片 -> 文字轴
  */
 public class TrackLineFragment extends Fragment {
-    private JsonArray tracks;
+
     private RecyclerView trackView;
     private TrackLineAdapter adapter;
     private LinearLayoutManager layoutManager;
@@ -45,16 +47,15 @@ public class TrackLineFragment extends Fragment {
     }
 
     private void initView() {
-        Log.d("track", this.tracks.toString());
+        PatientPresenter patientPresenter=PatientPresenter.getInstance();
+        Patient patient=patientPresenter.getPatient();
         trackView = view.findViewById(R.id.track_line_view);
         layoutManager = new LinearLayoutManager(this.getActivity(), LinearLayoutManager.VERTICAL, false);
-        adapter = new TrackLineAdapter(tracks, this.getContext());
+        adapter = new TrackLineAdapter(patient.getTrackPoints(), this.getContext());
 
         trackView.setLayoutManager(layoutManager);
         trackView.setAdapter(adapter);
     }
 
-    public void setTracks(JsonArray tracks) {
-        this.tracks = tracks;
-    }
+
 }

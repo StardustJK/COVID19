@@ -229,6 +229,7 @@ public class PatientPresenter implements IDataBackCallBack {
 
     public void setPatientId(String id) {
         this.patient.setId(id);
+        getPatientInfo();
     }
 
     @Override
