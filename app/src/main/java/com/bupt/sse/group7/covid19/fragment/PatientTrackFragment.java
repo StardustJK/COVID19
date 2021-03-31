@@ -13,6 +13,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -53,6 +54,7 @@ import com.bupt.sse.group7.covid19.utils.overlayutil.BusLineOverlay;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -63,7 +65,7 @@ import java.util.Map;
 /**
  * 病人主页 -> 轨迹卡片部分 -> 地图显示
  */
-public class PatientTrackFragment extends Fragment  {
+public class PatientTrackFragment extends Fragment {
     private static final String TAG = "PatientTrackFragment";
     private View view;
 
@@ -85,7 +87,7 @@ public class PatientTrackFragment extends Fragment  {
     private BusLineResult mBusLineResult;
     private String city;
 
-    private Context context=getActivity();
+    private Context context = getActivity();
 
     private PatientPresenter patientPresenter;
     private Patient patient;
@@ -131,18 +133,18 @@ public class PatientTrackFragment extends Fragment  {
         drawMarker = new DrawMarker(baiduMap, getActivity().getApplicationContext());
         initLocation();
 
-        patientPresenter=PatientPresenter.getInstance();
-        patient=patientPresenter.getPatient();
+        patientPresenter = PatientPresenter.getInstance();
+        patient = patientPresenter.getPatient();
 
 
-        //initBusTrack();
+        initBusTrack();
 
         List<TrackPoint> trackPoints = patient.getTrackPoints();
 
 
         drawMarker.drawAllWithNumber(trackPoints);
 
-        //TODO
+
         locate();
 
 
@@ -152,10 +154,10 @@ public class PatientTrackFragment extends Fragment  {
     private void locate() {
         List<TrackPoint> trackPoints = patient.getTrackPoints();
 
-        if (trackPoints== null || trackPoints.size() == 0)
+        if (trackPoints == null || trackPoints.size() == 0)
             return;
 
-        TrackPoint trackPoint=trackPoints.get(0);
+        TrackPoint trackPoint = trackPoints.get(0);
         city = trackPoint.getCity();
         String district = trackPoint.getDistrict();
         String address = "";
@@ -178,49 +180,55 @@ public class PatientTrackFragment extends Fragment  {
     //TODO
 
     private void initBusTrack() {
-        Map<String,String> args=new HashMap<>();
-        args.put("p_id",mp_id+"");
-        Call<ResponseBody> data=DBConnector.dao.executeGet("getBusTrackById.php",args);
+        Map<String, String> args = new HashMap<>();
+        args.put("userId", patient.getId());
+        Call<ResponseBody> data = DBConnector.dao.executeGet("track/busTrack", args);
         data.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                Log.i(TAG,"成功获取busline:"+response.body());
+                Log.i(TAG, "成功获取busline:" + response.body());
 
                 try {
-                    JsonArray busTracks=JsonUtils.parseInfo(response.body().byteStream());
-                    if(busTracks.size()==0){
-                        return;
-                    }
-                    ((PatientMainPageActivity)getActivity()).busTrackLayout.setVisibility(View.VISIBLE);
-                    TextView busTrackTv= ((PatientMainPageActivity)getActivity()).busTrackTv;
-                    String busTrackText="该患者于：\n";
-                    for(JsonElement je:busTracks){
-                        BusTrack busTrack=new BusTrack(
-                                je.getAsJsonObject().get("uid").getAsString(),
-                                je.getAsJsonObject().get("p_id").getAsInt(),
-                                je.getAsJsonObject().get("name").getAsString(),
-                                je.getAsJsonObject().get("start").getAsString(),
-                                je.getAsJsonObject().get("end").getAsString(),
-                                je.getAsJsonObject().get("date_time").getAsString()
+                    String dataString = JsonUtils.inputStream2String(response.body().byteStream());
+                    JsonObject rawData = (JsonObject) JsonParser.parseString(dataString);
+                    if (rawData.get("success").getAsBoolean()) {
+                        JsonArray busTracks = rawData.getAsJsonArray("data");
+                        if (busTracks.size() == 0) {
+                            return;
+                        }
+                        ((PatientMainPageActivity) getActivity()).busTrackLayout.setVisibility(View.VISIBLE);
+                        TextView busTrackTv = ((PatientMainPageActivity) getActivity()).busTrackTv;
+                        String busTrackText = "该患者于：\n";
+                        for (int i = 0; i < busTracks.size(); i++) {
+                            JsonObject jsonObject = busTracks.get(i).getAsJsonObject();
+                            BusTrack busTrack = new BusTrack(
+                                    jsonObject.get("id").getAsString(),
+                                    jsonObject.get("userId").getAsString(),
+                                    jsonObject.get("name").getAsString(),
+                                    jsonObject.get("start").getAsString(),
+                                    jsonObject.get("end").getAsString(),
+                                    jsonObject.get("dateTime").getAsString()
+                            );
 
-                        );
-                        searchBusOrSubway(busTrack);
-                        busTrackText+=busTrack.getDate_time().substring(0,busTrack.getDate_time().length()-3)+"在"+busTrack.getStart()+"乘坐"+busTrack.getName()
-                                +"至"+busTrack.getEnd()+"\n";
+                            //画公交线路
+                            searchBusOrSubway(busTrack);
+                            busTrackText += busTrack.getDateTime().substring(5, 10) + "在" + busTrack.getStart() + "乘坐" + busTrack.getName()
+                                    + "至" + busTrack.getEnd() + "\n";
+                        }
+                        busTrackTv.setText(busTrackText);
 
-                    }
-                    busTrackTv.setText(busTrackText);
 
+                    } else return;
                 } catch (IOException e) {
                     e.printStackTrace();
-                }
 
+                }
 
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.i(TAG,"获取busline失败");
+                Log.i(TAG, "获取busline失败");
                 Toast.makeText(getActivity(), "当前网络不可用，请检查你的网络", Toast.LENGTH_SHORT).show();
 
             }
@@ -234,7 +242,8 @@ public class PatientTrackFragment extends Fragment  {
         overlay.zoomToSpan();
 
     }
-    public void searchBusOrSubway( BusTrack busTrack) {
+
+    public void searchBusOrSubway(BusTrack busTrack) {
         mBusLineSearch = BusLineSearch.newInstance();
         //获取的是具体的公交线
         mBusLineSearch.setOnGetBusLineSearchResultListener(new OnGetBusLineSearchResultListener() {
@@ -255,12 +264,14 @@ public class PatientTrackFragment extends Fragment  {
 
             }
         });
+        //TODO 需要获取正确的线路uid来测试
         mBusLineSearch.searchBusLine(new BusLineSearchOption()
                 .city(city)
-                .uid(busTrack.getUid()));
+                .uid(busTrack.getId()));
 
 
     }
+
     public BusLineResult getChosenStations(String start, String end, BusLineResult busLineResult) {
         BusLineResult mBusLineResult = busLineResult;
         int indexStart = 0;
@@ -286,6 +297,7 @@ public class PatientTrackFragment extends Fragment  {
 
         return mBusLineResult;
     }
+
     private List<BusLineResult.BusStep> getChosenSteps(List<BusLineResult.BusStation> busStations, BusLineResult.BusStep busStep) {
         if (busStations == null) {
             return null;
