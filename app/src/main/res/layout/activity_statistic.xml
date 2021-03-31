@@ -10,7 +10,7 @@
         android:layout_height="match_parent">
         <!--    国内疫情-->
         <LinearLayout
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:layout_marginLeft="5dp"
             android:layout_marginBottom="8dp"
             android:layout_marginRight="5dp"

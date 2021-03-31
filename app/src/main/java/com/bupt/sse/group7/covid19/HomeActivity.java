@@ -52,7 +52,7 @@ public class HomeActivity extends AppCompatActivity {
     private CardView authCard;
     private CardView trackCard;
     private CardView pageCard;
-    private CardView diaryCard;
+
     private TextView mildTv, severeTv, curedTv, deadTv;
 
     private Context context = this;
@@ -73,7 +73,6 @@ public class HomeActivity extends AppCompatActivity {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         }
         initView();
-        initData();
         checkPermission();
         initCurrentUser();
     }
@@ -120,50 +119,18 @@ public class HomeActivity extends AppCompatActivity {
 
     }
 
-    private void initData() {
-        Log.i("hcccc", "initdata");
-//        Call<ResponseBody> data = DBConnector.dao.executeGet("getStatistics.php");
-        Call<ResponseBody> data = DBConnector.dao.executeGet("hello");
-
-        data.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                try {
-                    statistics = JsonUtils.input2Json(response.body().byteStream());
-                    //updateStatusView();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.i("hcccc", "HomeActivityOnFailure");
-                Toast.makeText(context, "当前网络不可用，请检查你的网络", Toast.LENGTH_SHORT).show();
-
-            }
-        });
-    }
 
 
-    private void updateStatusView() {
-        mildTv.setText(String.valueOf(statistics.get(Constants.CONFIRMED + "").getAsInt()
-                + statistics.get(Constants.MILD + "").getAsInt()));
-        severeTv.setText(statistics.get(Constants.SEVERE + "").getAsString());
-        deadTv.setText(statistics.get(Constants.DEAD + "").getAsString());
-        curedTv.setText(statistics.get(Constants.HEALTHY + "").getAsString());
-    }
+
+
+
 
     private void initView() {
         pageCard = findViewById(R.id.page_card);
         hospitalCard = findViewById(R.id.hospital_card);
         trackCard = findViewById(R.id.track_card);
         authCard = findViewById(R.id.auth_card);
-        diaryCard = findViewById(R.id.diary_card);
-        curedTv = findViewById(R.id.cured_statistic);
-        deadTv = findViewById(R.id.dead_statistic);
-        severeTv = findViewById(R.id.severe_statistic);
-        mildTv = findViewById(R.id.mild_statistic);
+
 
 
         hospitalCard.setOnClickListener(new View.OnClickListener() {
@@ -212,34 +179,10 @@ public class HomeActivity extends AppCompatActivity {
                     PatientPresenter.getInstance().setPatientId(CurrentUser.getCurrentUser().getUserId());
                     startActivity(intent);
                 }
-//                if (CurrentUser.getLabel().equals("visitor")) {
-//                    Intent auth = new Intent(HomeActivity.this, AuthenticateActivity.class);
-//                    startActivity(auth);
-//                    Toast.makeText(HomeActivity.this, "请先认证", Toast.LENGTH_LONG).show();
-//                } else {
-//                    Class context;
-//                    Intent intent;
-//                    if (CurrentUser.getLabel().equals("patient")) {
-//                        context = PatientMainPageActivity.class;
-//                        PatientPresenter.getInstance().setPatientId(CurrentUser.getId());
-//                        intent = new Intent(HomeActivity.this, context);
-//                    } else {
-//                        context = HospitalMainPageActivity.class;
-//                        HospitalPresenter.getInstance().setID(CurrentUser.getId());
-//                        intent = new Intent(HomeActivity.this, context);
-//                    }
-//                    startActivity(intent);
-//                }
+
             }
         });
 
-        diaryCard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = getPackageManager().getLaunchIntentForPackage("com.sunshine.diary");
-                startActivity(intent);
-            }
-        });
 
     }
 
