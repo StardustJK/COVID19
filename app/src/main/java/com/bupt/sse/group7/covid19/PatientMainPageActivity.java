@@ -66,7 +66,6 @@ public class PatientMainPageActivity extends AppCompatActivity implements IPatie
                 if (currentUser.isAuth() && currentUser.getUserId().equals(this.id)) {
                     Intent intent = new Intent(PatientMainPageActivity.this, EditTrackActivity.class);
                     startActivity(intent);
-                    finish();
                 } else {
                     Toast.makeText(this, "请先登录或认证本用户账号", Toast.LENGTH_SHORT).show();
                 }

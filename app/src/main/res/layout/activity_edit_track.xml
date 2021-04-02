@@ -88,27 +88,5 @@
 
     </RelativeLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-<!--        <Button-->
-<!--            android:layout_alignParentLeft="true"-->
-<!--            android:id="@+id/btn_confirm"-->
-<!--            android:background="@drawable/right"-->
-<!--            android:layout_width="40dp"-->
-<!--            android:layout_height="40dp" />-->
-        <Button
-            android:id="@+id/btn_cancel"
-            android:background="@drawable/cancel"
-            android:layout_centerInParent="true"
-            android:layout_width="40dp"
-            android:layout_height="40dp" />
-        <Button
-            android:layout_alignParentRight="true"
-            android:background="@drawable/finish"
-            android:id="@+id/btn_end"
-            android:layout_width="40dp"
-            android:layout_height="40dp" />
-    </RelativeLayout>
 
 </LinearLayout>

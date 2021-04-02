@@ -172,26 +172,6 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
         initMap();
 
 
-
-        //取消打点
-        btn_cancel = findViewById(R.id.btn_cancel);
-        btn_cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                baiduMap.clear();
-                allMarkers.clear();
-                Bundle bundle = new Bundle();
-                bundle.putString("id", p_id);
-                Intent intent = new Intent(EditTrackActivity.this, PatientMainPageActivity.class);
-                intent.putExtras(bundle);
-                startActivity(intent);
-                finish();
-
-
-            }
-        });
-
-
         // 公交
         AlertDialog.Builder busBuilder = new AlertDialog.Builder(this);
         View busView = View.inflate(this, R.layout.dialog_bus, null);
@@ -282,6 +262,7 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
             }
         });
 
+        //TODO 点不上了？！
         //点击marker进行删除和编辑
         baiduMap.setOnMarkerClickListener(new BaiduMap.OnMarkerClickListener() {
             @Override
@@ -498,8 +479,6 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
             case R.id.action_done:
                 //完成打点并提交到数据库
                 submit();
-                Intent intent = new Intent(EditTrackActivity.this, PatientMainPageActivity.class);
-                startActivity(intent);
                 finish();
                 return true;
             default:
