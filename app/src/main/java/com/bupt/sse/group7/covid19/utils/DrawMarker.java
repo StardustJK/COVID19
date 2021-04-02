@@ -107,37 +107,32 @@ public class DrawMarker {
         baiduMap.addOverlays(optionsList);
     }
 
-    //展示所有人详细的轨迹,不包括描述
-    public void drawAllDetailWithoutDes(List<JsonArray> tracklist) {
+    //展示所有人详细的轨迹,不包括描述,多条线
+    public void drawAllDetailWithoutDes(List<List<TrackPoint>> tracklist) {
         baiduMap.clear();
         if (tracklist == null || tracklist.size() == 0)
             return;
         optionsList = new ArrayList<>();
         for (int j = 0; j < tracklist.size(); j++) {
-            JsonArray track = tracklist.get(j);
-
+            List<TrackPoint> track=tracklist.get(j);
             Bundle bundle = null;
             List<LatLng> points = new ArrayList<>();
 
             for (int i = 0; i < track.size(); i++) {
 
-                JsonObject object = track.get(i).getAsJsonObject();
-                int id = object.get("p_id").getAsInt();
-                double curLng = object.get("longitude").getAsDouble();
-                double curLan = object.get("latitude").getAsDouble();
+                TrackPoint trackPoint = track.get(i);
+                String userId = trackPoint.getUserId();
 
-
-                LatLng currLatLng = new LatLng(curLan, curLng);
 
                 //添加Marker
-                OverlayOptions option = new MarkerOptions().position(currLatLng).icon(geo_bitmap);
+                OverlayOptions option = new MarkerOptions().position(trackPoint.getLatLng()).icon(geo_bitmap);
                 Marker marker = (Marker) baiduMap.addOverlay(option);
                 marker.setToTop();
                 //Marker上绑定id信息用于界面跳转
                 bundle = new Bundle();
-                bundle.putInt("p_id", id);
+                bundle.putString("userId", userId);
                 marker.setExtraInfo(bundle);
-                points.add(currLatLng);
+                points.add(trackPoint.getLatLng());
             }
             //添加line
             if (points.size() > 1) {
@@ -157,7 +152,6 @@ public class DrawMarker {
         if (tracklist == null || tracklist.size() == 0)
             return;
         optionsList = new ArrayList<>();
-        List<Marker> markerList = new ArrayList<>();
         for (int j = 0; j < tracklist.size(); j++) {
             //每个循环是同一个userId
             List<TrackPoint> track = tracklist.get(j);
