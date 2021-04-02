@@ -75,7 +75,7 @@ public class SetUsernameActivity extends AppCompatActivity {
         param.add("id", new JsonPrimitive(this.id));
         param.add("username", new JsonPrimitive(username));
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), String.valueOf(param));
-        Call<String> call = DBConnector.dao.executePost("setPatientUsername.php", body);
+        Call<String> call = DBConnector.dao.Post("setPatientUsername.php", body);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {

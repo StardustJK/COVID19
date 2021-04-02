@@ -193,7 +193,7 @@ public class HospitalPresenter implements IDataBackCallBack, IDataUpdateCalBack 
     private void updateSupplies(JsonObject supplies) {
         //更新Supplies
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), String.valueOf(supplies));
-        Call<String> call = DBConnector.dao.executePost("editSuppliesById.php", body);
+        Call<String> call = DBConnector.dao.Post("editSuppliesById.php", body);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
@@ -210,7 +210,7 @@ public class HospitalPresenter implements IDataBackCallBack, IDataUpdateCalBack 
 
     private void updateHospital(JsonObject hospital) {
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), String.valueOf(hospital));
-        Call<String> call = DBConnector.dao.executePost("editHospitalById.php", body);
+        Call<String> call = DBConnector.dao.Post("editHospitalById.php", body);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {

@@ -150,8 +150,8 @@ public class DrawMarker {
         baiduMap.addOverlays(optionsList);
     }
 
-    //展示所有人的粗略轨迹,不包括描述
-    public void drawAllRoughWithoutDes(List<JsonArray> tracklist) {
+    //展示所有人的粗略轨迹,不包括描述,多条线
+    public void drawAllRoughWithoutDes(List<List<TrackPoint>> tracklist) {
         baiduMap.clear();
 
         if (tracklist == null || tracklist.size() == 0)
@@ -159,24 +159,21 @@ public class DrawMarker {
         optionsList = new ArrayList<>();
         List<Marker> markerList = new ArrayList<>();
         for (int j = 0; j < tracklist.size(); j++) {
-            JsonArray track = tracklist.get(j);
+            //每个循环是同一个userId
+            List<TrackPoint> track = tracklist.get(j);
             if (track.size() == 0)
                 continue;
             Bundle bundle = null;
-            JsonObject object = track.get(0).getAsJsonObject();//获取起点
-            int id = object.get("p_id").getAsInt();
-            double curLng = object.get("longitude").getAsDouble();
-            double curLan = object.get("latitude").getAsDouble();
-
-            LatLng currLatLng = new LatLng(curLan, curLng);
+            TrackPoint trackPoint = track.get(0);//获取起点
+            String userId = trackPoint.getUserId();
 
             //添加Marker
-            OverlayOptions option = new MarkerOptions().position(currLatLng).icon(geo_bitmap);
+            OverlayOptions option = new MarkerOptions().position(trackPoint.getLatLng()).icon(geo_bitmap);
             Marker marker = (Marker) baiduMap.addOverlay(option);
             marker.setToTop();
             //Marker上绑定id信息用于界面跳转
             bundle = new Bundle();
-            bundle.putInt("p_id", id);
+            bundle.putString("userId", userId);
             marker.setExtraInfo(bundle);
         }
         baiduMap.addOverlays(optionsList);
@@ -222,6 +219,7 @@ public class DrawMarker {
         baiduMap.addOverlays(optionsList);
     }
 
+    //一条线
     public void drawAllWithNumber(List<TrackPoint> trackPoints) {
         baiduMap.clear();
         if (trackPoints == null || trackPoints.size() == 0)

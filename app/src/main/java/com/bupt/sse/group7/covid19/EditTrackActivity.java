@@ -1,6 +1,5 @@
 package com.bupt.sse.group7.covid19;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -9,7 +8,6 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -79,7 +77,6 @@ import com.bupt.sse.group7.covid19.fragment.SubwayFragment;
 import com.bupt.sse.group7.covid19.model.CurrentUser;
 import com.bupt.sse.group7.covid19.presenter.TrackAreaPresenter;
 import com.bupt.sse.group7.covid19.utils.DBConnector;
-import com.bupt.sse.group7.covid19.utils.overlayutil.BusLineOverlay;
 import com.bupt.sse.group7.covid19.utils.overlayutil.BusLineOverlay;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -752,7 +749,7 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
         jsonObject.add("rows", jsonArray);
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), String.valueOf(jsonObject));
         Log.i(TAG, "update bus data :" + String.valueOf(jsonObject));
-        Call<String> call = DBConnector.dao.executePost("addBusTrack.php", body);
+        Call<String> call = DBConnector.dao.Post("addBusTrack.php", body);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {

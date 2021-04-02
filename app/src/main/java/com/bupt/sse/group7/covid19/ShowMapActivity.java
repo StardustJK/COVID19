@@ -34,13 +34,16 @@ import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 import com.bupt.sse.group7.covid19.interfaces.IAreaSelectionCallBack;
 import com.bupt.sse.group7.covid19.model.Area;
+import com.bupt.sse.group7.covid19.model.TrackPoint;
 import com.bupt.sse.group7.covid19.presenter.PatientPresenter;
 import com.bupt.sse.group7.covid19.presenter.TrackAreaPresenter;
 import com.bupt.sse.group7.covid19.utils.DBConnector;
 import com.bupt.sse.group7.covid19.utils.DrawMarker;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -50,6 +53,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import retrofit2.Call;
+
 /**
  * 主页 -> 轨迹查看页面
  */
@@ -57,16 +62,15 @@ public class ShowMapActivity extends AppCompatActivity implements IAreaSelection
 
     private final String TAG = "ShowMapActivity";
     private String areaId;
-    private TrackAreaPresenter presenter = TrackAreaPresenter.getInstance();
+    private TrackAreaPresenter trackAreaPresenter = TrackAreaPresenter.getInstance();
 
     private final float mZoom = 15.0f;
     private MapView mapView;
     private BaiduMap baiduMap;
-    private List<JsonArray> trackList = new ArrayList<>();
+    private List<List<TrackPoint> >trackList = new ArrayList<>();
 
     private int sYear, sMonth, sDay, eYear, eMonth, eDay;
     private Calendar calendar = Calendar.getInstance();
-    private JsonArray allPatientId;
     private DrawMarker drawMarker;
 
     //时间选择
@@ -89,7 +93,7 @@ public class ShowMapActivity extends AppCompatActivity implements IAreaSelection
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_map);
 
-        presenter.registerCallBack(this);
+        trackAreaPresenter.registerCallBack(this);
 
         //时间选择
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -105,26 +109,25 @@ public class ShowMapActivity extends AppCompatActivity implements IAreaSelection
         initView();
         bindEvents();
         initLocationOption();
-        presenter.manualUpdate();
+        trackAreaPresenter.manualUpdate();
 
     }
 
     @Override
     public void onAreaSelected(Area area) {
         this.areaId = area.getAreaId();
-        getAllPatientId();
+
+
         trackList = new ArrayList<>();
-        for (JsonElement je : allPatientId) {
-            getTrackInfo(je.getAsJsonObject().get("p_id").getAsInt());
-        }
+
+        getAllPatientIdAndTrack();
         updateView();
     }
 
     private void updateView() {
         drawMarker = new DrawMarker(baiduMap, this);
-
         if (baiduMap.getMapStatus().zoom > mZoom) {
-            drawMarker.drawAllDetailWithoutDes(trackList);
+           // drawMarker.drawAllDetailWithoutDes(trackList);
 
         } else {
 
@@ -167,7 +170,7 @@ public class ShowMapActivity extends AppCompatActivity implements IAreaSelection
                 baiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
             }
         });
-        presenter.provinceParser(getResources().getXml(R.xml.cities));
+        trackAreaPresenter.provinceParser(getResources().getXml(R.xml.cities));
     }
 
 
@@ -302,7 +305,7 @@ public class ShowMapActivity extends AppCompatActivity implements IAreaSelection
     }
 
     //打开页面时候初始化，获取所有病人的轨迹信息
-    private void getAllPatientId() {
+    private void getAllPatientIdAndTrack() {
         Thread thread = getAllIds();
         try {
             thread.join();
@@ -318,7 +321,19 @@ public class ShowMapActivity extends AppCompatActivity implements IAreaSelection
                 new Runnable() {
                     @Override
                     public void run() {
-                        allPatientId = DBConnector.getTrackIds();
+                       // allPatientId = DBConnector.getTrackIds();
+                        Call<String> data = DBConnector.dao.Get("track/userIds");
+                        try {
+                            String body = data.execute().body();
+                            JsonObject rawData = (JsonObject) JsonParser.parseString(body);
+                            JsonArray dataAsJsonArray = rawData.getAsJsonArray("data");
+                            for(int i=0;i<dataAsJsonArray.size();i++){
+                                String userId=dataAsJsonArray.get(i).getAsString();
+                                getTrackInfo(userId);
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
         );
@@ -327,20 +342,21 @@ public class ShowMapActivity extends AppCompatActivity implements IAreaSelection
     }
 
     //get all track by p_id and time
-    private void getTrackInfo(int p_id) {
-        final Map<String, String> args = new HashMap<>();
+    private void getTrackInfo(String userId) {
+        Map<String, String> args = new HashMap<>();
 
-        args.put("p_id", p_id + "");
+        args.put("userId", userId);
         args.put("low", tv_start.getText().toString());
         args.put("up", getDayAfter(tv_end.getText().toString()));
         Thread thread;
+        //TODO 看看id
         if (areaId.length() == 4) {
             args.put("city", areaId);
             thread = new Thread(
                     new Runnable() {
                         @Override
                         public void run() {
-                            trackList.add(DBConnector.getTrackByDateAndCity(args));
+                            trackList.add(getTrackByCity(args));
                         }
                     }
             );
@@ -350,7 +366,7 @@ public class ShowMapActivity extends AppCompatActivity implements IAreaSelection
                     new Runnable() {
                         @Override
                         public void run() {
-                            trackList.add(DBConnector.getTrackByDateAndDistrict(args));
+                            trackList.add(getTrackByDistrict(args));
                         }
                     }
             );
@@ -363,6 +379,50 @@ public class ShowMapActivity extends AppCompatActivity implements IAreaSelection
         }
     }
 
+
+    private List<TrackPoint> getTrackByCity(Map param){
+        Call<String> call= DBConnector.dao.Get("track/trackByDateAndCity",param);
+        List<TrackPoint> trackPoints=new ArrayList<>();
+
+        try {
+            String body = call.execute().body();
+            JsonObject rawData= (JsonObject) JsonParser.parseString(body);
+
+            if(rawData.get("success").getAsBoolean()){
+                JsonArray jsonArray = rawData.get("data").getAsJsonArray();
+                for(int i=0;i<jsonArray.size();i++){
+                    JsonObject jsonObject=jsonArray.get(i).getAsJsonObject();
+                    TrackPoint trackPoint=new TrackPoint(
+                            jsonObject.get("dateTime").getAsString(),
+                            jsonObject.get("location").getAsString(),
+                            jsonObject.get("description").getAsString(),
+                            new LatLng(jsonObject.get("latitude").getAsDouble(),jsonObject.get("longitude").getAsDouble()),
+                            jsonObject.get("userId").getAsString(),
+                            jsonObject.get("city").getAsString(),
+                            jsonObject.get("district").getAsString()
+                            );
+                    trackPoints.add(trackPoint);
+                }
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return trackPoints;
+
+    }
+    private List<TrackPoint> getTrackByDistrict(Map param){
+        Call<String> call= DBConnector.dao.Get("track/trackByDateAndDistrict",param);
+        try {
+            String body = call.execute().body();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+
+    }
     private void bindEvents() {
         tv_start.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -418,7 +478,7 @@ public class ShowMapActivity extends AppCompatActivity implements IAreaSelection
 
                 //小于200米
                 if (zoom > mZoom) {
-                    drawMarker.drawAllDetailWithoutDes(trackList);
+//                    drawMarker.drawAllDetailWithoutDes(trackList);
                 } else {
                     drawMarker.drawAllRoughWithoutDes(trackList);
                 }

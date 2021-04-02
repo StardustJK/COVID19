@@ -22,6 +22,11 @@ public interface DAO {
 
     @Headers({"Content-type:application/json;charset=UTF-8"})
     @POST
-    Call<String> executePost(@Url String url, @Body RequestBody data);
+    Call<String> Post(@Url String url, @Body RequestBody data);
 
+    @GET
+    Call<String> Get(@Url String url, @QueryMap Map<String, String> queryMap);
+
+    @GET
+    Call<String> Get(@Url String url);
 }

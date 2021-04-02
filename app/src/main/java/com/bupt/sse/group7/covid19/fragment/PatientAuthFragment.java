@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,22 +20,12 @@ import com.bupt.sse.group7.covid19.R;
 import com.bupt.sse.group7.covid19.SetUsernameActivity;
 import com.bupt.sse.group7.covid19.model.CurrentUser;
 import com.bupt.sse.group7.covid19.utils.DBConnector;
-import com.bupt.sse.group7.covid19.utils.JsonUtils;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Map;
-
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -101,7 +90,7 @@ public class PatientAuthFragment extends Fragment {
 
     private void getAuthInfo(RequestBody args) {
 
-        Call<String> data = DBConnector.dao.executePost("user/login", args);
+        Call<String> data = DBConnector.dao.Post("user/login", args);
         data.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
