@@ -62,12 +62,13 @@ public class PatientMainPageActivity extends AppCompatActivity implements IPatie
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_update_track:
-                if (CurrentUser.getLabel().equals("patient") && CurrentUser.getId() == this.id) {
+                CurrentUser currentUser = CurrentUser.getCurrentUser();
+                if (currentUser.isAuth() && currentUser.getUserId().equals(this.id)) {
                     Intent intent = new Intent(PatientMainPageActivity.this, EditTrackActivity.class);
                     startActivity(intent);
                     finish();
                 } else {
-                    Toast.makeText(this, "请先认证本用户账号", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "请先登录或认证本用户账号", Toast.LENGTH_SHORT).show();
                 }
                 return true;
             default:

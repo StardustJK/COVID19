@@ -54,6 +54,14 @@ public class CurrentUser {
         this.auth=auth;
     }
 
+    public boolean isAuth() {
+        return auth;
+    }
+
+    public void setAuth(boolean auth) {
+        this.auth = auth;
+    }
+
     public String getUserId() {
         return userId;
     }
