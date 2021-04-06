@@ -75,6 +75,7 @@ import com.bupt.sse.group7.covid19.fragment.BusBaseFragment;
 import com.bupt.sse.group7.covid19.fragment.BusFragment;
 import com.bupt.sse.group7.covid19.fragment.SubwayFragment;
 import com.bupt.sse.group7.covid19.model.CurrentUser;
+import com.bupt.sse.group7.covid19.presenter.PatientPresenter;
 import com.bupt.sse.group7.covid19.presenter.TrackAreaPresenter;
 import com.bupt.sse.group7.covid19.utils.DBConnector;
 import com.bupt.sse.group7.covid19.utils.overlayutil.BusLineOverlay;
@@ -82,6 +83,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -99,7 +101,7 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
     BitmapDescriptor bitmap;
     private Context mContext = this;
     private static final String TAG = "EditTrackActivity";
-    String p_id = CurrentUser.getId();
+    String p_id = CurrentUser.getCurrentUser().getUserId();
     //int p_id=5;
     private MapView mapView;
     private BaiduMap baiduMap;
@@ -479,6 +481,7 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
             case R.id.action_done:
                 //完成打点并提交到数据库
                 submit();
+                PatientPresenter.getInstance().getPatientInfo();
                 finish();
                 return true;
             default:
@@ -489,27 +492,24 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
 
     //提交到数据库
     private void submit() {
-        JsonObject args = new JsonObject();
         JsonArray jsonArray = new JsonArray();
-        // jsonArray.add(info);
 
         if (allMarkers.size() == 0)
             return;
         for (int i = 0; i < allMarkers.size(); i++) {
             JsonObject info = new JsonObject();
             MyMarker myMarker = allMarkers.get(i);
-            info.add("date_time", new JsonPrimitive(myMarker.getDate()));
+            info.add("dateTime", new JsonPrimitive(myMarker.getDate()));
             info.add("longitude", new JsonPrimitive(myMarker.getLocation().longitude));
             info.add("latitude", new JsonPrimitive(myMarker.getLocation().latitude));
             info.add("location", new JsonPrimitive(myMarker.getAddress()));
             info.add("district", new JsonPrimitive(myMarker.getDistrict()));
-            info.add("p_id", new JsonPrimitive(p_id + ""));
+            info.add("userId", new JsonPrimitive(p_id));
             info.add("description", new JsonPrimitive(myMarker.getDescription()));
             info.add("city", new JsonPrimitive(myMarker.getCity()));
             jsonArray.add(info);
         }
-        args.add("rows", jsonArray);
-        addData(args);
+        addData(jsonArray);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -526,12 +526,18 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
         bus_picker.dismiss();
     }
 
-    private void addData(final JsonObject args) {
+    private void addData(JsonArray args) {
         new Thread(
                 new Runnable() {
                     @Override
                     public void run() {
-                        DBConnector.addPatientTrack(args);
+                        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), String.valueOf(args));
+                        try {
+                            DBConnector.dao.Post("/track/addTrack",body).execute();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
                     }
                 }
         ).start();

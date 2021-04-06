@@ -113,6 +113,7 @@ public class PatientTrackFragment extends Fragment {
     }
 
     public void initView() {
+
         mapView = view.findViewById(R.id.mapView);
         baiduMap = mapView.getMap();
         baiduMap.setMapType(BaiduMap.MAP_TYPE_NORMAL);
@@ -120,9 +121,14 @@ public class PatientTrackFragment extends Fragment {
         locationIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                List<TrackPoint> trackPoints = patient.getTrackPoints();
+                if (trackPoints == null || trackPoints.size() == 0)
+                    return;
+
+                TrackPoint trackPoint = trackPoints.get(0);
                 Log.i(TAG, "locationTvOnClicked");
-                LatLng latLng = new LatLng(initialLoc.latitude, initialLoc.longitude);
-                Log.i(TAG, "longitude:" + initialLoc.latitude + "   lantitude:" + initialLoc.longitude);
+                LatLng latLng = trackPoint.getLatLng();
+               // Log.i(TAG, "longitude:" + initialLoc.latitude + "   lantitude:" + initialLoc.longitude);
                 MapStatus.Builder builder = new MapStatus.Builder();
                 builder.target(latLng).zoom(mZoom);
                 baiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
@@ -131,7 +137,6 @@ public class PatientTrackFragment extends Fragment {
 
         //marker图标
         drawMarker = new DrawMarker(baiduMap, getActivity().getApplicationContext());
-        initLocation();
 
         patientPresenter = PatientPresenter.getInstance();
         patient = patientPresenter.getPatient();
@@ -158,24 +163,13 @@ public class PatientTrackFragment extends Fragment {
             return;
 
         TrackPoint trackPoint = trackPoints.get(0);
+        LatLng latLng = patient.getTrackPoints().get(0).getLatLng();
+        // Log.i(TAG, "longitude:" + initialLoc.latitude + "   lantitude:" + initialLoc.longitude);
+        MapStatus.Builder builder = new MapStatus.Builder();
+        builder.target(latLng).zoom(mZoom);
+        baiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
         city = trackPoint.getCity();
-        String district = trackPoint.getDistrict();
-        String address = "";
-        TrackAreaPresenter areaPresenter = TrackAreaPresenter.getInstance();
-        if (areaPresenter.getPList(getResources().getXml(R.xml.cities)) != null) {
-            //TODO 这里是数字转换成城市名???
-//            city = areaPresenter.cNameMap.get(city).getName();
-//            district = areaPresenter.dNameMap.get(district).getName();
-            address = city + district + trackPoint.getLocation();
-        }
-
-        Log.i(TAG, "city:" + city + "address" + address);
-
-        mCoder.geocode(new GeoCodeOption()
-                .city(city)
-                .address(address));
     }
-
 
     //TODO
 
@@ -328,56 +322,6 @@ public class PatientTrackFragment extends Fragment {
 
     }
 
-
-    //初始化定位
-    private void initLocation() {
-        mCoder = GeoCoder.newInstance();
-        OnGetGeoCoderResultListener listener = new OnGetGeoCoderResultListener() {
-            @Override
-            public void onGetGeoCodeResult(GeoCodeResult geoCodeResult) {
-                if (null != geoCodeResult && null != geoCodeResult.getLocation()) {
-                    if (geoCodeResult == null || geoCodeResult.error != SearchResult.ERRORNO.NO_ERROR) {
-                        //没有检索到结果
-                        Log.i(TAG, "onGetGeoCodeResult没有检索到结果");
-                        return;
-                    } else {
-                        //定位到选择的区域
-                        double latitude = geoCodeResult.getLocation().latitude;
-                        double longitude = geoCodeResult.getLocation().longitude;
-                        initialLoc = new LatLng(latitude, longitude);
-                        Log.i(TAG, "onGetGeoCodeResult:latitude " + latitude + " longitude: " + longitude);
-                        MapStatus.Builder builder = new MapStatus.Builder();
-                        builder.target(initialLoc).zoom(mZoom);
-                        baiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
-                    }
-                }
-
-            }
-
-            @Override
-            public void onGetReverseGeoCodeResult(ReverseGeoCodeResult reverseGeoCodeResult) {
-
-            }
-
-        };
-        mCoder.setOnGetGeoCodeResultListener(listener);
-    }
-
-    //get all track by p_id
-    private Thread getTrackInfo(String p_id) {
-        final Map<String, String> args = new HashMap<>();
-        args.put("p_id", p_id);
-        Thread thread = new Thread(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        tracklist.add(DBConnector.getPatientTrackById(args));
-                    }
-                }
-        );
-        thread.start();
-        return thread;
-    }
 
 
     public void setMp_id(String mp_id) {

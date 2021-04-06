@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -89,20 +90,20 @@ public class PatientMainPageActivity extends AppCompatActivity implements IPatie
         statusLineFragment = new StatusLineFragment();
         statusLineFragment.setList(patient.getStatuses());
         FragmentTransaction tranStatus = fragmentManager.beginTransaction();
-        tranStatus.add(R.id.patient_content, statusLineFragment);
+        tranStatus.replace(R.id.patient_content, statusLineFragment);
         tranStatus.commitAllowingStateLoss();
 
         if (patient.getTrackPoints().size() > 0) {
             patientTrackBlockFragment = new PatientTrackBlockFragment();
             patientTrackBlockFragment.setId(patient.getId());
             FragmentTransaction trackTran = fragmentManager.beginTransaction();
-            trackTran.add(R.id.patient_content, patientTrackBlockFragment);
+            trackTran.replace(R.id.patient_content, patientTrackBlockFragment);
             trackTran.commitAllowingStateLoss();
         } else {
             notAvailable = new NotAvailable();
             notAvailable.setTitle("ta的轨迹");
             FragmentTransaction notTran = fragmentManager.beginTransaction();
-            notTran.add(R.id.patient_content, notAvailable);
+            notTran.replace(R.id.patient_content, notAvailable);
             notTran.commitAllowingStateLoss();
         }
 
@@ -123,7 +124,10 @@ public class PatientMainPageActivity extends AppCompatActivity implements IPatie
 
     @Override
     public void onGetDataFailed() {
+
         Toast.makeText(this, "当前网络不可用，请检查你的网络", Toast.LENGTH_SHORT).show();
 
     }
+
+
 }
