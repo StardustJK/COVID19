@@ -481,7 +481,9 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
             case R.id.action_done:
                 //完成打点并提交到数据库
                 submit();
-                PatientPresenter.getInstance().getPatientInfo();
+                Intent intent=new Intent(EditTrackActivity.this,PatientMainPageActivity.class);
+                PatientPresenter.getInstance().setPatientId(CurrentUser.getCurrentUser().getUserId());
+                startActivity(intent);
                 finish();
                 return true;
             default:
@@ -527,7 +529,7 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
     }
 
     private void addData(JsonArray args) {
-        new Thread(
+        Thread thread=new Thread(
                 new Runnable() {
                     @Override
                     public void run() {
@@ -540,7 +542,13 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
 
                     }
                 }
-        ).start();
+        );
+        thread.start();
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private void hideYear(DatePicker datePicker) {
