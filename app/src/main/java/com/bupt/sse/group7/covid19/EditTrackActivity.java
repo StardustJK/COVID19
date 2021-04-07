@@ -152,7 +152,7 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
     private BusLineResult mBusLineResult;
     private String busLineSelected;
     private String busKeyword;
-
+    private JsonArray busTrackList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -179,6 +179,7 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
         View busView = View.inflate(this, R.layout.dialog_bus, null);
         busBuilder.setView(busView);
         bus_picker = busBuilder.create();
+        busTrackList=new JsonArray();
 
         //时间选择
         AlertDialog.Builder timeBuilder = new AlertDialog.Builder(this);
@@ -495,9 +496,6 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
     //提交到数据库
     private void submit() {
         JsonArray jsonArray = new JsonArray();
-
-        if (allMarkers.size() == 0)
-            return;
         for (int i = 0; i < allMarkers.size(); i++) {
             JsonObject info = new JsonObject();
             MyMarker myMarker = allMarkers.get(i);
@@ -511,7 +509,7 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
             info.add("city", new JsonPrimitive(myMarker.getCity()));
             jsonArray.add(info);
         }
-        addData(jsonArray);
+        addData(jsonArray,busTrackList);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -528,18 +526,28 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
         bus_picker.dismiss();
     }
 
-    private void addData(JsonArray args) {
+    private void addData(JsonArray track,JsonArray busTrack) {
+        //track
         Thread thread=new Thread(
                 new Runnable() {
                     @Override
                     public void run() {
-                        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), String.valueOf(args));
-                        try {
-                            DBConnector.dao.Post("/track/addTrack",body).execute();
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                        if(track.size()!=0){
+                            RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), String.valueOf(track));
+                            try {
+                                DBConnector.dao.Post("/track/addTrack",body).execute();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         }
-
+                        if(busTrack.size()!=0){
+                            RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), String.valueOf(busTrack));
+                            try {
+                                DBConnector.dao.Post("/track/addBusTrack",body).execute();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
                 }
         );
@@ -726,36 +734,18 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
         saveBusLine(startStation, endStation);
     }
 
+    //保存列表，submit再提交到数据库
     public void saveBusLine(String startStation, String endStation) {
         JsonObject busLineJO = new JsonObject();
-        busLineJO.add("uid", new JsonPrimitive(busLineSelected));
+        busLineJO.add("id", new JsonPrimitive(busLineSelected));
         busLineJO.add("name", new JsonPrimitive(busKeyword));
-        busLineJO.add("p_id", new JsonPrimitive(p_id));
+        busLineJO.add("userId", new JsonPrimitive(p_id));
         busLineJO.add("start", new JsonPrimitive(startStation));
         busLineJO.add("end", new JsonPrimitive(endStation));
         //TODO 改时间
-        busLineJO.add("date_time", new JsonPrimitive("2020-06-09 13:13:13"));
+        busLineJO.add("dateTime", new JsonPrimitive("2020-06-09 13:13:13"));
+        busTrackList.add(busLineJO);
 
-        JsonArray jsonArray = new JsonArray();
-        jsonArray.add(busLineJO);
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.add("rows", jsonArray);
-        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), String.valueOf(jsonObject));
-        Log.i(TAG, "update bus data :" + String.valueOf(jsonObject));
-        Call<String> call = DBConnector.dao.Post("addBusTrack.php", body);
-        call.enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                Log.i(TAG, "公交更新成功");
-            }
-
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                Log.i(TAG, "公交更新失败");
-                Toast.makeText(mContext, "当前网络不可用，请检查你的网络", Toast.LENGTH_SHORT).show();
-
-            }
-        });
 
     }
 
