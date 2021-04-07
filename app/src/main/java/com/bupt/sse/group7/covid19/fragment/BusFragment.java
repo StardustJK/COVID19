@@ -24,8 +24,9 @@ public class BusFragment extends BusBaseFragment {
             public void onClick(View v) {
                 Log.d("lyj", "公交 " + busLineAdapter.getUid() + " " + startAdapter.getChosenName() + " " + endAdapter.getChosenName());
                 // TODO 完成 公交 选择，添加到地图
-                ((EditTrackActivity) getActivity()).closeBusDialog();
                 ((EditTrackActivity) getActivity()).updateBusView(startAdapter.getChosenName(),endAdapter.getChosenName());
+                ((EditTrackActivity) getActivity()).closeBusDialog();
+
             }
         });
     }

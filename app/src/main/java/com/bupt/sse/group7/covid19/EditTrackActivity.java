@@ -524,6 +524,9 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
 
     public void closeBusDialog() {
         bus_picker.dismiss();
+        fragment.updateBusLineView(new HashMap<>(), fragment);
+        fragment.updateStations(new ArrayList<>(),fragment);
+
     }
 
     private void addData(JsonArray track,JsonArray busTrack) {
