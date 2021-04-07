@@ -25,6 +25,7 @@ public class SubwayFragment extends BusBaseFragment {
                 // TODO 完成公交选择，添加到地图
                 ((EditTrackActivity) getActivity()).updateBusView(startAdapter.getChosenName(),endAdapter.getChosenName());
                 ((EditTrackActivity) getActivity()).closeBusDialog();
+                searchField.setText("");
 
             }
         });
