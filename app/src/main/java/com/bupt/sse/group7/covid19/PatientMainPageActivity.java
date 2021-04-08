@@ -64,12 +64,12 @@ public class PatientMainPageActivity extends AppCompatActivity implements IPatie
         switch (item.getItemId()) {
             case R.id.action_update_track:
                 CurrentUser currentUser = CurrentUser.getCurrentUser();
-                if (currentUser.isAuth() && currentUser.getUserId().equals(this.id)) {
+                if (currentUser.getUserId().equals(this.id)) {
                     Intent intent = new Intent(PatientMainPageActivity.this, EditTrackActivity.class);
                     startActivity(intent);
                     finish();
                 } else {
-                    Toast.makeText(this, "请先登录或认证本用户账号", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "请先登录本用户账号", Toast.LENGTH_SHORT).show();
                 }
                 return true;
             default:
