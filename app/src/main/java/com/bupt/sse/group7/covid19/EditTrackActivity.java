@@ -289,7 +289,13 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
                     @Override
                     public void onClick(View view) {
                         Log.i(TAG, "edit");
-                        editMarker();
+                        //TODO 这样显示没有问题了，但是不能再次点击marker了
+                        deleteMarker(thismarker);//这个删除了在list里面的对象
+
+                        editMarker();//编辑的时候只添加了text,marker是在点击地图的时候添加的所以需要单独写
+                        MarkerOptions markerOptions=new MarkerOptions().position(thismarker.getPosition()).icon(bitmap);
+                        curMyMarker.setMarker((Marker) baiduMap.addOverlay(markerOptions));
+
 
                     }
                 });
@@ -297,22 +303,8 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
                     @RequiresApi(api = Build.VERSION_CODES.N)
                     @Override
                     public void onClick(View view) {
-                        baiduMap.hideInfoWindow();
-                        Log.i(TAG, "dele");
-                        int index = allMarkers.size();
-                        for (int i = 0; i < allMarkers.size(); i++) {
-                            if (allMarkers.get(i).marker == thismarker) {
-                                index = i;
-                                break;
-                            }
-                        }
-                        if (index < allMarkers.size()) {
+                        deleteMarker(thismarker);
 
-                            MyMarker deleMarker = allMarkers.remove(index);
-                            deleMarker.marker.remove();
-                            deleMarker.textOverlay.remove();
-
-                        }
 
                         drawLines();
 
@@ -378,6 +370,25 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
 //        });
 
 
+    }
+
+    private void deleteMarker(Marker thismarker) {
+        baiduMap.hideInfoWindow();
+        Log.i(TAG, "dele");
+        int index = allMarkers.size();
+        for (int i = 0; i < allMarkers.size(); i++) {
+            if (allMarkers.get(i).marker == thismarker) {
+                index = i;
+                break;
+            }
+        }
+        if (index < allMarkers.size()) {
+
+            MyMarker deleMarker = allMarkers.remove(index);
+            deleMarker.marker.remove();
+            deleMarker.textOverlay.remove();
+
+        }
     }
 
     //画线和描述

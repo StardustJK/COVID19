@@ -10,7 +10,7 @@
     <item
         android:id="@+id/action_update_status"
         android:orderInCategory="1"
-        android:title="更新轨迹"
+        android:title="更新状态"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_auth"
