@@ -122,49 +122,7 @@ public class PatientAuthFragment extends Fragment {
 
             }
         });
-//        data.enqueue(new Callback<String>() {
-//            @Override
-//            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-//                try {
-//                    returnedInfo = JsonUtils.parseInfo(response.body().byteStream()).get(0).getAsJsonObject();
-//                    String tel = patientPassWordView.getText().toString();
-//                    checkAuth(tel);
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<ResponseBody> call, Throwable t) {
-//                Log.i(TAG, "getAuthInfoOnFailure");
-//                Toast.makeText(getActivity(), "当前网络不可用，请检查你的网络", Toast.LENGTH_SHORT).show();
-//
-//            }
-//        });
     }
 
-    private void checkAuth(String tel) {
-        int status = returnedInfo.get("status").getAsInt();
-        if (status == 1) {
-            if (returnedInfo.get("tel").getAsString().equals(tel)) {
-                Toast.makeText(getActivity(), "认证成功", Toast.LENGTH_SHORT).show();
-                CurrentUser.setId(returnedInfo.get("p_id").getAsString());
-                CurrentUser.setLabel("patient");
-
-                getActivity().finish();
-            } else {
-                Toast.makeText(getActivity(), "病案号或手机错误", Toast.LENGTH_SHORT).show();
-            }
-        } else if (status == 0) {
-            Toast.makeText(getActivity(), "用户不存在", Toast.LENGTH_SHORT).show();
-        } else {
-            Intent intent = new Intent(this.getActivity(), SetUsernameActivity.class);
-            Bundle bundle = new Bundle();
-            bundle.putInt("id", returnedInfo.get("p_id").getAsInt());
-            intent.putExtras(bundle);
-            startActivity(intent);
-            this.getActivity().finish();
-        }
-    }
 
 }

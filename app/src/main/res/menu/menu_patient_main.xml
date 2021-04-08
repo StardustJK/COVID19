@@ -7,6 +7,17 @@
         android:orderInCategory="1"
         android:title="@string/update_track"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_update_status"
+        android:orderInCategory="1"
+        android:title="更新轨迹"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_auth"
+        android:orderInCategory="1"
+        android:title="身份认证"
+        app:showAsAction="never" />
+
 
 </menu>
 

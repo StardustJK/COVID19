@@ -40,8 +40,8 @@ public class AuthPageCollectionFragment extends Fragment {
         viewPager.setAdapter(authPageAdapter);
 
         authTabLabels = new ArrayList<>();
-        authTabLabels.add("个人认证");
-        authTabLabels.add("医院认证");
+        authTabLabels.add("登录");
+        authTabLabels.add("注册");
 
         TabLayout tabs = view.findViewById(R.id.auth_tabs);
         new TabLayoutMediator(tabs, viewPager, (tab, position) -> tab.setText(authTabLabels.get(position))).attach();

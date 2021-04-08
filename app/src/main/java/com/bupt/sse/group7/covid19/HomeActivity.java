@@ -150,6 +150,7 @@ public class HomeActivity extends AppCompatActivity {
                 if (CurrentUser.getCurrentUser() == null) {
                     intent = new Intent(HomeActivity.this, AuthenticateActivity.class);
                 } else {
+                    PatientPresenter.getInstance().setPatientId(CurrentUser.getCurrentUser().getUserId());
                     intent = new Intent(HomeActivity.this, LogOutActivity.class);
 
                 }

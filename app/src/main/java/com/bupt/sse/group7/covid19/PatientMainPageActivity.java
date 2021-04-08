@@ -72,6 +72,10 @@ public class PatientMainPageActivity extends AppCompatActivity implements IPatie
                     Toast.makeText(this, "请先登录本用户账号", Toast.LENGTH_SHORT).show();
                 }
                 return true;
+            case R.id.action_update_status:
+                return true;
+            case R.id.action_auth:
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
