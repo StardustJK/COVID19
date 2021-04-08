@@ -91,20 +91,20 @@ public class PatientMainPageActivity extends AppCompatActivity implements IPatie
         statusLineFragment = new StatusLineFragment();
         statusLineFragment.setList(patient.getStatuses());
         FragmentTransaction tranStatus = fragmentManager.beginTransaction();
-        tranStatus.replace(R.id.patient_content, statusLineFragment);
+        tranStatus.add(R.id.patient_content, statusLineFragment);
         tranStatus.commitAllowingStateLoss();
 
         if (patient.getTrackPoints().size() > 0) {
             patientTrackBlockFragment = new PatientTrackBlockFragment();
             patientTrackBlockFragment.setId(patient.getId());
             FragmentTransaction trackTran = fragmentManager.beginTransaction();
-            trackTran.replace(R.id.patient_content, patientTrackBlockFragment);
+            trackTran.add(R.id.patient_content, patientTrackBlockFragment);
             trackTran.commitAllowingStateLoss();
         } else {
             notAvailable = new NotAvailable();
             notAvailable.setTitle("ta的轨迹");
             FragmentTransaction notTran = fragmentManager.beginTransaction();
-            notTran.replace(R.id.patient_content, notAvailable);
+            notTran.add(R.id.patient_content, notAvailable);
             notTran.commitAllowingStateLoss();
         }
 

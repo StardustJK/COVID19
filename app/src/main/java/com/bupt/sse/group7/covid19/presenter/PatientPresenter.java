@@ -188,8 +188,9 @@ public class PatientPresenter implements IDataBackCallBack {
     private void processStatusResult() {
         this.patient.setStatuses(new ArrayList<>());
         if (pStatusResult.size() == 0) {
-            SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd hh-mm-ss");
             String date=simpleDateFormat.format(new Date());
+            Log.d(TAG,"processStatusResult date:"+date);
             this.patient.getStatuses().add(
                     new Status(date, 0)
             );

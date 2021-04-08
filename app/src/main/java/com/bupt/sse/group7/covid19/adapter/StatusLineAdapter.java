@@ -3,6 +3,7 @@ package com.bupt.sse.group7.covid19.adapter;
 
 import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,8 +41,10 @@ public class StatusLineAdapter extends RecyclerView.Adapter<StatusLineAdapter.St
 
     @Override
     public void onBindViewHolder(@NonNull StatusHolder holder, int position) {
-        String[] date = list.get(position).getDay().split("-");
-        String day = date[1] + "/" + date[2];
+        String[] rawDate=list.get(position).getDay().split(" ");
+        String date=rawDate[0];
+        String [] fDate = date.split("-");
+        String day = fDate[1] + "/" + fDate[2];
         int status = list.get(position).getStatus();
         GradientDrawable drawable = (GradientDrawable) holder.dotView.getBackground();
 
