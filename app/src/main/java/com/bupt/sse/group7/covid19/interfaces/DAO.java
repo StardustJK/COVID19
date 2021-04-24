@@ -10,6 +10,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
 import retrofit2.http.Url;
 
@@ -23,6 +24,10 @@ public interface DAO {
     @Headers({"Content-type:application/json;charset=UTF-8"})
     @POST
     Call<String> Post(@Url String url, @Body RequestBody data);
+
+    @Headers({"Content-type:application/json;charset=UTF-8"})
+    @POST
+    Call<String> Post(@Url String url, @Body RequestBody data, @Query("verify_code")String code);
 
     @GET
     Call<String> Get(@Url String url, @QueryMap Map<String, String> queryMap);

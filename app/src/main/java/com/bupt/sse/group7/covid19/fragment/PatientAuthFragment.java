@@ -97,7 +97,6 @@ public class PatientAuthFragment extends Fragment {
                 returnedInfo = (JsonObject) JsonParser.parseString(response.body());
                 //登录成功
                 if (returnedInfo.get("success").getAsBoolean()) {
-                    //TODO 修改当前用户
                     JsonObject data = returnedInfo.get("data").getAsJsonObject();
                     CurrentUser currentUser = new CurrentUser(data.get("id").getAsString(),
                             data.get("phone").getAsString(),
