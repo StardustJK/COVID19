@@ -43,7 +43,7 @@ public class HospitalAuthFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.hospital_auth, container, false);
+        return inflater.inflate(R.layout.register, container, false);
     }
 
     @Override

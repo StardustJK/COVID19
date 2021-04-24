@@ -36,7 +36,7 @@
                 android:textStyle="bold"/>
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="250dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center">
 
@@ -49,15 +49,15 @@
 
                 <EditText
                     android:id="@+id/hospital_auth_username"
-                    android:layout_width="150dp"
+                    android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:textSize="16dp"
-                    android:hint="请输入手机号" />
+                    android:hint="请输入邮箱" />
 
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="250dp"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_gravity="center">
@@ -71,13 +71,50 @@
 
                 <EditText
                     android:id="@+id/hospital_auth_password"
-                    android:layout_width="150dp"
+                    android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:textSize="16dp"
                     android:hint="@string/inputPassword"
                     android:inputType="textPassword" />
 
             </LinearLayout>
+            <RelativeLayout
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                >
+                <ImageView
+                    android:id="@+id/code_image"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    android:src="@drawable/captcha"/>
+                <EditText
+                    android:layout_toRightOf="@id/code_image"
+                    android:id="@+id/captcha"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:textSize="16dp"
+                    android:hint="请输入验证码"
+                    />
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/button"
+                    android:text="获取验证码"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimary"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:layout_alignParentRight="true"
+                    />
+
+
+
+
+            </RelativeLayout>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/hospital_submit_auth"
@@ -85,14 +122,14 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="25dp"
                 android:layout_height="36dp"
-                app:cardBackgroundColor="@color/cardGreen"
+                app:cardBackgroundColor="@color/darkGreen"
                 app:cardElevation="3dp"
                 app:cardCornerRadius="15dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/submit"
+                    android:text="注册"
                     android:layout_gravity="center"
                     android:textColor="@color/colorPrimary"
                     android:textStyle="bold" />
