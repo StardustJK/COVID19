@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -19,6 +20,7 @@ import com.bupt.sse.group7.covid19.model.CurrentUser;
 import com.bupt.sse.group7.covid19.utils.DBConnector;
 import com.bupt.sse.group7.covid19.utils.JsonUtils;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -32,13 +34,14 @@ import retrofit2.Response;
 /**
  * 认证页面，医院认证
  */
-public class HospitalAuthFragment extends Fragment {
+public class RegisterFragment extends Fragment {
     private static final String TAG = "HospitalAuthFragment";
-    private EditText userView;
+    private EditText emailView;
     private EditText passView;
+    private EditText codeView;
+    private Button sendCode;
     private JsonObject returnedInfo;
     private View view;
-    private Context mContext=getActivity();
 
     @Nullable
     @Override
@@ -59,23 +62,61 @@ public class HospitalAuthFragment extends Fragment {
     }
 
     private void initView() {
-        userView = view.findViewById(R.id.hospital_auth_username);
-        passView = view.findViewById(R.id.hospital_auth_password);
-        CardView submit = (CardView) view.findViewById(R.id.hospital_submit_auth);
-        submit.setOnClickListener(new View.OnClickListener() {
+        emailView = view.findViewById(R.id.email);
+        passView = view.findViewById(R.id.password);
+        CardView register = (CardView) view.findViewById(R.id.register);
+        register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                submitHospitalAuth();
+                register();
+            }
+        });
+        sendCode=view.findViewById(R.id.send_code);
+        sendCode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendVerifyCode();
             }
         });
     }
 
-    public void submitHospitalAuth() {
-        String username = userView.getText().toString();
-        Map<String, String> args = new HashMap<>();
-        args.put("username", username);
+    public void sendVerifyCode(){
+        if(emailView.getText().toString().equals("")){
+            Toast.makeText(getActivity(),"邮箱不能为空",Toast.LENGTH_LONG).show();
+            return;
+        }
 
-        getAuthInfo(args);
+        Map<String,String> args=new HashMap<>();
+        args.put("phone",emailView.getText().toString());
+        Call<String> data=DBConnector.dao.Get("user/checkRegister",args);
+        data.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                returnedInfo=(JsonObject) JsonParser.parseString(response.body());
+                if(returnedInfo.get("success").getAsBoolean()){
+                    Toast.makeText(getActivity(),"验证码已发送，有效期为10分钟",Toast.LENGTH_LONG).show();
+
+                }
+                else {
+                    String msg=returnedInfo.get("message").getAsString();
+                    Toast.makeText(getActivity(),msg,Toast.LENGTH_LONG).show();
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+
+            }
+        });
+    }
+    public void register() {
+//        String username = userView.getText().toString();
+//        Map<String, String> args = new HashMap<>();
+//        args.put("username", username);
+//
+//        getAuthInfo(args);
     }
 
     private void checkAuth(String password) {
