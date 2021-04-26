@@ -84,6 +84,20 @@
 
             </androidx.cardview.widget.CardView>
 
+            <androidx.cardview.widget.CardView
+                style="@style/fab_card"
+                android:id="@+id/btn_wifiroute"
+                android:layout_below="@id/btn_confirm"
+                app:cardBackgroundColor="@color/cardLightBlue"
+                app:cardElevation="5dp"
+                app:cardCornerRadius="30dp">
+
+                <ImageView
+                    style="@style/fab_img"
+                    android:src="@drawable/wifi"/>
+
+            </androidx.cardview.widget.CardView>
+
         </RelativeLayout>
 
     </RelativeLayout>

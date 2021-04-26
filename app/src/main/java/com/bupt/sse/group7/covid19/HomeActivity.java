@@ -52,6 +52,8 @@ public class HomeActivity extends AppCompatActivity {
     private CardView authCard;
     private CardView trackCard;
     private CardView pageCard;
+    private CardView wifiCard;
+    private CardView bluetoothCard;
 
     private TextView mildTv, severeTv, curedTv, deadTv;
 
@@ -81,7 +83,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private void initCurrentUser() {
         SharedPreferences sharedPreferences = getSharedPreferences("Current_User", Context.MODE_PRIVATE);
-        String currentUserId = sharedPreferences.getString("userId", null);
+        String currentUserId = sharedPreferences.getString("userId", "2");
         //获取当前的用户对象
         if (currentUserId != null) {
             Map<String, String> param = new HashMap<>();
@@ -130,6 +132,9 @@ public class HomeActivity extends AppCompatActivity {
         hospitalCard = findViewById(R.id.hospital_card);
         trackCard = findViewById(R.id.track_card);
         authCard = findViewById(R.id.auth_card);
+        wifiCard = findViewById(R.id.wifi_card);
+        bluetoothCard = findViewById(R.id.bluetooth_card);
+
 
 
 
@@ -183,6 +188,16 @@ public class HomeActivity extends AppCompatActivity {
 
             }
         });
+
+        wifiCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HomeActivity.this, WIFIActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
 
 
     }

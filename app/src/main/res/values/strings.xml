@@ -44,11 +44,15 @@
     <string name="authentication">用户认证</string>
     <string name="my_page">我的主页</string>
     <string name="track">轨迹查看</string>
+    <string name="wifi">WIFI扫描</string>
+    <string name="bluetooth">蓝牙扫描</string>
 
     <string name="my_page_desc">进入认证用户主页</string>
     <string name="hospitals_desc">查看全部医院列表</string>
     <string name="auth_desc">用户进行身份认证登录</string>
     <string name="track_desc">查看附近确诊患者轨迹</string>
+    <string name="wifi_desc">WIFI扫描相关服务</string>
+    <string name="bluetooth_desc">蓝牙扫描相关服务</string>
 
     <string name="bed_capacity">床位容量</string>
 
