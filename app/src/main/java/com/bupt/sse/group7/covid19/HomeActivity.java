@@ -53,6 +53,8 @@ public class HomeActivity extends AppCompatActivity {
     private CardView trackCard;
     private CardView pageCard;
     private CardView patientTripCard;
+    private CardView wifiCard;
+    private CardView bluetoothCard;
 
     private TextView mildTv, severeTv, curedTv, deadTv;
 
@@ -131,6 +133,8 @@ public class HomeActivity extends AppCompatActivity {
         hospitalCard = findViewById(R.id.hospital_card);
         trackCard = findViewById(R.id.track_card);
         authCard = findViewById(R.id.auth_card);
+        wifiCard = findViewById(R.id.wifi_card);
+        bluetoothCard = findViewById(R.id.bluetooth_card);
         patientTripCard=findViewById(R.id.patient_trip);
 
 
@@ -192,6 +196,16 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        wifiCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HomeActivity.this, WIFIActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
 
 
     }

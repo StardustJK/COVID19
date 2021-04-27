@@ -1,13 +1,17 @@
 package com.bupt.sse.group7.covid19;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,6 +22,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -26,11 +31,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
 import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.RequestBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import okhttp3.Response;
 
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
@@ -71,10 +79,12 @@ import com.baidu.mapapi.search.poi.PoiIndoorResult;
 import com.baidu.mapapi.search.poi.PoiResult;
 import com.baidu.mapapi.search.poi.PoiSearch;
 import com.baidu.mapapi.utils.DistanceUtil;
+import com.bupt.sse.group7.covid19.SQLite.WIFIAdapter;
 import com.bupt.sse.group7.covid19.fragment.BusBaseFragment;
 import com.bupt.sse.group7.covid19.fragment.BusFragment;
 import com.bupt.sse.group7.covid19.fragment.SubwayFragment;
 import com.bupt.sse.group7.covid19.model.CurrentUser;
+import com.bupt.sse.group7.covid19.model.WIFIConnection;
 import com.bupt.sse.group7.covid19.presenter.PatientPresenter;
 import com.bupt.sse.group7.covid19.presenter.TrackAreaPresenter;
 import com.bupt.sse.group7.covid19.utils.DBConnector;
@@ -83,12 +93,19 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import static com.baidu.mapapi.map.PolylineDottedLineType.DOTTED_LINE_SQUARE;
 
@@ -107,6 +124,7 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
     private BaiduMap baiduMap;
     LatLng currLatLng;
     Marker currMarker;
+    MyMarker wifiMarker;
 
 
     private Button btn_cancel;
@@ -118,7 +136,7 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
     private TimePicker timePickerStart;
     private AlertDialog date_time_picker;
     private AlertDialog bus_picker;
-    private CardView btn_confirmTime, btn_edit, btn_bus;
+    private CardView btn_confirmTime, btn_edit, btn_bus,btn_wifi;
     List<String> datelist = new ArrayList<>();
     private BusBaseFragment fragment;
 
@@ -154,12 +172,17 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
     private String busKeyword;
     private JsonArray busTrackList;
 
+    WIFIAdapter wifiadapter;//wifi扫描记录操作
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         SDKInitializer.initialize(getApplicationContext());
         setContentView(R.layout.activity_edit_track);
         //返回
+
+        wifiadapter = new WIFIAdapter(EditTrackActivity.this);
+        wifiadapter.open();//启动数据库
 
         Toolbar toolbar = findViewById(R.id.toolbar_edit);
         setSupportActionBar(toolbar);
@@ -247,9 +270,8 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
 
                                 allMarkers.add(myMarker);
 
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                    drawLines();
-                                }
+                                drawLines();
+
                             }
                         }).create();
 
@@ -264,6 +286,7 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
                 desDialog.show();
             }
         });
+
 
         //TODO 点不上了？！
         //点击marker进行删除和编辑
@@ -290,6 +313,7 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
                     public void onClick(View view) {
                         Log.i(TAG, "edit");
                         //TODO 这样显示没有问题了，但是不能再次点击marker了
+                        currLatLng = thismarker.getPosition();
                         deleteMarker(thismarker);//这个删除了在list里面的对象
 
                         editMarker();//编辑的时候只添加了text,marker是在点击地图的时候添加的所以需要单独写
@@ -372,6 +396,19 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
 
     }
 
+    private void deleteAllMarkers(){
+        baiduMap.hideInfoWindow();
+        Log.i(TAG, "deleall");
+
+        for (int i = 0; i < allMarkers.size(); i++) {
+
+            MyMarker deleMarker = allMarkers.remove(i);
+            deleMarker.marker.remove();
+            deleMarker.textOverlay.remove();
+
+        }
+    }
+
     private void deleteMarker(Marker thismarker) {
         baiduMap.hideInfoWindow();
         Log.i(TAG, "dele");
@@ -400,9 +437,7 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
 
         List<LatLng> points = new ArrayList<>();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            getSortedLocation(allMarkers);
-        }
+        getSortedLocation(allMarkers);
 
         for (int i = 0; i < allMarkers.size(); i++) {
             points.add(allMarkers.get(i).getLocation());
@@ -427,6 +462,7 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
         locationIv = findViewById(R.id.locationIv);
         //确认单个marker
         btn_edit = findViewById(R.id.btn_confirm);
+        btn_wifi = findViewById(R.id.btn_wifiroute);
         btn_edit.setCardBackgroundColor(getResources().getColor(R.color.darkGrey));
         btn_bus = findViewById(R.id.bus_button);
         btn_bus.setOnClickListener(new View.OnClickListener() {
@@ -439,6 +475,199 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
                 bus_picker.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
             }
         });
+
+       setDateOnClickListener(btn_wifi);
+
+
+
+
+    }
+
+
+    void setDateOnClickListener(View DatePicker) {
+        Calendar DateCalendar = Calendar.getInstance();
+        DatePicker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePickerDialog dialog = new DatePickerDialog(EditTrackActivity.this,
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(android.widget.DatePicker view, int year, int month, int dayOfMonth) {
+                                DateCalendar.set(Calendar.YEAR, year);
+                                DateCalendar.set(Calendar.MONTH, month);
+                                DateCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                                DateCalendar.set(Calendar.HOUR_OF_DAY, 0);
+                                // 分
+                                DateCalendar.set(Calendar.MINUTE, 0);
+                                // 秒
+                                DateCalendar.set(Calendar.SECOND, 0);
+                                // 毫秒
+                                DateCalendar.set(Calendar.MILLISECOND, 0);
+
+                                deleteAllMarkers();
+
+                                new Thread(new Runnable(){
+                                    @Override
+                                    public void run() {
+                                            generateWifiroute(DateCalendar);
+
+                                    }
+                                }).start();
+                            }
+                        },
+                        DateCalendar.get(Calendar.YEAR),
+                        DateCalendar.get(Calendar.MONTH),
+                        DateCalendar.get(Calendar.DAY_OF_MONTH));
+                dialog.show();
+            }
+        });
+    }
+
+    private void generateWifiroute(Calendar calendar)
+    {
+        Date date1 = calendar.getTime();
+        calendar.setTimeInMillis(date1.getTime() + DateUtils.DAY_IN_MILLIS);
+        Date date2 = calendar.getTime();
+        calendar.setTimeInMillis(date1.getTime());
+        Log.e("date1", WIFIConnection.DateToString(date1));
+        Log.e("date2", WIFIConnection.DateToString(date2));
+        WIFIConnection[] wt = wifiadapter.queryWIFIConnectionByDate2(date1,date2);
+
+        if(wt==null)
+            {
+                Looper.prepare();//增加部分
+                 Toast.makeText(EditTrackActivity.this, "无可用扫描信息", Toast.LENGTH_SHORT).show();
+                 Looper.loop();
+                 return;
+            }
+
+        List<String> macWhichHasAdresslist = new ArrayList<>();
+        List<String> macNotHasAdresslist = new ArrayList<>();
+        List<MyMarker> adresslist = new ArrayList<>();
+        List<WIFIConnection> wifiList = new ArrayList<>();
+        List<String> timeList = new ArrayList<>();
+        List<MyMarker> markerlist = new ArrayList<>();
+
+        for(WIFIConnection item:wt)
+        {
+            if(macNotHasAdresslist.indexOf(item.MAC_address)!=-1) continue;
+            int i=macWhichHasAdresslist.indexOf(item.MAC_address);
+            if(i!=-1) wifiList.add(item);
+                else {
+                    MyMarker marker =getWifiLocation(item.MAC_address);
+                    if(marker==null) macNotHasAdresslist.add(item.MAC_address);
+                    else {
+                        macWhichHasAdresslist.add(item.MAC_address);
+                        adresslist.add(marker);
+                        wifiList.add(item);
+                        }
+                }
+        }
+        Log.d("wifilistSize", String.valueOf(wifiList.size()));
+        LatLng lastlocation = new LatLng(0,0);
+        for(WIFIConnection item:wifiList)
+        {
+            Log.d("wifiitem", item.toString());
+            if(timeList.indexOf(item.datetime)!=-1) continue;
+            else timeList.add(WIFIConnection.DateToString(item.datetime));
+
+            MyMarker marker = adresslist.get(macWhichHasAdresslist.indexOf(item.MAC_address));
+            LatLng location = marker.getLocation();
+            if(lastlocation.latitude==location.latitude&& lastlocation.longitude==location.longitude)
+                continue;
+            marker.setDate(WIFIConnection.DateToString(item.datetime));
+            marker.setLocation(location);
+            marker.setDescription("");
+            markerlist.add(marker);
+            lastlocation = location;
+        }
+
+        Log.e("marklist", String.valueOf(markerlist.size()));
+
+        for(MyMarker myMarker:markerlist)
+        {
+            myMarker.setRecord(true);
+            MarkerOptions markerOptions = new MarkerOptions().position(myMarker.getLocation()).icon(bitmap);
+            currMarker = (Marker) baiduMap.addOverlay(markerOptions);
+            currMarker.setToTop();
+            myMarker.setMarker(currMarker);
+            OverlayOptions textOptions = new TextOptions()
+                    //                    .bgColor(0xAAFFFF00)
+                    .fontSize(36)
+                    .fontColor(Color.BLACK)
+                    .text(myMarker.getDate() + " " + myMarker.getDescription())
+                    .position(myMarker.getLocation());
+
+            myMarker.setTextOverlay(baiduMap.addOverlay(textOptions));
+
+            curMyMarker = myMarker;
+            geoCoder.reverseGeoCode(new ReverseGeoCodeOption().location(curMyMarker.getLocation()));
+            synchronized (curMyMarker) {
+                try {
+                    curMyMarker.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+//            try {
+//                Thread.sleep(1000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+
+            allMarkers.add(curMyMarker);
+
+        }
+
+        drawLines();
+
+
+    }
+
+    private MyMarker getWifiLocation(String mac)
+    {
+        SharedPreferences sharedPreferences = getSharedPreferences("Current_User", Context.MODE_PRIVATE);
+        String currentUserId = sharedPreferences.getString("userId", "0");
+
+        OkHttpClient client = new OkHttpClient();
+        FormBody body = new FormBody.Builder()
+                .add("mac",mac)
+                .add("userid",currentUserId)
+                .build();
+        Request request = new Request.Builder()
+                .url("http://81.70.253.77:8080/api/Wifinode/getWifiLocation")
+                .post(body)
+                .build();
+
+        okhttp3.Call call = client.newCall(request);
+
+        try {
+            String s=call.execute().body().string();
+            wifiMarker = processLocation(s);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return wifiMarker;
+    }
+
+    public MyMarker processLocation(String s)
+    {
+        MyMarker marker=new MyMarker();
+
+        try{
+                JSONObject jsonObject = new JSONObject(s);
+                LatLng mylocation = new LatLng(jsonObject.getDouble("lantitude"),jsonObject.getDouble("longitude"));
+                marker.setLocation(mylocation);
+                marker.setCity(jsonObject.getString("city"));
+                marker.setDistrict(jsonObject.getString("district"));
+                marker.setAddress(jsonObject.getString("adressinfo"));
+
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+        return marker;
     }
 
     private void initLocation() {
@@ -523,14 +752,26 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
         addData(jsonArray,busTrackList);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    private List<LatLng> getSortedLocation(List<MyMarker> markers) {
-        markers.sort(Comparator.comparing(MyMarker::getDate));
-        List<LatLng> result = new ArrayList<>();
-        for (MyMarker marker : markers) {
-            result.add(marker.getLocation());
+    private void getSortedLocation(List<MyMarker> markers){
+        List<String> timelist1 = new ArrayList<>();
+        List<String> timelist2 = new ArrayList<>();
+        List<MyMarker> result = new ArrayList<>();
+
+        for(MyMarker item:markers)
+        {
+            timelist1.add(item.getDate());
+            timelist2.add(item.getDate());
         }
-        return result;
+        Collections.sort(timelist1);
+
+        for(String item:timelist1)
+        {
+            Log.d("sorttime",item);
+           result.add(markers.get(timelist2.indexOf(item)));
+        }
+
+        allMarkers = result;
+
     }
 
     public void closeBusDialog() {
@@ -643,10 +884,12 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
         }
         Log.i("hcccc", "address:" + address);
 
-
-        curMyMarker.setCity(city);
-        curMyMarker.setAddress(address);
-        curMyMarker.setDistrict(district);
+        synchronized (curMyMarker) {
+            curMyMarker.setCity(city);
+            curMyMarker.setAddress(address);
+            curMyMarker.setDistrict(district);
+            curMyMarker.notify();
+        }
 
 
     }
@@ -766,7 +1009,6 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
     public void setBusFragment(BusBaseFragment fragment) {
         this.fragment = fragment;
     }
-
 
     public class MyLocationListener extends BDAbstractLocationListener {
         @Override

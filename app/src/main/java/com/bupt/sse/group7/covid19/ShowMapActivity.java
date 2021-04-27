@@ -2,9 +2,14 @@ package com.bupt.sse.group7.covid19;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.net.wifi.ScanResult;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +17,7 @@ import android.view.View;
 import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -35,6 +41,7 @@ import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 import com.bupt.sse.group7.covid19.interfaces.IAreaSelectionCallBack;
 import com.bupt.sse.group7.covid19.model.Area;
 import com.bupt.sse.group7.covid19.model.TrackPoint;
+import com.bupt.sse.group7.covid19.model.WIFIConnection;
 import com.bupt.sse.group7.covid19.presenter.PatientPresenter;
 import com.bupt.sse.group7.covid19.presenter.TrackAreaPresenter;
 import com.bupt.sse.group7.covid19.utils.DBConnector;
@@ -42,6 +49,11 @@ import com.bupt.sse.group7.covid19.utils.DrawMarker;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -53,6 +65,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 import retrofit2.Call;
 
 /**
@@ -80,12 +98,15 @@ public class ShowMapActivity extends AppCompatActivity implements IAreaSelection
 
     //定位
     private ImageView locationIv;
+    private ImageView WifiIv;
     private BDLocation mCurrentLoc;
     private boolean isFirstLoc = true;
     private LocationClient locationClient;
     private MyLocationListener myLocationListener;
 
     private GeoCoder mCoder;
+    private androidx.appcompat.app.AlertDialog.Builder builder;
+    WifiManager wifiManager;
 
 
     @Override
@@ -105,6 +126,7 @@ public class ShowMapActivity extends AppCompatActivity implements IAreaSelection
         }
 
         initMap();
+        initDevice();
 
         initView();
         bindEvents();
@@ -112,6 +134,20 @@ public class ShowMapActivity extends AppCompatActivity implements IAreaSelection
         trackAreaPresenter.manualUpdate();
 
     }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        locationClient.stop();
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        locationClient.start();
+    }
+
+
 
     @Override
     public void onAreaSelected(Area area) {
@@ -159,6 +195,14 @@ public class ShowMapActivity extends AppCompatActivity implements IAreaSelection
 
         //初始化定位
         locationIv = findViewById(R.id.locationIv);
+        WifiIv = findViewById(R.id.WifiIv);
+
+        WifiIv.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                showMultiSelect();
+            }
+        });
+
         locationIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -198,7 +242,7 @@ public class ShowMapActivity extends AppCompatActivity implements IAreaSelection
 //可选，默认gcj02，设置返回的定位结果坐标系，如果配合百度地图使用，建议设置为bd09ll;
         locationOption.setCoorType("bd09ll");
 //可选，默认0，即仅定位一次，设置发起连续定位请求的间隔需要大于等于1000ms才是有效的
-        locationOption.setScanSpan(1000);
+        locationOption.setScanSpan(10*1000);
 //可选，设置是否需要设备方向结果
         locationOption.setNeedDeviceDirect(false);
 //可选，默认true，定位SDK内部是一个SERVICE，并放到了独立进程，设置是否在stop的时候杀死这个进程，默认不杀死
@@ -206,6 +250,15 @@ public class ShowMapActivity extends AppCompatActivity implements IAreaSelection
 //可选，默认false，设置是否开启Gps定位
         locationOption.setOpenGps(true);
 //需将配置好的LocationClientOption对象，通过setLocOption方法传递给LocationClient对象使用
+        locationOption.setIsNeedAddress(true);
+//可选，是否需要地址信息，默认为不需要，即参数为false
+//如果开发者需要获得当前点的地址信息，此处必须为true
+
+        locationOption.setNeedNewVersionRgc(true);
+//可选，设置是否需要最新版本的地址信息。默认需要，即参数为true
+        locationOption.setIsNeedLocationDescribe(true);
+//可选，是否需要位置描述信息，默认为不需要，即参数为false
+//如果开发者需要获得当前点的位置信息，此处必须为true
         locationClient.setLocOption(locationOption);
         //开始定位
         locationClient.start();
@@ -254,6 +307,18 @@ public class ShowMapActivity extends AppCompatActivity implements IAreaSelection
             //以下只列举部分获取经纬度相关（常用）的结果信息
             //更多结果信息获取说明，请参照类参考中BDLocation类中的说明
 
+            String addr = location.getAddrStr();    //获取详细地址信息
+            String country = location.getCountry();    //获取国家
+            String province = location.getProvince();    //获取省份
+            String city = location.getCity();    //获取城市
+            String district = location.getDistrict();    //获取区县
+            String street = location.getStreet();    //获取街道信息
+            String adcode = location.getAdCode();    //获取adcode
+            String town = location.getTown();    //获取乡镇信息
+            String locationDescribe = location.getLocationDescribe();    //获取位置描述信息
+
+            Log.d("addr",addr+"  "+locationDescribe);
+
             //获取纬度信息
             double latitude = location.getLatitude();
             //获取经度信息
@@ -267,7 +332,7 @@ public class ShowMapActivity extends AppCompatActivity implements IAreaSelection
                 isFirstLoc = false;
             }
             mCurrentLoc = location;
-            locationClient.stop();
+            //locationClient.stop();
             if (location.getLocType() == BDLocation.TypeGpsLocation) {
                 Log.e(TAG, "GPS");
             } else if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
@@ -515,6 +580,158 @@ public class ShowMapActivity extends AppCompatActivity implements IAreaSelection
                 return false;
             }
         });
+    }
+
+    public void showMultiSelect() {
+        List<ScanResult> scanlist = getWifiList();
+        List<ScanResult> choice = new ArrayList<>();
+        String[] items = new String[scanlist.size()];
+        //默认都未选中
+        boolean[] isSelect = new boolean[scanlist.size()];
+        int i = 0;
+        for (ScanResult item : scanlist) {
+            items[i] = item.SSID + "   " + item.BSSID;
+            isSelect[i] = true;
+            choice.add(scanlist.get(i));
+            i++;
+        }
+
+        builder = new androidx.appcompat.app.AlertDialog.Builder(this).setIcon(R.mipmap.ic_launcher)
+                .setTitle("注册所选WIFI")
+                .setMultiChoiceItems(items, isSelect, new DialogInterface.OnMultiChoiceClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i, boolean b) {
+
+                        if (b) {
+                            choice.add(scanlist.get(i));
+                        } else {
+                            choice.remove(scanlist.get(i));
+                        }
+
+                    }
+                }).setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        StringBuilder str = new StringBuilder();
+
+                        for (ScanResult s : choice) {
+                            str.append(s.SSID + "  ");
+                        }
+                        Toast.makeText(ShowMapActivity.this, "你选择了" + str, Toast.LENGTH_LONG).show();
+                        locationClient.restart();
+                        UploadWifiNode(choice);
+                    }
+                });
+
+        builder.create().show();
+
+    }
+
+    public void UploadWifiNode(List<ScanResult> scanlist) {
+        if (scanlist.size() != 0) {
+            OkHttpClient client = new OkHttpClient();
+            SharedPreferences sharedPreferences = getSharedPreferences("Current_User", Context.MODE_PRIVATE);
+            String currentUserId = sharedPreferences.getString("userId", "0");
+
+            JSONArray jsonArray = new JSONArray();
+            try {
+                int count=0;
+                for(ScanResult item:scanlist)
+                {
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("mac",item.BSSID);
+                    jsonObject.put("name",item.SSID);
+                    jsonObject.put("registerUser",currentUserId);
+                    jsonObject.put("longitude",mCurrentLoc.getLongitude());
+                    jsonObject.put("lantitude",mCurrentLoc.getLatitude());
+                    jsonObject.put("city",mCurrentLoc.getCity());
+                    jsonObject.put("district",mCurrentLoc.getDistrict());
+                    jsonObject.put("street",mCurrentLoc.getStreet());
+                    jsonObject.put("adressinfo",mCurrentLoc.getLocationDescribe()+"");
+                    jsonObject.put("registerTime", WIFIConnection.DateToString(new Date()));
+                    // 返回一个JSONArray对象
+                    jsonArray.put(count,jsonObject);
+                    count++;
+                    Log.i("jsonArray",jsonArray.toString());
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            RequestBody body = RequestBody.create(MediaType.parse("application/json"), jsonArray.toString());
+            Request request = new Request.Builder()
+                    .url("http://81.70.253.77:8080/api/Wifinode/addWifinode")
+                    .post(body)
+                    .build();
+            okhttp3.Call call = client.newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(@NotNull okhttp3.Call call, @NotNull IOException e) {
+                    e.printStackTrace();
+                    Log.d("LoginTest", "onFailure: 访问服务器失败");
+                }
+
+                @Override
+                public void onResponse(@NotNull okhttp3.Call call, @NotNull Response response) throws IOException {
+                    String s = response.body().string();
+                    if(Integer.parseInt(s)==0)
+                    { Log.d("UploadWifiConnection", "上传成功");}
+                    else{Log.d("UploadWifiConnection", "上传失败");}
+                    //Toast.makeText(getActivity().getBaseContext(),"上传蓝牙连接ID:"+newbt.ID, Toast.LENGTH_SHORT).show();
+                }
+            });
+
+
+        }
+
+    }
+
+    public List<ScanResult> getWifiList() {
+        //获取WIFI链接列表
+        List<ScanResult> scanWifiList = wifiManager.getScanResults();
+        List<ScanResult> wifiList = new ArrayList<>();
+        if (scanWifiList != null && scanWifiList.size() > 0) {
+            HashMap<String, Integer> signalStrength = new HashMap<String, Integer>();
+            for (int i = 0; i < scanWifiList.size(); i++) {
+                ScanResult scanResult = scanWifiList.get(i);
+                Log.e("运行", "搜索的wifi-ssid:" + scanResult.SSID);
+                if (!scanResult.SSID.isEmpty()) {
+                    String key = scanResult.SSID + " " + scanResult.capabilities;
+                    if (!signalStrength.containsKey(key)) {
+                        signalStrength.put(key, i);
+                        wifiList.add(scanResult);
+                    }
+                }
+            }
+        }else {
+            Log.e("运行", "没有搜索到wifi");
+        }
+        return wifiList;
+    }
+
+    private boolean initDevice() {
+        wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+        //获取WIFIManager
+        if(!testWIFI()) return false;
+        //addPairedDevice();
+        return  true;
+    }
+
+    private Boolean testWIFI()
+    {
+        if (wifiManager == null) {
+            Toast.makeText(getBaseContext(), "您的机器上没有发现WIFI适配器，本程序将不能运行!", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if (wifiManager.getWifiState() != WifiManager.WIFI_STATE_ENABLED)
+        {// 如果WIFI还没开启
+            Toast.makeText(getBaseContext(), "请先开启WIFI", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        return true;
     }
 
 }
