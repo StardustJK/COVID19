@@ -52,6 +52,7 @@ public class HomeActivity extends AppCompatActivity {
     private CardView authCard;
     private CardView trackCard;
     private CardView pageCard;
+    private CardView patientTripCard;
     private CardView wifiCard;
     private CardView bluetoothCard;
 
@@ -134,8 +135,7 @@ public class HomeActivity extends AppCompatActivity {
         authCard = findViewById(R.id.auth_card);
         wifiCard = findViewById(R.id.wifi_card);
         bluetoothCard = findViewById(R.id.bluetooth_card);
-
-
+        patientTripCard=findViewById(R.id.patient_trip);
 
 
         hospitalCard.setOnClickListener(new View.OnClickListener() {
@@ -186,6 +186,14 @@ public class HomeActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
 
+            }
+        });
+
+        patientTripCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HomeActivity.this, PatientTripActivity.class);
+                startActivity(intent);
             }
         });
 
