@@ -3,11 +3,14 @@ package com.bupt.sse.group7.covid19;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
+import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
@@ -16,6 +19,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -24,9 +28,13 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import org.w3c.dom.Text;
 
+import java.util.Calendar;
+
 public class PatientTripActivity extends AppCompatActivity {
 
     TextView type;
+    TextView dateStart,dateEnd;
+    CardView query;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +59,58 @@ public class PatientTripActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 selectType();
+            }
+        });
+        initTimePicker();
+        query=findViewById(R.id.query);
+        query.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+    }
+    private void initTimePicker(){
+        dateStart=findViewById(R.id.date_start);
+        dateEnd=findViewById(R.id.date_end);
+        Calendar calendar=Calendar.getInstance();
+        //今天的日期
+        int year=calendar.get(Calendar.YEAR);
+        int month=calendar.get(Calendar.MONTH);
+        int day=calendar.get(Calendar.DAY_OF_MONTH);
+        dateEnd.setText(year+"-"+(month+1)+"-"+day);
+        //7天前的日期
+        calendar.add(Calendar.DATE,-7);
+        int year7=calendar.get(Calendar.YEAR);
+        int month7=calendar.get(Calendar.MONTH);
+        int day7=calendar.get(Calendar.DAY_OF_MONTH);
+        dateStart.setText(year7+"-"+(month7+1)+"-"+day7);
+
+        dateStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePickerDialog.OnDateSetListener listener=new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                        dateStart.setText(year + "-" + (++month) + "-" + dayOfMonth);
+                    }
+                };
+                DatePickerDialog datePickerDialog=new DatePickerDialog(PatientTripActivity.this, AlertDialog.THEME_HOLO_LIGHT,listener,year7,month7,day7);
+                datePickerDialog.show();
+            }
+        });
+        dateEnd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePickerDialog.OnDateSetListener listener=new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                        dateEnd.setText(year + "-" + (++month) + "-" + dayOfMonth);
+                    }
+                };
+                DatePickerDialog datePickerDialog=new DatePickerDialog(PatientTripActivity.this, AlertDialog.THEME_HOLO_LIGHT,listener,year,month,day);
+                datePickerDialog.show();
             }
         });
     }
