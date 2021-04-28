@@ -83,7 +83,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private void initCurrentUser() {
         SharedPreferences sharedPreferences = getSharedPreferences("Current_User", Context.MODE_PRIVATE);
-        String currentUserId = sharedPreferences.getString("userId", "2");
+        String currentUserId = sharedPreferences.getString("userId", null);
         //获取当前的用户对象
         if (currentUserId != null) {
             Map<String, String> param = new HashMap<>();

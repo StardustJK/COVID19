@@ -28,8 +28,7 @@ public class WIFIAdapter {
     public static final String KEY_LEVEL ="level";
     public static final String KEY_ISSent = "isSent";
     public static final String KEY_NAME = "name";
-    public static final String KEY_LOW_LEVEL ="lowLevel";
-    public static final String KEY_HIGH_LEVEL ="highLevel";
+    public static final String KEY_AVERAGE_LEVEL ="averageLevel";
 
 
     private SQLiteDatabase db;
@@ -100,7 +99,7 @@ public class WIFIAdapter {
     }
 
     public BroadcastKey[] queryBroadcastKeyByDate(Date date1, Date date2) {
-        Cursor results =  db.query(DB_TABLE_BroadcastKey, new String[] { KEY_ID, KEY_DATE, KEY_DURATION,KEY_MAC,KEY_NAME,KEY_LOW_LEVEL,KEY_HIGH_LEVEL},
+        Cursor results =  db.query(DB_TABLE_BroadcastKey, new String[] { KEY_ID, KEY_DATE, KEY_DURATION,KEY_MAC,KEY_NAME,KEY_AVERAGE_LEVEL},
                 "date("+KEY_DATE+") >= "+" date(?) and date("+KEY_DATE+") <= "+
                         " date(?) ORDER BY "+KEY_DATE +" DESC"
                 , new String[] {WIFIConnection.DateToString(date1),WIFIConnection.DateToString(date2)}, null, null, null);
@@ -137,7 +136,7 @@ public class WIFIAdapter {
     }
 
     public BroadcastKey[] queryAllBroadcastKey() {
-        Cursor results =  db.query(DB_TABLE_BroadcastKey, new String[] { KEY_ID, KEY_DATE, KEY_DURATION,KEY_MAC,KEY_NAME,KEY_LOW_LEVEL,KEY_HIGH_LEVEL},
+        Cursor results =  db.query(DB_TABLE_BroadcastKey, new String[] { KEY_ID, KEY_DATE, KEY_DURATION,KEY_MAC,KEY_NAME,KEY_AVERAGE_LEVEL},
                 null, null, null, null, null);
         return ConvertToBroadcastKey(results);
     }
@@ -155,8 +154,7 @@ public class WIFIAdapter {
            connections[i].duration = cursor.getInt(cursor.getColumnIndex(KEY_DURATION));
             connections[i].MAC_address=cursor.getString(cursor.getColumnIndex(KEY_MAC));
             connections[i].name=cursor.getString(cursor.getColumnIndex(KEY_NAME));
-            connections[i].low_level=cursor.getInt(cursor.getColumnIndex(KEY_LOW_LEVEL));
-            connections[i].high_level=cursor.getInt(cursor.getColumnIndex(KEY_HIGH_LEVEL));
+            connections[i].average_distance=cursor.getDouble(cursor.getColumnIndex(KEY_AVERAGE_LEVEL));
             cursor.moveToNext();
         }
         return connections;
@@ -193,8 +191,7 @@ public class WIFIAdapter {
         newValues.put(KEY_MAC,broadcastKey.MAC_address);
         newValues.put(KEY_NAME,broadcastKey.name);
         newValues.put(KEY_DURATION,broadcastKey.duration);
-        newValues.put(KEY_LOW_LEVEL,broadcastKey.low_level);
-        newValues.put(KEY_HIGH_LEVEL,broadcastKey.high_level);
+        newValues.put(KEY_AVERAGE_LEVEL,broadcastKey.average_distance);
         return db.insert(DB_TABLE_BroadcastKey, null, newValues);
     }
 
@@ -218,7 +215,7 @@ public class WIFIAdapter {
                 DB_TABLE_BroadcastKey + " (" + KEY_ID + " integer primary key autoincrement, " +
                 KEY_DATE + " text not null," + KEY_DURATION+" integer not null,"+
                 KEY_NAME +" text not null,"+KEY_MAC +" text not null,"+
-                KEY_LOW_LEVEL+" integer not null," +KEY_HIGH_LEVEL +" integer not null"+
+                KEY_AVERAGE_LEVEL+" double not null" +
                 ");";
 
 

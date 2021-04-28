@@ -199,6 +199,13 @@ public class ShowMapActivity extends AppCompatActivity implements IAreaSelection
 
         WifiIv.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                SharedPreferences sharedPreferences = getSharedPreferences("Current_User", Context.MODE_PRIVATE);
+                String currentUserId = sharedPreferences.getString("userId", "0");
+                if(currentUserId.equals("0"))
+                    {
+                        Toast.makeText(ShowMapActivity.this, "尚未登录无法关注wifi节点", Toast.LENGTH_LONG).show();
+                        return;
+                    }
                 showMultiSelect();
             }
         });

@@ -16,6 +16,7 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,7 +53,9 @@ public class WIFIActivity extends AppCompatActivity {
 
     List<ScanResult> list;  //存放周围wifi热点对象的列表
     TextView tv1;
-    Button bt1, bt2, bt3, bt4, bt5, bt6, bt7;
+    private static TextView tv_wifiscan_text;
+    Button  bt3, bt4, bt5, bt6, bt7,bt_getrisk;
+    ImageButton bt_wifiscan;
     WIFIAdapter wifiadapter;
     Intent serviceIntent = null;
 
@@ -62,13 +65,14 @@ public class WIFIActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wifiscan);
         tv1 = (TextView) findViewById(R.id.tv1);
-        bt1 = (Button) findViewById(R.id.bt1);
-        bt2 = (Button) findViewById(R.id.bt2);
         bt3 = (Button) findViewById(R.id.bt3);
         bt4 = (Button) findViewById(R.id.bt4);
         bt5 = (Button) findViewById(R.id.bt5);
         bt6 = (Button) findViewById(R.id.bt6);
         bt7 = (Button) findViewById(R.id.bt7);
+        bt_wifiscan = (ImageButton) findViewById(R.id.bt_wifiscan);
+        bt_getrisk = (Button) findViewById(R.id.bt_getrisk);
+        tv_wifiscan_text = (TextView) findViewById(R.id.tv_wifiscan_text);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -89,21 +93,24 @@ public class WIFIActivity extends AppCompatActivity {
         if (!isIgnoringBatteryOptimizations())
             requestIgnoreBatteryOptimizations();
 
-        bt1.setOnClickListener(new View.OnClickListener() {
+        bt_wifiscan.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onClick(View v) {
-                Toast.makeText(WIFIActivity.this, "开始扫描", Toast.LENGTH_SHORT).show();
-                startScanService();//开始扫描
-            }
-        });
+                if(!bt_wifiscan.isSelected()){
+                    Toast.makeText(WIFIActivity.this, "开始扫描", Toast.LENGTH_SHORT).show();
+                    startScanService();//开始扫描
+                    bt_wifiscan.setSelected(true);
+                    tv_wifiscan_text.setText("扫描已开启");
+                    tv_wifiscan_text.setTextColor(getResources().getColor(R.color.white));
+                }else{
+                    Toast.makeText(WIFIActivity.this, "停止扫描", Toast.LENGTH_SHORT).show();
+                    WIFIActivity.this.stopService(serviceIntent);
+                    bt_wifiscan.setSelected(false);
+                    tv_wifiscan_text.setText("扫描未开启");
+                    tv_wifiscan_text.setTextColor(getResources().getColor(R.color.text_grey));
+                }
 
-        bt2.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.M)
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(WIFIActivity.this, "停止扫描", Toast.LENGTH_SHORT).show();
-                WIFIActivity.this.stopService(serviceIntent);
             }
         });
 
@@ -147,7 +154,6 @@ public class WIFIActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Toast.makeText(WIFIActivity.this, "生成安全提醒", Toast.LENGTH_SHORT).show();
                 CompareBroadcastKey();
-                wifiadapter.deleteAllWIFIConnection();
             }
         });
 
@@ -247,10 +253,13 @@ public class WIFIActivity extends AppCompatActivity {
 
         OkHttpClient client = new OkHttpClient();
 
+        SharedPreferences sharedPreferences = getSharedPreferences("Current_User", Context.MODE_PRIVATE);
+        String currentUserId = sharedPreferences.getString("userId", "0");
+
         if(bt!=null)
             for(final WIFIConnection newbt:bt) {
                 FormBody body = new FormBody.Builder()
-                        .add("userId", String.valueOf(1))
+                        .add("userId", currentUserId)
                         .add("startTime",WIFIConnection.DateToString(newbt.datetime))
                         .add("duartion",String.valueOf(newbt.duration))
                         .add("distanceLevel", String.valueOf(newbt.level))
@@ -340,10 +349,9 @@ public class WIFIActivity extends AppCompatActivity {
                 String wifiName = jsonObject.getString("wifiName");
                 String startTime = jsonObject.getString("startTime");
                 int duartion = jsonObject.getInt("duartion");
-                int lowDistance =jsonObject.getInt("lowDistance");
-                int highDistance = jsonObject.getInt("highDistance");
+                int averageDistance =jsonObject.getInt("averageDistance");
                 BroadcastKey broadcastKey = new BroadcastKey(WIFIConnection.strToDate(startTime),duartion,
-                        wifiMac,wifiName,lowDistance,highDistance);
+                        wifiMac,wifiName,averageDistance);
                 wifiadapter.insertBroadcastKey(broadcastKey);
             }
         }catch (Exception e){
@@ -376,7 +384,7 @@ public class WIFIActivity extends AppCompatActivity {
                     else {
                          count++;
                         s+="风险提醒第"+count+"条：\n"+"扫描记录："+wt.toString()+"\n"+
-                                "与下载记录："+bk.toString()+"比配成功\n";
+                                "与下载记录："+bk.toString()+"匹配成功\n";
                     }
 
                 }
