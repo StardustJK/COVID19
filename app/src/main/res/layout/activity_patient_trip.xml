@@ -66,6 +66,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <EditText
+                    android:id="@+id/area"
                     android:background="@null"
                     style="@style/trip_text"
                     android:hint="如:北京、成都"/>
@@ -89,6 +90,7 @@
                 </RelativeLayout>
 
                 <EditText
+                    android:id="@+id/no"
                     android:background="@null"
                     style="@style/trip_text"
                     android:hint="如:G308、632路"/>

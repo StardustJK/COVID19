@@ -24,17 +24,27 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bupt.sse.group7.covid19.utils.DBConnector;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import org.w3c.dom.Text;
 
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class PatientTripActivity extends AppCompatActivity {
 
-    TextView type;
+    TextView type,area,no;
     TextView dateStart,dateEnd;
     CardView query;
+    int typeSelected=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +64,8 @@ public class PatientTripActivity extends AppCompatActivity {
 
     private void initView() {
         type = findViewById(R.id.type);
+        area=findViewById(R.id.area);
+        no=findViewById(R.id.no);
         RelativeLayout type_layout=findViewById(R.id.type_layout);
         type_layout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,7 +78,28 @@ public class PatientTripActivity extends AppCompatActivity {
         query.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Map<String,String> args=new HashMap<>();
+                args.put("area",area.getText().toString());
+                args.put("type",typeSelected+"");
+                args.put("no",no.getText().toString());
+                //使用 yyyy-MM-dd格式后台读入会报错，改用yyyy/mm/dd传输数据g
+                String start=dateStart.getText().toString().replace("-","/");
+                args.put("start",start);
+                String end=dateEnd.getText().toString().replace("-","/");
+                args.put("end",end);
+                Call<String> data= DBConnector.dao.Get("/trip/search",args);
+                data.enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(Call<String> call, Response<String> response) {
+                        JsonObject info= (JsonObject) JsonParser.parseString(response.body());
 
+                    }
+
+                    @Override
+                    public void onFailure(Call<String> call, Throwable t) {
+
+                    }
+                });
             }
         });
 
@@ -131,6 +164,7 @@ public class PatientTripActivity extends AppCompatActivity {
             @Override
             public void onItemClick(int position, String text) {
                 type.setText(text);
+                typeSelected=position;
                 typeDialog.dismiss();
             }
         });
@@ -140,6 +174,7 @@ public class PatientTripActivity extends AppCompatActivity {
 
     static class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
+        //TODO 改类别
         private String types[] = {"全部", "飞机", "火车", "地铁", "公交车", "出租车", "轮船"};
         private OnItemClickListener onItemClickListener;
 
