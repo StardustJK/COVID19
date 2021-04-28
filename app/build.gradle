@@ -25,6 +25,10 @@ android {
         versionCode 1
         versionName "1.0"
 
+        // 项目已经超过65k个方法，一个dex已经装不下了，需要个多个dex，也就是multidex
+        // https://blog.csdn.net/qq_42579571/article/details/81260591
+        multiDexEnabled true
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -63,5 +67,17 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:4.7.2'
     implementation 'com.squareup.retrofit2:converter-scalars:2.0.0'
     compile 'com.github.lecho:hellocharts-library:1.5.8@aar'
+    // 蓝牙模块相关的依赖
+    implementation 'org.litepal.android:java:3.0.0'
+    implementation 'com.github.bumptech.glide:glide:3.7.0'
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
+
+    // 蓝牙模块算法相关的依赖
+    implementation 'javax.xml.bind:jaxb-api:2.3.1'
+    implementation group: 'xerces', name: 'xercesImpl', version: '2.11.0'
+
+    // 项目已经超过65k个方法，一个dex已经装不下了，需要个多个dex，也就是multidex
+    // https://blog.csdn.net/qq_42579571/article/details/81260591
+    implementation 'com.android.support:multidex:1.0.3'
 
 }
