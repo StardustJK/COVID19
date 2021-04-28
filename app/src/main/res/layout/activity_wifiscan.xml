@@ -23,23 +23,41 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <Button
-            android:id="@+id/bt1"
+        android:background="@color/bg_grey"
+        >
+
+        <ImageView
+            android:id="@+id/bg"
+            android:layout_width="match_parent"
+            android:layout_height="500dp"
+            android:layout_gravity="center"
+            android:scaleType="fitXY"
+            android:src="@drawable/bg11"
+            android:visibility="visible" />
+
+        <ImageButton
+            android:id="@+id/bt_wifiscan"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="120dp"
+            android:background="@drawable/record_statue_selector" />
+
+        <TextView
+            android:id="@+id/tv_wifiscan_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="开始扫描!"/>
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="200dp"
+            android:textColor="@color/text_grey"
+            android:text="扫描未开启"
+            android:textSize="35sp" />
 
-        <Button
-            android:id="@+id/bt2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="停止扫描!" />
+    </RelativeLayout>
 
-    </LinearLayout>>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -56,6 +74,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
         android:text="下载确诊患者wifi记录"/>
+
+        <Button
+            android:id="@+id/bt_wifinode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="查看已关注wifi"/>
     </LinearLayout>>
 
     <LinearLayout
@@ -79,6 +103,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="本地匹配"/>
+
+        <Button
+            android:id="@+id/bt_getrisk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="风险预测"/>
     </LinearLayout>>
 
     <ScrollView

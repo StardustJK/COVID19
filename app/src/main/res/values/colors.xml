@@ -16,9 +16,14 @@
     <color name="cardOrange">#E29460</color>
     <color name="cardLightGreen">#72A668</color>
     <color name="cardDarkGreen">#00ADA2</color>
+    <color name="text_grey">#9D9D9D</color>
+    <color name="bg_grey">#EDEDED</color>
     <color name="cardLightBlue">#00BDBA</color>
     <color name="cardPurple">#6C6BA8</color>
     <color name="dead">#555555</color>
     <color name="polyline">#ff941d</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="blue">#108EE9</color>
     <color name="chosen">#c6e8e4</color>
 </resources>

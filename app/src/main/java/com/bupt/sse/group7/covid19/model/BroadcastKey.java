@@ -8,20 +8,18 @@ public class BroadcastKey {
     public int duration =0;//连接持续时间
     public String MAC_address;//扫描到的WIFIMAC地址
     public String name;//WIFI名字
-    public int low_level;//最低强度
-    public int high_level;//最高强度
+    public double average_distance;
 
     public BroadcastKey()
     {}
 
-    public BroadcastKey(Date datetime,int duartion,String address,String name,int low_level,int high_level)
+    public BroadcastKey(Date datetime,int duartion,String address,String name,double average_distance)
     {
         this.datetime = datetime;
         this.duration = duartion;
         this.MAC_address = address;
         this.name = name;
-        this.low_level = low_level;
-        this.high_level = high_level;
+        this.average_distance = average_distance;
     }
 
 
@@ -32,8 +30,7 @@ public class BroadcastKey {
         result += "时间为" + WIFIConnection.DateToString(this.datetime) + "，";
         result += "MAC地址为" + this.MAC_address;
         result += "持续时间为"+ this.duration +"毫秒.";
-        result += "最低信号强度为" + this.low_level;
-        result += "最高信号强度为" + this.high_level;
+        result += "平均信号强度为" + this.average_distance;
         return result;
     }
 

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorAccent">
+
+    <FrameLayout
+    android:id="@+id/fl_move_circle"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:background="@color/colorAccent" />
+
+    <ImageView
+        android:id="@+id/iv_out_circle"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_gravity="center"
+        android:background="@color/colorAccent"
+        android:alpha="0.6"
+        android:src="@drawable/outcircle" />
+
+    <ImageView
+        android:id="@+id/iv_btn"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_gravity="center"
+        android:src="@drawable/circle" />
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:textColor="#ffffff"
+        android:layout_gravity="center"
+        android:textSize="15sp"
+        android:layout_marginTop="13dp"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/search_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/cardview_default_radius"
+        android:background="@drawable/bordernoline"
+        android:padding="10dp"
+        android:layout_gravity="bottom|center"
+        android:layout_marginBottom="100dp"
+
+        android:textColor="@color/cardBlue"
+        android:textSize="20sp"
+        />
+
+<!--    <Button-->
+<!--        android:background="@drawable/bordernoline"-->
+<!--        android:layout_marginBottom="30dp"-->
+<!--        android:layout_marginTop="50dp"-->
+<!--        android:layout_gravity="center"-->
+<!--        android:id="@+id/btn_logout"-->
+<!--        android:layout_width="70dp"-->
+<!--        android:layout_height="40dp"-->
+<!--        android:text="注销"-->
+<!--        android:textColor="@color/cardBlue"-->
+<!--        android:textSize="18sp" />-->
+
+</FrameLayout>

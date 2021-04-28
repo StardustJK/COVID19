@@ -24,6 +24,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.baidu.mapapi.SDKInitializer;
+import com.bupt.sse.group7.covid19.bluetoothActivity.BluetoothActivity;
 import com.bupt.sse.group7.covid19.model.CurrentUser;
 import com.bupt.sse.group7.covid19.presenter.HospitalPresenter;
 import com.bupt.sse.group7.covid19.presenter.PatientPresenter;
@@ -201,6 +202,14 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(HomeActivity.this, WIFIActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        bluetoothCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HomeActivity.this, BluetoothActivity.class);
                 startActivity(intent);
             }
         });
