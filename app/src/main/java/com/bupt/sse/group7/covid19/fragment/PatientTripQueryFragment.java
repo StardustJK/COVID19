@@ -22,6 +22,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bupt.sse.group7.covid19.PatientTripActivity;
 import com.bupt.sse.group7.covid19.R;
+import com.bupt.sse.group7.covid19.adapter.TripResultAdapter;
+import com.bupt.sse.group7.covid19.adapter.TypeChooseAdapter;
 import com.bupt.sse.group7.covid19.model.PatientTrip;
 import com.bupt.sse.group7.covid19.utils.DBConnector;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -162,7 +164,7 @@ public class PatientTripQueryFragment extends Fragment {
             patientTrip.setMemo(trip.get("t_memo").getAsString());
             patientTripList.add(patientTrip);
         }
-        ResultAdapter resultAdapter = new ResultAdapter(patientTripList);
+        TripResultAdapter resultAdapter = new TripResultAdapter(patientTripList);
         resultRv.setAdapter(resultAdapter);
 
     }
@@ -219,13 +221,13 @@ public class PatientTripQueryFragment extends Fragment {
         RecyclerView recyclerView = view.findViewById(R.id.trip_dialog);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
-        TypeAdapter adapter = new TypeAdapter();
+        TypeChooseAdapter adapter = new TypeChooseAdapter(types);
         recyclerView.setAdapter(adapter);
 
         BottomSheetDialog typeDialog = new BottomSheetDialog(getActivity());
         typeDialog.setContentView(view);
         typeDialog.show();
-        adapter.setOnItemClickListener(new TypeAdapter.OnItemClickListener() {
+        adapter.setOnItemClickListener(new TypeChooseAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position, String text) {
                 type.setText(text);
@@ -235,114 +237,6 @@ public class PatientTripQueryFragment extends Fragment {
         });
 
 
-    }
-
-    static class TypeAdapter extends RecyclerView.Adapter<TypeAdapter.MyViewHolder> {
-
-        //TODO 改类别
-        private OnItemClickListener onItemClickListener;
-
-        public void setOnItemClickListener(OnItemClickListener li) {
-            onItemClickListener = li;
-        }
-
-        @NonNull
-        @Override
-        public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_trip_type, parent, false);
-            return new MyViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-            holder.tv.setText(types[position]);
-            if (onItemClickListener != null) {
-                holder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        onItemClickListener.onItemClick(position,
-                                types[position]);
-                    }
-                });
-            }
-
-        }
-
-
-        @Override
-        public int getItemCount() {
-            return types.length;
-        }
-
-        class MyViewHolder extends RecyclerView.ViewHolder {
-
-            private TextView tv;
-
-            public MyViewHolder(@NonNull View itemView) {
-                super(itemView);
-                tv = itemView.findViewById(R.id.text);
-            }
-        }
-
-        interface OnItemClickListener {
-            void onItemClick(int position, String text);
-        }
-    }
-
-    static class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.MyViewHolder> {
-        private List<PatientTrip> patientTripList;
-
-        public ResultAdapter(List<PatientTrip> patientTrips) {
-            patientTripList = patientTrips;
-        }
-
-        @NonNull
-        @Override
-        public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_trip_result, parent, false);
-            return new MyViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-            PatientTrip patientTrip = patientTripList.get(position);
-            holder.date.setText(patientTrip.getDate());
-            holder.typeNo.setText(patientTrip.getTypeNo());
-            holder.subNo.setText(patientTrip.getNoSub());
-            holder.startPos.setText(patientTrip.getStartPos());
-            holder.endPos.setText(patientTrip.getEndPos());
-            holder.who.setText(patientTrip.getWho());
-            if(patientTrip.getMemo().equals("")){
-                holder.memo.setVisibility(View.GONE);
-                holder.beizhu.setVisibility(View.GONE);
-            }
-            else {
-                holder.memo.setText(patientTrip.getMemo());
-            }
-        }
-
-        @Override
-        public int getItemCount() {
-            return patientTripList.size();
-        }
-
-        class MyViewHolder extends RecyclerView.ViewHolder {
-
-            TextView date, typeNo, subNo, startPos, endPos, who,memo,beizhu;
-
-            public MyViewHolder(@NonNull View itemView) {
-                super(itemView);
-                date = itemView.findViewById(R.id.date);
-                typeNo = itemView.findViewById(R.id.type_no);
-                subNo = itemView.findViewById(R.id.no_sub);
-                startPos = itemView.findViewById(R.id.start_pos);
-                endPos = itemView.findViewById(R.id.end_pos);
-                who = itemView.findViewById(R.id.who);
-                memo=itemView.findViewById(R.id.memo);
-                beizhu=itemView.findViewById(R.id.beizhu);
-
-            }
-        }
     }
 
 }

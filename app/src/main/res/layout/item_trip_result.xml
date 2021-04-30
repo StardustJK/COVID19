@@ -43,6 +43,7 @@
                 android:textSize="@dimen/trip_result_text_size"/>
         </RelativeLayout>
         <RelativeLayout
+            android:id="@+id/start_end"
             android:layout_width="match_parent"
             android:orientation="horizontal"
             android:layout_height="wrap_content">
@@ -84,10 +85,10 @@
 
         </RelativeLayout>
         <LinearLayout
+            android:id="@+id/memo_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <TextView
-                android:id="@+id/beizhu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/text_grey"
@@ -100,6 +101,7 @@
                 android:textSize="@dimen/trip_text_size"/>
         </LinearLayout>
         <LinearLayout
+            android:id="@+id/who_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <TextView

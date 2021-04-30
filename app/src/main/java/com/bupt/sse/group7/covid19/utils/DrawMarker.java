@@ -121,7 +121,7 @@ public class DrawMarker {
             for (int i = 0; i < track.size(); i++) {
 
                 TrackPoint trackPoint = track.get(i);
-                String userId = trackPoint.getUserId();
+                int userId = trackPoint.getUserId();
 
 
                 //添加Marker
@@ -130,7 +130,7 @@ public class DrawMarker {
                 marker.setToTop();
                 //Marker上绑定id信息用于界面跳转
                 bundle = new Bundle();
-                bundle.putString("userId", userId);
+                bundle.putInt("userId", userId);
                 marker.setExtraInfo(bundle);
                 points.add(trackPoint.getLatLng());
             }
@@ -159,7 +159,7 @@ public class DrawMarker {
                 continue;
             Bundle bundle = null;
             TrackPoint trackPoint = track.get(0);//获取起点
-            String userId = trackPoint.getUserId();
+            int userId = trackPoint.getUserId();
 
             //添加Marker
             OverlayOptions option = new MarkerOptions().position(trackPoint.getLatLng()).icon(geo_bitmap);
@@ -167,7 +167,7 @@ public class DrawMarker {
             marker.setToTop();
             //Marker上绑定id信息用于界面跳转
             bundle = new Bundle();
-            bundle.putString("userId", userId);
+            bundle.putInt("userId", userId);
             marker.setExtraInfo(bundle);
         }
         baiduMap.addOverlays(optionsList);
@@ -225,7 +225,7 @@ public class DrawMarker {
         for (int i = 0; i < trackPoints.size(); i++) {
             TrackPoint track = trackPoints.get(i);
 
-            String id = track.getUserId();
+            int id = track.getUserId();
 
             //添加Marker
             View numberView = inflater.inflate(R.layout.number_marker, null);
@@ -237,7 +237,7 @@ public class DrawMarker {
             marker.setToTop();
             //Marker上绑定id信息用于界面跳转
             bundle = new Bundle();
-            bundle.putString("p_id", id);
+            bundle.putInt("p_id", id);
             marker.setExtraInfo(bundle);
             points.add(track.getLatLng());
         }
