@@ -35,7 +35,7 @@ public class UserTripHistoryAdapter extends RecyclerView.Adapter<UserTripHistory
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         UserTrip userTrip = userTripList.get(position);
         holder.date.setText(userTrip.getDate());
-        holder.typeNo.setText(userTrip.getTypeNo());
+        holder.typeNo.setText(userTrip.getType()+userTrip.getNo());
         //非必填
         if (!TextUtils.isEmpty(userTrip.getNoSub())) {
             holder.subNo.setText(userTrip.getNoSub());
