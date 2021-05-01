@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bupt.sse.group7.covid19.R;
 import com.bupt.sse.group7.covid19.adapter.TypeChooseAdapter;
 import com.bupt.sse.group7.covid19.model.UserTrip;
+import com.bupt.sse.group7.covid19.utils.Constants;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.Calendar;
@@ -74,7 +75,7 @@ public class AddTripDialog extends Dialog {
                         userTrip.setNoSub(subNo.getText().toString());
                         userTrip.setMemo(memo.getText().toString());
                         userTrip.setDate(date.getText().toString());
-                        userTrip.setType(type.getText().toString());
+                        userTrip.setType(Constants.typeMap.get(type.getText().toString()));
                         yesClickListener.onYesClick(userTrip);
                     }
 

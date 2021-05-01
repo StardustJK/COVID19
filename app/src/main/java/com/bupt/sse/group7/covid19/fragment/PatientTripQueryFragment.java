@@ -25,6 +25,7 @@ import com.bupt.sse.group7.covid19.R;
 import com.bupt.sse.group7.covid19.adapter.TripResultAdapter;
 import com.bupt.sse.group7.covid19.adapter.TypeChooseAdapter;
 import com.bupt.sse.group7.covid19.model.PatientTrip;
+import com.bupt.sse.group7.covid19.utils.Constants;
 import com.bupt.sse.group7.covid19.utils.DBConnector;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.JsonArray;
@@ -42,7 +43,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class PatientTripQueryFragment extends Fragment {
-    private static String types[] = {"全部", "飞机", "火车", "地铁", "公交车", "出租车", "轮船"};
 
     TextView type, area, no;
     TextView dateStart, dateEnd;
@@ -155,7 +155,7 @@ public class PatientTripQueryFragment extends Fragment {
             JsonObject trip = trips.get(i).getAsJsonObject();
             String date=trip.get("t_date").getAsString().split(" ")[0];
             patientTrip.setDate(date);
-            patientTrip.setTypeNo(types[trip.get("t_type").getAsInt()]
+            patientTrip.setTypeNo(Constants.types[trip.get("t_type").getAsInt()]
                     + trip.get("t_no").getAsString());
             patientTrip.setNoSub(trip.get("t_no_sub").getAsString());
             patientTrip.setStartPos(trip.get("t_pos_start").getAsString());
@@ -220,7 +220,7 @@ public class PatientTripQueryFragment extends Fragment {
         RecyclerView recyclerView = view.findViewById(R.id.trip_dialog);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
-        TypeChooseAdapter adapter = new TypeChooseAdapter(types);
+        TypeChooseAdapter adapter = new TypeChooseAdapter(Constants.types);
         recyclerView.setAdapter(adapter);
 
         BottomSheetDialog typeDialog = new BottomSheetDialog(getActivity());

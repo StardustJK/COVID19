@@ -1,5 +1,6 @@
 package com.bupt.sse.group7.covid19.adapter;
 
+import android.graphics.Color;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,13 +13,17 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bupt.sse.group7.covid19.R;
-import com.bupt.sse.group7.covid19.model.PatientTrip;
 import com.bupt.sse.group7.covid19.model.UserTrip;
+import com.bupt.sse.group7.covid19.utils.Constants;
 
 import java.util.List;
 
 public class UserTripHistoryAdapter extends RecyclerView.Adapter<UserTripHistoryAdapter.MyViewHolder> {
     private List<UserTrip> userTripList;
+
+    public void setUserTripList(List<UserTrip> userTripList) {
+        this.userTripList = userTripList;
+    }
 
     public UserTripHistoryAdapter(List<UserTrip> userTrips) {
         userTripList = userTrips;
@@ -35,7 +40,7 @@ public class UserTripHistoryAdapter extends RecyclerView.Adapter<UserTripHistory
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         UserTrip userTrip = userTripList.get(position);
         holder.date.setText(userTrip.getDate());
-        holder.typeNo.setText(userTrip.getType()+userTrip.getNo());
+        holder.typeNo.setText(Constants.types[userTrip.getType()]+userTrip.getNo());
         //非必填
         if (!TextUtils.isEmpty(userTrip.getNoSub())) {
             holder.subNo.setText(userTrip.getNoSub());
@@ -61,7 +66,9 @@ public class UserTripHistoryAdapter extends RecyclerView.Adapter<UserTripHistory
 
         } else {
             holder.memo_layout.setVisibility(View.GONE);
-
+        }
+        if(userTrip.getRisk()){
+            holder.layout.setBackgroundResource(R.drawable.border_red);
         }
     }
 
@@ -74,7 +81,7 @@ public class UserTripHistoryAdapter extends RecyclerView.Adapter<UserTripHistory
 
         TextView date, typeNo, subNo, startPos, endPos, who, memo;
         RelativeLayout start_end;
-        LinearLayout who_layout,memo_layout;
+        LinearLayout who_layout,memo_layout,layout;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -88,6 +95,7 @@ public class UserTripHistoryAdapter extends RecyclerView.Adapter<UserTripHistory
             memo_layout = itemView.findViewById(R.id.memo_layout);
             who_layout=itemView.findViewById(R.id.who_layout);
             who_layout.setVisibility(View.GONE);
+            layout=itemView.findViewById(R.id.layout);
 
         }
     }

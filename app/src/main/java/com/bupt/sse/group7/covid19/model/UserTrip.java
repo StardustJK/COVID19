@@ -2,12 +2,30 @@ package com.bupt.sse.group7.covid19.model;
 
 public class UserTrip {
     String date;//*
-    String type;//飞机*
+    int type;//飞机*
     String no;//G308*
     String noSub;//车厢
     String startPos;//起始站
     String endPos;//结束站
     String memo;//备注
+    int id;
+    boolean risk;
+
+    public boolean getRisk() {
+        return risk;
+    }
+
+    public void setRisk(boolean risk) {
+        this.risk = risk;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getNo() {
         return no;
@@ -33,12 +51,12 @@ public class UserTrip {
         this.date = date;
     }
 
-    public String getType() {
+    public int getType() {
         return type;
     }
 
-    public void setType(String typeNo) {
-        this.type = typeNo;
+    public void setType(int type) {
+        this.type = type;
     }
 
     public String getNoSub() {

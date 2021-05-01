@@ -22,7 +22,7 @@ import org.w3c.dom.Text;
 
 public class PatientTripActivity extends AppCompatActivity{
 
-TextView query,record;
+TextView query,record,risk;
 ViewPager2 viewPager;
 
 PatientTripPagerAdapter mAdapter;
@@ -46,6 +46,7 @@ PatientTripPagerAdapter mAdapter;
     private void initView() {
         query=findViewById(R.id.query_btn);
         record=findViewById(R.id.record_btn);
+        risk=findViewById(R.id.risk_btn);
         mAdapter=new PatientTripPagerAdapter(getSupportFragmentManager(),getLifecycle());
         viewPager=findViewById(R.id.viewpager);
         viewPager.setAdapter(mAdapter);
@@ -79,6 +80,12 @@ PatientTripPagerAdapter mAdapter;
             @Override
             public void onClick(View v) {
                 viewPager.setCurrentItem(1);
+            }
+        });
+        risk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewPager.setCurrentItem(2);
             }
         });
 

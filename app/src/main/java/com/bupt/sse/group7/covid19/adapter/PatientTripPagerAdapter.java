@@ -8,16 +8,19 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.bupt.sse.group7.covid19.fragment.PatientTripQueryFragment;
 import com.bupt.sse.group7.covid19.fragment.PatientTripRecordFragment;
+import com.bupt.sse.group7.covid19.fragment.PatientTripRiskFragment;
 
 public class PatientTripPagerAdapter extends FragmentStateAdapter {
 
     PatientTripQueryFragment patientTripQueryFragment;
     PatientTripRecordFragment patientTripRecordFragment;
+    PatientTripRiskFragment patientTripRiskFragment;
 
     public PatientTripPagerAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle) {
         super(fragmentManager, lifecycle);
         patientTripRecordFragment = new PatientTripRecordFragment();
         patientTripQueryFragment = new PatientTripQueryFragment();
+        patientTripRiskFragment=new PatientTripRiskFragment();
     }
 
     @NonNull
@@ -31,12 +34,14 @@ public class PatientTripPagerAdapter extends FragmentStateAdapter {
             case 1:
                 fragment = patientTripRecordFragment;
                 break;
+            case 2:
+                fragment=patientTripRiskFragment;
         }
         return fragment;
     }
 
     @Override
     public int getItemCount() {
-        return 2;
+        return 3;
     }
 }
