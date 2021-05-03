@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".EditTrackActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar_edit"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimary"
+            android:outlineAmbientShadowColor="@color/darkGrey"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            tools:targetApi="p" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.baidu.mapapi.map.MapView
+            android:id="@+id/mapView"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            >
+        </com.baidu.mapapi.map.MapView>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="35dp"
+            android:layout_marginHorizontal="8dp"
+            android:layout_alignParentRight="true">
+
+            <androidx.cardview.widget.CardView
+                style="@style/fab_card"
+                android:id="@+id/bus_button"
+                app:cardBackgroundColor="@color/cardLightBlue"
+                app:cardElevation="5dp"
+                app:cardCornerRadius="28dp">
+
+                <ImageView
+                    android:id="@+id/bus_btn"
+                    style="@style/fab_img"
+                    android:src="@drawable/bus"/>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                style="@style/fab_card"
+                android:id="@+id/locate_button"
+                android:layout_below="@id/bus_button"
+                app:cardBackgroundColor="@color/cardLightBlue"
+                app:cardElevation="5dp"
+                app:cardCornerRadius="30dp">
+
+                <ImageView
+                    android:id="@+id/locationIv"
+                    style="@style/fab_img"
+                    android:src="@drawable/locate"/>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                style="@style/fab_card"
+                android:id="@+id/btn_confirm"
+                android:layout_below="@id/locate_button"
+                app:cardBackgroundColor="@color/cardLightBlue"
+                app:cardElevation="5dp"
+                app:cardCornerRadius="30dp">
+
+                <ImageView
+                    style="@style/fab_img"
+                    android:src="@drawable/edit"/>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                style="@style/fab_card"
+                android:id="@+id/btn_wifiroute"
+                android:layout_below="@id/btn_confirm"
+                app:cardBackgroundColor="@color/cardLightBlue"
+                app:cardElevation="5dp"
+                app:cardCornerRadius="30dp">
+
+                <ImageView
+                    style="@style/fab_img"
+                    android:src="@drawable/wifi"/>
+
+            </androidx.cardview.widget.CardView>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+
+</LinearLayout>

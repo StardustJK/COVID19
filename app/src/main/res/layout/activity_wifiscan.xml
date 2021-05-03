@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/lightGrey"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimary"
+            android:outlineAmbientShadowColor="@color/darkGrey"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            tools:targetApi="p" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/bg_grey"
+        >
+
+        <ImageView
+            android:id="@+id/bg"
+            android:layout_width="match_parent"
+            android:layout_height="500dp"
+            android:layout_gravity="center"
+            android:scaleType="fitXY"
+            android:src="@drawable/bg11"
+            android:visibility="visible" />
+
+        <ImageButton
+            android:id="@+id/bt_wifiscan"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="120dp"
+            android:background="@drawable/record_statue_selector" />
+
+        <TextView
+            android:id="@+id/tv_wifiscan_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="200dp"
+            android:textColor="@color/text_grey"
+            android:text="扫描未开启"
+            android:textSize="35sp" />
+
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/bt3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="上传WiFi记录!"/>
+
+        <Button
+            android:id="@+id/bt4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+        android:text="下载确诊患者wifi记录"/>
+
+        <Button
+            android:id="@+id/bt_wifinode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="查看已关注wifi"/>
+    </LinearLayout>>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/bt5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="显示wifi记录"/>
+
+        <Button
+            android:id="@+id/bt6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="显示下载记录"/>
+
+        <Button
+            android:id="@+id/bt7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="本地匹配"/>
+
+        <Button
+            android:id="@+id/bt_getrisk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="风险预测"/>
+    </LinearLayout>>
+
+    <ScrollView
+        android:id="@+id/scrollView2"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tv1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hello World!" />
+      
+     </ScrollView>
+
+
+</LinearLayout>
+

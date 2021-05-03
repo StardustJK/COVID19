@@ -1,0 +1,85 @@
+<resources>
+    <string name="app_name">Covid19</string>
+    <string name="action_settings">Settings</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+    <string name="get_hospitals">Get all hospitals</string>
+    <string name="get_first">Get hospital with id 1</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+
+    <string name="contact_hospital">联系医院</string>
+    <string name="tel">电话</string>
+    <string name="address">地址</string>
+    <string name="inCharge">负责人</string>
+
+    <string name="update_hosp_data">更新数据</string>
+    <string name="edit_hosp_info">编辑信息</string>
+
+    <string name="severe">重症</string>
+    <string name="mild">轻症</string>
+    <string name="cured">已治愈</string>
+    <string name="dead">死亡</string>
+    <string name="confirmed">确诊</string>
+
+    <string name="hospital_status">确诊情况</string>
+
+    <string name="patient_auth">个人认证</string>
+    <string name="inputNo">请输入用户名或手机号</string>
+    <string name="inputTel">请输入密码</string>
+    <string name="setUsername">设置登录名</string>
+
+    <string name="hospital_auth">医院认证</string>
+    <string name="inputUsername">请输入登录名</string>
+    <string name="inputPassword">请输入密码</string>
+
+
+    <string name="submit">提交</string>
+
+    <string name="hospitals">医院列表</string>
+    <string name="authentication">用户认证</string>
+    <string name="my_page">我的主页</string>
+    <string name="track">轨迹查看</string>
+    <string name="wifi">WIFI扫描</string>
+    <string name="bluetooth">蓝牙扫描</string>
+
+    <string name="my_page_desc">进入认证用户主页</string>
+    <string name="hospitals_desc">查看全部医院列表</string>
+    <string name="auth_desc">用户进行身份认证登录</string>
+    <string name="track_desc">查看附近确诊患者轨迹</string>
+    <string name="wifi_desc">WIFI扫描相关服务</string>
+    <string name="bluetooth_desc">蓝牙扫描相关服务</string>
+
+    <string name="bed_capacity">床位容量</string>
+
+    <string name="hospital_info">医院信息</string>
+    <string name="done">完成</string>
+    <string name="patient_track">ta的轨迹</string>
+
+    <string name="set_username">设置用户名</string>
+    <string name="set_name_hint1">首次登录，请填写昵称</string>
+
+    <string name="not_available">暂未上传</string>
+
+    <string name="supplies_remains">物资情况(缺少数量)</string>
+    <string name="remains_count">剩余数量</string>
+    <string name="n95">N95口罩</string>
+    <string name="surgeon">医用外科口罩</string>
+    <string name="ventilator">呼吸机</string>
+    <string name="clothe">防护服</string>
+    <string name="glasses">护目镜</string>
+    <string name="alcohol">医用酒精</string>
+    <string name="pants">安心裤</string>
+
+    <string name="nothing">-</string>
+    <string name="update_track">上传轨迹</string>
+
+    <string name="filter">筛选</string>
+    <string name="bus">添加公交出行记录</string>
+    <string name="confirm">确定</string>
+    <string name="date_time">日期与时间</string>
+</resources>

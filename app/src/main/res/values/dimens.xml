@@ -1,0 +1,10 @@
+<resources>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="status_4">30dp</dimen>
+    <dimen name="status_3">40dp</dimen>
+    <dimen name="status_2">60dp</dimen>
+    <dimen name="status_1">120dp</dimen>
+    <dimen name="trip_text_size">20sp</dimen>
+    <dimen name="trip_margin">20dp</dimen>
+    <dimen name="trip_height">40dp</dimen>
+</resources>

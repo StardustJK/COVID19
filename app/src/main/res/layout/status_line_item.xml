@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/lightGrey">
+
+        <TextView
+            android:id="@+id/status_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textColor="@color/textGrey"
+            android:text="" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="30dp"
+                    android:id="@+id/status_line_before"
+                    android:layout_height="1dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@color/darkGrey" />
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_marginVertical="5dp"
+                    android:layout_gravity="center_vertical"
+                    app:cardBackgroundColor="@color/colorPrimary"
+                    app:cardCornerRadius="9dp"
+                    app:cardElevation="5dp">
+
+                        <TextView
+                            android:id="@+id/inner_dot"
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:background="@drawable/dot"
+                            android:layout_margin="3dp"/>
+
+
+                </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:layout_width="30dp"
+                    android:id="@+id/status_line_after"
+                    android:layout_height="1dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@color/darkGrey" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/status_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textColor="@color/textGrey"
+            android:text="" />
+
+</LinearLayout>

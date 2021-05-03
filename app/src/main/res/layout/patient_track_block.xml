@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    style="@style/detail_fragment"
+    >
+
+    <TextView
+        style="@style/detail_card_title"
+        android:text="@string/patient_track" />
+
+    <LinearLayout
+        style="@style/detail_card"
+        android:orientation="vertical"
+        android:background="@drawable/border"
+        android:padding="12dp"
+        android:id="@+id/track_block">
+
+
+    </LinearLayout>
+</LinearLayout>

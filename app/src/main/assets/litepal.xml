@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<litepal>
+    <dbname value="BluetoothDemo"/>
+    <version value="1"/>
+
+    <!-- 映射表 -->
+    <list>
+        <mapping class="com.bupt.sse.group7.covid19.bluetoothDataEntity.BluetoothInfo"/>
+        <mapping class="com.bupt.sse.group7.covid19.bluetoothDataEntity.MySecretKeyInfo"/>
+        <mapping class="com.bupt.sse.group7.covid19.bluetoothDataEntity.OtherSecretKeyInfo"/>
+        <mapping class="com.bupt.sse.group7.covid19.bluetoothDataEntity.MyIdentifierInfo"/>
+
+    </list>
+
+</litepal>

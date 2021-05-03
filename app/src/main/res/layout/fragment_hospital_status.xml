@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/detail_fragment">
+
+    <TextView
+        style="@style/detail_card_title"
+        android:text="@string/hospital_status" />
+
+    <LinearLayout
+        style="@style/detail_card"
+        android:background="@drawable/border"
+        android:layout_marginHorizontal="15dp"
+        android:orientation="vertical">
+
+        <androidx.gridlayout.widget.GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginVertical="12dp"
+            app:columnCount="8"
+            app:rowCount="1">
+
+            <TextView
+                app:layout_columnWeight="1"
+                style="@style/statusTitle"
+                android:text="@string/mild"
+                android:textColor="@color/mild" />
+
+            <TextView
+                app:layout_columnWeight="1"
+                style="@style/statusContent"
+                android:id="@+id/mild_view"
+                android:text="12"
+                android:textColor="@color/textGrey"/>
+
+            <TextView
+                app:layout_columnWeight="1"
+                style="@style/statusTitle"
+                android:text="@string/severe"
+                android:textColor="@color/severe" />
+
+            <TextView
+                app:layout_columnWeight="1"
+                style="@style/statusContent"
+                android:text="23"
+                android:id="@+id/severe_view"
+                android:textColor="@color/textGrey"/>
+
+            <TextView
+                app:layout_columnWeight="1"
+                style="@style/statusTitle"
+                android:text="@string/cured"
+                android:textColor="@color/healthy" />
+
+            <TextView
+                app:layout_columnWeight="1"
+                style="@style/statusContent"
+                android:text="59"
+                android:id="@+id/cured_view"
+                android:textColor="@color/textGrey"/>
+
+            <TextView
+                app:layout_columnWeight="1"
+                style="@style/statusTitle"
+                android:text="@string/dead"
+                android:textColor="@color/textGrey" />
+
+            <TextView
+                app:layout_columnWeight="1"
+                style="@style/statusContent"
+                android:text="8"
+                android:id="@+id/dead_view"
+                android:textColor="@color/textGrey"/>
+
+
+        </androidx.gridlayout.widget.GridLayout>
+
+    </LinearLayout>
+
+
+</LinearLayout>

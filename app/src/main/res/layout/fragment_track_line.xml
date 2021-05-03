@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="12dp"
+    android:orientation="vertical">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:id="@+id/track_line_view"
+        android:background="@color/colorPrimary"
+        android:layout_marginTop="0dp"
+        android:layout_marginHorizontal="15dp"
+        android:layout_gravity="center_horizontal">
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+</LinearLayout>

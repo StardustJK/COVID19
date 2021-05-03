@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#FFFFFF</color>
+    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorAccent">#03DAC5</color>
+    <color name="cardGreen">#19B29D</color>
+    <color name="darkGreen">#128676</color>
+    <color name="cardBlue">#01B4C2</color>
+    <color name="mild">#FF931C</color>
+    <color name="severe">#E8443A</color>
+    <color name="healthy">#5C9E46</color>
+    <color name="lightGrey">#F5F5F5</color>
+    <color name="darkGrey">#AFABAB</color>
+    <color name="confirmed">#8497B0</color>
+    <color name="textGrey">#515151</color>
+    <color name="cardOrange">#E29460</color>
+    <color name="cardLightGreen">#72A668</color>
+    <color name="cardDarkGreen">#00ADA2</color>
+    <color name="text_grey">#9D9D9D</color>
+    <color name="bg_grey">#EDEDED</color>
+    <color name="cardLightBlue">#00BDBA</color>
+    <color name="cardPurple">#6C6BA8</color>
+    <color name="dead">#555555</color>
+    <color name="polyline">#ff941d</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="blue">#108EE9</color>
+    <color name="chosen">#c6e8e4</color>
+</resources>
