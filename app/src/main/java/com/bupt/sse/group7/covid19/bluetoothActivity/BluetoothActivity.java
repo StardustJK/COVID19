@@ -3,6 +3,7 @@ package com.bupt.sse.group7.covid19.bluetoothActivity;
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bupt.sse.group7.covid19.R;
@@ -143,11 +145,11 @@ public class BluetoothActivity extends AppCompatActivity implements View.OnClick
         public void onReceive(Context context, Intent intent) {
             boolean threadFlag = intent.getBooleanExtra("threadFlag", false);
             Log.d(TAG, "onReceive:广播收到threadFlag：" + threadFlag);
-            if(threadFlag){
+            if (threadFlag) {
                 scanningView.setTitle("扫描中");
                 scanningView.startScanAnimation();
                 searchButton.setText("停止蓝牙扫描服务");
-            }else{
+            } else {
                 scanningView.setTitle(" ");
                 scanningView.stopScanAnimation();
                 searchButton.setText("开启蓝牙扫描服务");
@@ -163,9 +165,9 @@ public class BluetoothActivity extends AppCompatActivity implements View.OnClick
         setContentView(R.layout.activity_bluetooth);
         Log.d(TAG, "onCreate:蓝牙活动创建");
 
-        if(CurrentUser.getCurrentUser() != null &&CurrentUser.getCurrentUser().getUserId() !=null)
+        if (CurrentUser.getCurrentUser() != null && CurrentUser.getCurrentUser().getUserId() != null)
             userid = Integer.parseInt(CurrentUser.getCurrentUser().getUserId());
-        Log.d(TAG, "onCreate:用户id是："+userid);
+        Log.d(TAG, "onCreate:用户id是：" + userid);
 
 
         //获取控件
@@ -311,11 +313,37 @@ public class BluetoothActivity extends AppCompatActivity implements View.OnClick
                 break;
             case R.id.post_secretKeyInfo_button:
                 Log.d(TAG, "onClick: 上传每日跟踪秘钥");
-                postMySecretKeyInfo();
+                if (this.userid == 0) {
+                    AlertDialog alertDialog = new AlertDialog.Builder(this)
+                            .setTitle("提示")//标题
+                            .setMessage("匿名用户只有在确诊后才可以上传自己的每日跟踪秘钥，是否继续操作？")//内容
+                            .setIcon(R.mipmap.ic_launcher)//图标
+                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    postMySecretKeyInfo();
+                                }
+                            })
+                            .setNegativeButton("取消", null)
+                            .create();
+                    alertDialog.show();
+                } else {
+                    postMySecretKeyInfo();
+                }
                 break;
             case R.id.post_bluetoothInfo_button:
                 Log.d(TAG, "onClick: 上传蓝牙扫描信息");
-                postBluetoothInfo();
+                if (this.userid == 0) {
+                    AlertDialog alertDialog = new AlertDialog.Builder(this)
+                            .setTitle("有问题")//标题
+                            .setMessage("用户在登录后才可以使用此功能。")//内容
+                            .setIcon(R.mipmap.ic_launcher)//图标
+                            .setPositiveButton("我知道了", null)
+                            .create();
+                    alertDialog.show();
+                } else {
+                    postBluetoothInfo();
+                }
                 break;
             case R.id.get_otherSecretKey_button:
                 Log.d(TAG, "onClick: 下载广播键");
@@ -331,7 +359,30 @@ public class BluetoothActivity extends AppCompatActivity implements View.OnClick
                 break;
             case R.id.get_riskLevel_button:
                 Log.d(TAG, "onClick: 获得感染风险评估等级");
-                findRiskLevelByUserid();
+                AlertDialog alertDialog;//标题
+                if (this.userid == 0) {
+                    alertDialog = new AlertDialog.Builder(this)
+                            .setTitle("有问题")//标题
+                            .setMessage("用户在登录后才可以使用此功能。")//内容
+                            .setIcon(R.mipmap.ic_launcher)//图标
+                            .setPositiveButton("我知道了", null)
+                            .create();
+                } else {
+                    alertDialog = new AlertDialog.Builder(this)
+                            .setTitle("提示")//标题
+                            .setMessage("用户使用此功能需要上传蓝牙扫描信息，是否继续操作？")//内容
+                            .setIcon(R.mipmap.ic_launcher)//图标
+                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    postBluetoothInfo();
+                                    findRiskLevelByUserid();
+                                }
+                            })
+                            .setNegativeButton("取消", null)
+                            .create();
+                }
+                alertDialog.show();
                 break;
             default:
                 break;
@@ -351,6 +402,8 @@ public class BluetoothActivity extends AppCompatActivity implements View.OnClick
      * 上传每日跟踪秘钥
      */
     private void postMySecretKeyInfo() {
+
+
         String url = API_URL + "api/Bluetooth/postSecretKeyInfoList";
 
         List<MySecretKeyInfo> mySecretKeyInfoList =
@@ -394,6 +447,7 @@ public class BluetoothActivity extends AppCompatActivity implements View.OnClick
      * 上传蓝牙扫描信息
      */
     private void postBluetoothInfo() {
+
         String url = API_URL + "api/Bluetooth/postBluetoothInfoList";
 
         List<BluetoothInfo> bluetoothInfoList =
@@ -436,6 +490,7 @@ public class BluetoothActivity extends AppCompatActivity implements View.OnClick
                 Log.d(TAG, "onResponse: 上传蓝牙扫描信息成功，上传数量：" + n);
             }
         });
+        return;
     }
 
     /**
@@ -443,7 +498,7 @@ public class BluetoothActivity extends AppCompatActivity implements View.OnClick
      */
     private void findRiskLevelByUserid() {
         int userid = this.userid;
-        String url = API_URL + "user/getBluetoothRiskLevel?userId="+userid;
+        String url = API_URL + "user/getBluetoothRiskLevel?userId=" + userid;
 //        RequestBody requestBody = new FormBody.Builder()
 //                .add("userId", String.valueOf(userid))
 //                .build();
@@ -490,7 +545,7 @@ public class BluetoothActivity extends AppCompatActivity implements View.OnClick
     /**
      * 下载并准备存储广播键
      */
-    public void getAndSaveOtherSK(){
+    public void getAndSaveOtherSK() {
         String url = API_URL + "api/Bluetooth/getSecretKeyList";
         HttpUtil.sendOkHttpRequest(url, new Callback() {
             @Override
@@ -501,7 +556,7 @@ public class BluetoothActivity extends AppCompatActivity implements View.OnClick
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws  IOException {
+            public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
                 handler.sendEmptyMessage(GET_OTHER_KEY_SUCCESSFUL);
                 Log.d(TAG, "onResponse: 获取广播键成功：" + responseText);
@@ -516,6 +571,7 @@ public class BluetoothActivity extends AppCompatActivity implements View.OnClick
 
     /**
      * 存储广播键
+     *
      * @param reponse
      * @return
      * @throws JSONException
@@ -534,7 +590,7 @@ public class BluetoothActivity extends AppCompatActivity implements View.OnClick
                     .find(OtherSecretKeyInfo.class);
 
             //如果没有这个广播键，则存储到本地
-            if(otherSecretKeyInfoList.size() == 0) {
+            if (otherSecretKeyInfoList.size() == 0) {
                 OtherSecretKeyInfo otherSecretKeyInfo = new OtherSecretKeyInfo();
                 otherSecretKeyInfo.setSecret_key(secret_key);
                 otherSecretKeyInfo.setDate(dateString);
@@ -550,6 +606,7 @@ public class BluetoothActivity extends AppCompatActivity implements View.OnClick
 
     /**
      * 获得并存储本地匹配结果
+     *
      * @throws Exception
      */
     private void getAndSaveCheckResult() throws Exception {
