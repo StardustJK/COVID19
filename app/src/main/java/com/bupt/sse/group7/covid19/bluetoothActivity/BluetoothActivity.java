@@ -261,29 +261,6 @@ public class BluetoothActivity extends AppCompatActivity implements View.OnClick
     }
 
     /**
-     * 保存用户id
-     *
-     * @param userid
-     */
-//    private void saveMyUserid(int userid) {
-//        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(BluetoothActivity.this).edit();
-//        editor.putInt("userid", userid);
-//        editor.apply();
-//    }
-
-
-    /**
-     * 获得用户id
-     *
-     * @return
-     */
-//    private int getMyUserid() {
-//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-//        int myUserid = prefs.getInt("userid", 0);
-//        return userid;
-//    }
-
-    /**
      * 按钮监听器
      *
      * @param v
@@ -402,9 +379,15 @@ public class BluetoothActivity extends AppCompatActivity implements View.OnClick
      * 上传每日跟踪秘钥
      */
     private void postMySecretKeyInfo() {
-
-
         String url = API_URL + "api/Bluetooth/postSecretKeyInfoList";
+
+        int userid = this.userid;
+
+        //如果userid不为0，但user是确诊患者，则把userid置为0
+        if(userid != 0){
+            if(CurrentUser.getCurrentUser().getStatus() == 1)
+                userid = 0;
+        }
 
         List<MySecretKeyInfo> mySecretKeyInfoList =
                 LitePal.where("is_used = ?", "0").find(MySecretKeyInfo.class);
@@ -499,9 +482,6 @@ public class BluetoothActivity extends AppCompatActivity implements View.OnClick
     private void findRiskLevelByUserid() {
         int userid = this.userid;
         String url = API_URL + "user/getBluetoothRiskLevel?userId=" + userid;
-//        RequestBody requestBody = new FormBody.Builder()
-//                .add("userId", String.valueOf(userid))
-//                .build();
         HttpUtil.sendOkHttpRequest(url, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -520,8 +500,6 @@ public class BluetoothActivity extends AppCompatActivity implements View.OnClick
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-//                String responseText = response.body().string();
-//                int riskLevel = Integer.parseFloat(responseText);
                 handler.sendEmptyMessage(GET_RISK_LEVEL_SUCCESSFUL);
                 Log.d(TAG, "onResponse: 获得风险评估等级成功，riskLevel：" + riskLevel);
                 saveMyRiskLevel(riskLevel);
