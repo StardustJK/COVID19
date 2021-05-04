@@ -193,6 +193,7 @@ public class PatientTripQueryFragment extends Fragment {
                 DatePickerDialog.OnDateSetListener listener = new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                        dateStart.setText(year + "-" + (++month) + "-" + dayOfMonth);
                     }
                 };
                 DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), AlertDialog.THEME_HOLO_LIGHT, listener, year7, month7, day7);
