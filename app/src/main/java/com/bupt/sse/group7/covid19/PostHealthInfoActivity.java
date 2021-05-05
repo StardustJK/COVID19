@@ -86,7 +86,12 @@ public class PostHealthInfoActivity extends AppCompatActivity {
         contentText = findViewById(R.id.healthInfo_content);
         submitCard = findViewById(R.id.healthInfo_submit);
 
+        //创建dialog
         waitingDialog= new ProgressDialog(this);
+        waitingDialog.setTitle("等待中");
+        waitingDialog.setMessage("请稍候...");
+        waitingDialog.setIndeterminate(true);
+        waitingDialog.setCancelable(false);
 
         //获取array中定义的值
         healthInfoType = getResources().getStringArray(R.array.healthInfoType);
@@ -110,7 +115,7 @@ public class PostHealthInfoActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: 点击提交按钮");
-                showWaitingDialog();
+                waitingDialog.show();
                 postHealthInfo();
             }
         });
@@ -175,16 +180,6 @@ public class PostHealthInfoActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    private void showWaitingDialog() {
-        /* 等待Dialog具有屏蔽其他控件的交互能力
-         * @setCancelable 为使屏幕不可点击，设置为不可取消(false)
-         * 下载等事件完成后，主动调用函数关闭该Dialog
-         */
-        waitingDialog.setTitle("我是一个等待Dialog");
-        waitingDialog.setMessage("等待中...");
-        waitingDialog.setIndeterminate(true);
-        waitingDialog.setCancelable(false);
-        waitingDialog.show();
-    }
+
 
 }

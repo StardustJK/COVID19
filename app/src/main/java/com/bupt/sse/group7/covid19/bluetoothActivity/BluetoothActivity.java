@@ -106,40 +106,42 @@ public class BluetoothActivity extends AppCompatActivity implements View.OnClick
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case POST_SECRET_KEY_SUCCESSFUL:
-                    Toast.makeText(BluetoothActivity.this,
-                            "上传每日跟踪秘钥成功", Toast.LENGTH_SHORT).show();
+                    waitingDialog.dismiss();
+                    showResponseDialog("上传每日跟踪秘钥成功。");
+//                    Toast.makeText(BluetoothActivity.this,
+//                            "上传每日跟踪秘钥成功", Toast.LENGTH_SHORT).show();
                     break;
                 case POST_SECRET_KEY_UNSUCCESSFUL:
-                    Toast.makeText(BluetoothActivity.this,
-                            "上传每日跟踪秘钥失败", Toast.LENGTH_SHORT).show();
+                    waitingDialog.dismiss();
+                    showResponseDialog("上传每日跟踪秘钥失败。");
                     break;
                 case POST_BLUETOOTH_INFO_SUCCESSFUL:
-                    Toast.makeText(BluetoothActivity.this,
-                            "上传蓝牙扫描信息成功", Toast.LENGTH_SHORT).show();
+                    waitingDialog.dismiss();
+                    showResponseDialog("上传蓝牙扫描信息成功");
                     break;
                 case POST_BLUETOOTH_INFO_UNSUCCESSFUL:
-                    Toast.makeText(BluetoothActivity.this,
-                            "上传蓝牙扫描信息失败", Toast.LENGTH_SHORT).show();
+                    waitingDialog.dismiss();
+                    showResponseDialog("上传蓝牙扫描信息失败");
                     break;
                 case GET_OTHER_KEY_SUCCESSFUL:
-                    Toast.makeText(BluetoothActivity.this,
-                            "成功下载最新广播键", Toast.LENGTH_SHORT).show();
+                    waitingDialog.dismiss();
+                    showResponseDialog("成功下载最新广播键");
                     break;
                 case GET_OTHER_KEY_UNSUCCESSFUL:
-                    Toast.makeText(BluetoothActivity.this,
-                            "下载广播键失败", Toast.LENGTH_SHORT).show();
+                    waitingDialog.dismiss();
+                    showResponseDialog("下载广播键失败");
                     break;
                 case GET_RISK_LEVEL_SUCCESSFUL:
-                    Toast.makeText(BluetoothActivity.this,
-                            "获得感染风险评估等级成功，请查看", Toast.LENGTH_SHORT).show();
+                    waitingDialog.dismiss();
+                    showResponseDialog("获得感染风险评估等级成功，请到个人主页查看");
                     break;
                 case GET_RISK_LEVEL_UNSUCCESSFUL:
-                    Toast.makeText(BluetoothActivity.this,
-                            "获得感染风险评估等级失败", Toast.LENGTH_SHORT).show();
+                    waitingDialog.dismiss();
+                    showResponseDialog("获得感染风险评估等级失败");
                     break;
                 case GET_CHECK_RESULT:
-                    Toast.makeText(BluetoothActivity.this,
-                            "本地匹配完成，请查看", Toast.LENGTH_SHORT).show();
+                    waitingDialog.dismiss();
+                    showResponseDialog("本地匹配完成，请到个人主页查看");
                     break;
                 case SHOW_WAITTING_DIALOG:
                     waitingDialog.show();
@@ -208,8 +210,8 @@ public class BluetoothActivity extends AppCompatActivity implements View.OnClick
 
         //创建dialog
         waitingDialog= new ProgressDialog(this);
-        waitingDialog.setTitle("我是一个等待Dialog");
-        waitingDialog.setMessage("等待中...");
+        waitingDialog.setTitle("等待中");
+        waitingDialog.setMessage("请稍候...");
         waitingDialog.setIndeterminate(true);
         waitingDialog.setCancelable(false);
 
@@ -399,10 +401,10 @@ public class BluetoothActivity extends AppCompatActivity implements View.OnClick
      * 上传每日跟踪秘钥
      */
     private void postMySecretKeyInfo() {
+        handler.sendEmptyMessage(SHOW_WAITTING_DIALOG);
         String url = API_URL + "api/Bluetooth/postSecretKeyInfoList";
 
         int userid = this.userid;
-
         //如果userid不为0，但user是确诊患者，则把userid置为0
         if(userid != 0){
             if(CurrentUser.getCurrentUser().getStatus() == 1)
@@ -450,7 +452,7 @@ public class BluetoothActivity extends AppCompatActivity implements View.OnClick
      * 上传蓝牙扫描信息
      */
     private void postBluetoothInfo() {
-
+        handler.sendEmptyMessage(SHOW_WAITTING_DIALOG);
         String url = API_URL + "api/Bluetooth/postBluetoothInfoList";
 
         List<BluetoothInfo> bluetoothInfoList =
@@ -500,6 +502,7 @@ public class BluetoothActivity extends AppCompatActivity implements View.OnClick
      * 向服务器请求获得用户的感染风险
      */
     private void findRiskLevelByUserid() {
+        handler.sendEmptyMessage(SHOW_WAITTING_DIALOG);
         int userid = this.userid;
         String url = API_URL + "user/getBluetoothRiskLevel?userId=" + userid;
         HttpUtil.sendOkHttpRequest(url, new Callback() {
@@ -544,6 +547,7 @@ public class BluetoothActivity extends AppCompatActivity implements View.OnClick
      * 下载并准备存储广播键
      */
     public void getAndSaveOtherSK() {
+        handler.sendEmptyMessage(SHOW_WAITTING_DIALOG);
         String url = API_URL + "api/Bluetooth/getSecretKeyList";
         HttpUtil.sendOkHttpRequest(url, new Callback() {
             @Override
@@ -608,6 +612,7 @@ public class BluetoothActivity extends AppCompatActivity implements View.OnClick
      * @throws Exception
      */
     private void getAndSaveCheckResult() throws Exception {
+        handler.sendEmptyMessage(SHOW_WAITTING_DIALOG);
         int checkResult = AlgUtil.getCheckResult();
         handler.sendEmptyMessage(GET_CHECK_RESULT);
         Log.d(TAG, "getAndSaveCheckResult: 本地匹配完成，匹配成功数量：" + checkResult);
@@ -625,6 +630,15 @@ public class BluetoothActivity extends AppCompatActivity implements View.OnClick
         editor.apply();
     }
 
+    private void showResponseDialog(String message){
+        AlertDialog alertDialog = new AlertDialog.Builder(this)
+//                .setTitle("提示")//标题
+                .setMessage(message)//内容
+                .setIcon(R.mipmap.ic_launcher)//图标
+                .setPositiveButton("确定",null )
+                .create();
+        alertDialog.show();
+    }
 
 
 }
