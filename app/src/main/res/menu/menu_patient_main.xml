@@ -10,8 +10,15 @@
     <item
         android:id="@+id/action_update_status"
         android:orderInCategory="1"
-        android:title="更新状态"
+        android:title="上报健康信息"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_healthInfo_history"
+        android:orderInCategory="1"
+        android:title="查看健康信息记录"
+        app:showAsAction="never" />
+
     <item
         android:id="@+id/action_auth"
         android:orderInCategory="1"

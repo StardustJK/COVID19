@@ -27,7 +27,6 @@ import okhttp3.Response;
 public class FirstWorkService extends Service {
 
     private static final String TAG = "FirstWorkService";
-    private static final String API_URL = "http://192.168.43.129:3030/api/Bluetooth";
     public static final MediaType JSON=MediaType.parse("application/json; charset=utf-8");
 
     @Override

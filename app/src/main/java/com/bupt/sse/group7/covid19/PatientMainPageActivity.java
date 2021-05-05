@@ -73,6 +73,14 @@ public class PatientMainPageActivity extends AppCompatActivity implements IPatie
                 }
                 return true;
             case R.id.action_update_status:
+                Intent intent1 = new Intent(PatientMainPageActivity.this, PostHealthInfoActivity.class);
+                startActivity(intent1);
+                finish();
+                return true;
+            case R.id.action_healthInfo_history:
+                Intent intent2 = new Intent(PatientMainPageActivity.this, ShowHealthInfoHistoryActivity.class);
+                startActivity(intent2);
+                finish();
                 return true;
             case R.id.action_auth:
                 return true;

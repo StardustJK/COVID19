@@ -20,4 +20,9 @@
             <item>平谷区</item>  
     </string-array>  
 
+    <string-array name="healthInfoType">
+        <item>确诊信息</item>
+        <item>康复信息</item>
+    </string-array>
+
 </resources>

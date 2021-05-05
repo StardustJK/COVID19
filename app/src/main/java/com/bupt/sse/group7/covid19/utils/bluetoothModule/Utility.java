@@ -17,8 +17,16 @@ public class Utility {
      */
     public static float getDistanceByRSSI(int rssi){
         int RSSI = Math.abs(rssi);
-        return (float) Math.pow(10, (RSSI - 59) / (10 * 2.0));
+        float distance =  (float) Math.pow(10, (RSSI - 59) / (10 * 2.0));
+
+        //对距离进行修正
+        if(distance > 10)
+            distance = 10;
+        if(distance < 0.15)
+            distance = (float) 0.15;
+        return distance;
     }
+
 
 
     /**
@@ -49,4 +57,13 @@ public class Utility {
         return (int)((time2 - time1) / (1000*60*60*24));
     }
 
+    /**
+     * 获得当前时间的字符串
+     * @return
+     */
+    public static String getDateTimeString(){
+        Date date = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return dateFormat.format(date);
+    }
 }

@@ -82,4 +82,6 @@
     <string name="bus">添加公交出行记录</string>
     <string name="confirm">确定</string>
     <string name="date_time">日期与时间</string>
+
+    <string name="healthInfo_type">请选择健康信息类型</string>
 </resources>
