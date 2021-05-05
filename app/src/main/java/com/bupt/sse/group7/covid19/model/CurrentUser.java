@@ -38,14 +38,14 @@ public class CurrentUser {
     public static void setCurrentUser(CurrentUser user){
         currentUser=user;
     }
-    private String userId;
+    private int userId;
     private String phone;
     private String name;
     private int status;
     private int role;
     private boolean auth;
 
-    public CurrentUser(String userId, String phone, String name, int status, int role,boolean auth) {
+    public CurrentUser(int userId, String phone, String name, int status, int role,boolean auth) {
         this.userId = userId;
         this.phone = phone;
         this.name = name;
@@ -62,11 +62,11 @@ public class CurrentUser {
         this.auth = auth;
     }
 
-    public String getUserId() {
+    public int getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(int userId) {
         this.userId = userId;
     }
 

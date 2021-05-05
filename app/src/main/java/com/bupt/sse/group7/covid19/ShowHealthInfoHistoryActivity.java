@@ -34,8 +34,8 @@ import okhttp3.Response;
 
 public class ShowHealthInfoHistoryActivity extends AppCompatActivity {
     private static final String TAG = "ShowHealthInfoHistory";
-    private static final String API_URL = "http://192.168.43.129:3030/";
-//    private static final String API_URL = "http://39.97.212.229:3030/";
+//    private static final String API_URL = "http://192.168.43.129:3030/";
+    private static final String API_URL = "http://39.97.212.229:3030/";
     private static final int UPDATE_RE_VIEW = 1;
 
 
@@ -91,7 +91,7 @@ public class ShowHealthInfoHistoryActivity extends AppCompatActivity {
      * 向服务器请求获得用户的健康信息历史记录
      */
     public void getHealthInfoHistory() {
-        String userid = CurrentUser.getCurrentUser().getUserId();
+        int userid = CurrentUser.getCurrentUser().getUserId();
         String url = API_URL + "api/healthInfo/findHealthInfoListByUserid?userid=" + userid;
         HttpUtil.sendOkHttpRequest(url, new Callback() {
             @Override

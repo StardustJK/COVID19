@@ -1,6 +1,7 @@
 package com.bupt.sse.group7.covid19;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -8,9 +9,9 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.net.wifi.ScanResult;
-import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
 import android.os.PowerManager;
 import android.provider.Settings;
 import android.util.Log;
@@ -25,28 +26,25 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.baidu.mapapi.model.LatLng;
 import com.bupt.sse.group7.covid19.SQLite.WIFIAdapter;
 import com.bupt.sse.group7.covid19.model.BroadcastKey;
+import com.bupt.sse.group7.covid19.model.CurrentUser;
 import com.bupt.sse.group7.covid19.model.WIFIConnection;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class WIFIActivity extends AppCompatActivity {
@@ -54,10 +52,13 @@ public class WIFIActivity extends AppCompatActivity {
     List<ScanResult> list;  //存放周围wifi热点对象的列表
     TextView tv1;
     private static TextView tv_wifiscan_text;
-    Button  bt3, bt4, bt5, bt6, bt7,bt_getrisk;
+    Button  bt3, bt4, bt5, bt6, bt7,bt_getrisk,bt_wifinode;
     ImageButton bt_wifiscan;
     WIFIAdapter wifiadapter;
     Intent serviceIntent = null;
+
+    private AlertDialog.Builder builder;
+    private ProgressDialog progressDialog;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -72,6 +73,7 @@ public class WIFIActivity extends AppCompatActivity {
         bt7 = (Button) findViewById(R.id.bt7);
         bt_wifiscan = (ImageButton) findViewById(R.id.bt_wifiscan);
         bt_getrisk = (Button) findViewById(R.id.bt_getrisk);
+        bt_wifinode = (Button) findViewById(R.id.bt_wifinode);
         tv_wifiscan_text = (TextView) findViewById(R.id.tv_wifiscan_text);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -157,7 +159,124 @@ public class WIFIActivity extends AppCompatActivity {
             }
         });
 
+        bt_getrisk.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if(CurrentUser.getCurrentUser() == null)
+                {
+                    Toast.makeText(WIFIActivity.this, "尚未登录", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Toast.makeText(WIFIActivity.this, "风险预测", Toast.LENGTH_SHORT).show();
+                UploadWifiInfo();
+                getUserRisk(String.valueOf(CurrentUser.getCurrentUser().getUserId()));
 
+            }
+        });
+
+        bt_wifinode.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if(CurrentUser.getCurrentUser() == null)
+                {
+                    Toast.makeText(WIFIActivity.this, "尚未登录", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Toast.makeText(WIFIActivity.this, "查看关注已WiFi节点", Toast.LENGTH_SHORT).show();
+                DownloadBroadcastKey();
+                getWifinode(String.valueOf(CurrentUser.getCurrentUser().getUserId()));
+
+            }
+        });
+
+
+
+
+    }
+
+    public void getUserRisk(String userId)
+    {
+        OkHttpClient client = new OkHttpClient();
+        FormBody body = new FormBody.Builder()
+                .add("userId",userId)
+                .build();
+        Request request = new Request.Builder()
+                .url("http://81.70.253.77:8080/api/CalculateRisk")
+                .post(body)
+                .build();
+
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                e.printStackTrace();
+                Log.d("LoginTest", "onFailure: 访问服务器失败");
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                String s = response.body().string();
+                Log.d("预测风险", "onResponse: "+s);
+                Looper.prepare();
+                builder = new AlertDialog.Builder(WIFIActivity.this).setIcon(R.mipmap.ic_launcher).setTitle("提示")
+                        .setMessage("您的感染风险是"+s).setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                                dialogInterface.dismiss();
+                            }
+                        });
+                builder.create().show();
+                Looper.loop();
+
+
+            }
+        });
+    }
+
+    public void getWifinode(String userId)
+    {
+        OkHttpClient client = new OkHttpClient();
+        FormBody body = new FormBody.Builder()
+                .add("userid",userId)
+                .build();
+        Request request = new Request.Builder()
+                .url("http://81.70.253.77:8080/api/Wifinode/getRegisterWifi")
+                .post(body)
+                .build();
+
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                e.printStackTrace();
+                Log.d("LoginTest", "onFailure: 访问服务器失败");
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                String s = response.body().string();
+                Log.d("查看WiFi节点", "onResponse: "+s);
+                Looper.prepare();
+                final String[] items = processMac(s);
+                builder = new AlertDialog.Builder(WIFIActivity.this).setIcon(R.mipmap.ic_launcher)
+                        .setTitle("已关注的WIFI节点")
+                        .setItems(items, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Toast.makeText(WIFIActivity.this, "你点击的内容为： " + items[i], Toast.LENGTH_LONG).show();
+
+                            }
+                        });
+                builder.create().show();
+                Looper.loop();
+
+
+            }
+        });
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -359,6 +478,23 @@ public class WIFIActivity extends AppCompatActivity {
         }
     }
 
+    public String[] processMac(String s)
+    {
+        String[] macname = new String[1];
+        try{
+            JSONArray jsonArray = new JSONArray(s);
+            macname = new String[jsonArray.length()];
+            for(int i=0;i <jsonArray.length();i++)
+            {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                macname[i] = jsonObject.getString("mac");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return macname;
+    }
+
     public void CompareBroadcastKey()
     {
         String s ="";
@@ -378,8 +514,8 @@ public class WIFIActivity extends AppCompatActivity {
                 if(wt.MAC_address.equals(bk.MAC_address))
                 {
                     Log.e("MAC",bk.ID+":"+wt.ID);
-                    if(wt.datetime.getTime()+wt.duration*1000+20*60*1000< bk.datetime.getTime()-20*60*1000 ||
-                            bk.datetime.getTime()+wt.duration*1000+20*60*1000< wt.datetime.getTime()-20*60*1000)
+                    if(wt.datetime.getTime()+wt.duration*1000+10*60*1000< bk.datetime.getTime()-10*60*1000 ||
+                            bk.datetime.getTime()+wt.duration*1000+10*60*1000< wt.datetime.getTime()-10*60*1000)
                         continue;
                     else {
                          count++;

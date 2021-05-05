@@ -7,4 +7,6 @@
     <dimen name="trip_text_size">20sp</dimen>
     <dimen name="trip_margin">20dp</dimen>
     <dimen name="trip_height">40dp</dimen>
+    <dimen name="trip_result_text_size">18sp</dimen>
+
 </resources>

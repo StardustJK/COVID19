@@ -15,6 +15,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- 读写手机状态和身份 -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" /> <!-- SD卡读取权限，用户写入离线定位数据 -->
+
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- WIFI状态 -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" /> <!-- 前台服务 -->
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" /> <!-- 申请忽略电池优化 -->
@@ -23,6 +24,7 @@
         tools:ignore="ProtectedPermissions" /> <!-- 添加两个蓝牙权限 -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+
     <uses-permission
         android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"
         tools:ignore="ProtectedPermissions" />
@@ -184,11 +186,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <service
             android:name=".WIFIScanService"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="true"></service>
     </application>
 
 </manifest>

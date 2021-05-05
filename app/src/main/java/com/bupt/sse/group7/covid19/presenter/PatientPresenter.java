@@ -63,7 +63,7 @@ public class PatientPresenter implements IDataBackCallBack {
 
     private void getPatientResult() {
         Map<String, String> args = new HashMap<>();
-        args.put("userId", patient.getId());
+        args.put("userId", patient.getId()+"");
         Call<ResponseBody> data = DBConnector.dao.executeGet("user/userInfo", args);
         data.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -217,7 +217,7 @@ public class PatientPresenter implements IDataBackCallBack {
                             jsonObject.get("location").getAsString(),
                             jsonObject.get("description").getAsString(),
                             latLng,
-                            jsonObject.get("userId").getAsString(),
+                            jsonObject.get("userId").getAsInt(),
                             jsonObject.get("city").getAsString(),
                             jsonObject.get("district").getAsString()));
         }
@@ -228,7 +228,7 @@ public class PatientPresenter implements IDataBackCallBack {
         return instance;
     }
 
-    public void setPatientId(String id) {
+    public void setPatientId(int id) {
         this.patient.setId(id);
         getPatientInfo();
     }

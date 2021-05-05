@@ -6,6 +6,10 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.graphics.Color;
+import android.os.Build;
+import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,6 +31,7 @@ import com.bupt.sse.group7.covid19.interfaces.IPatientViewCallBack;
 import com.bupt.sse.group7.covid19.model.CurrentUser;
 import com.bupt.sse.group7.covid19.model.Patient;
 import com.bupt.sse.group7.covid19.presenter.PatientPresenter;
+import com.bupt.sse.group7.covid19.utils.Constants;
 
 import java.text.MessageFormat;
 
@@ -36,7 +41,7 @@ public class PatientMainPageActivity extends AppCompatActivity implements IPatie
     private StatusLineFragment statusLineFragment;
     private PatientTrackBlockFragment patientTrackBlockFragment;
     private NotAvailable notAvailable;
-    private String id;
+    private int id;
     public TextView busTrackTv;
     public LinearLayout busTrackLayout;
     private SharedPreferences pref;
@@ -69,7 +74,7 @@ public class PatientMainPageActivity extends AppCompatActivity implements IPatie
         switch (item.getItemId()) {
             case R.id.action_update_track:
                 CurrentUser currentUser = CurrentUser.getCurrentUser();
-                if (currentUser.getUserId().equals(this.id)) {
+                if (currentUser.getUserId()==this.id) {
                     Intent intent = new Intent(PatientMainPageActivity.this, EditTrackActivity.class);
                     startActivity(intent);
                     finish();

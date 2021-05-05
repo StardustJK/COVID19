@@ -35,8 +35,8 @@ import okhttp3.Response;
 
 public class PostHealthInfoActivity extends AppCompatActivity {
     private static final String TAG = "PostHealthInfoActivity";
-    private static final String API_URL = "http://192.168.43.129:3030/";
-    //    private static final String API_URL = "http://39.97.212.229:3030/";
+//    private static final String API_URL = "http://192.168.43.129:3030/";
+        private static final String API_URL = "http://39.97.212.229:3030/";
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     public static final int SUBMIT_SUCCESSFUL = 0;

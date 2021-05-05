@@ -13,10 +13,10 @@ public class TrackPoint {
     private String city;//市
     private String district;//区
     private LatLng latLng;
-    private String userId;
+    private int userId;
 
 
-    public TrackPoint(String date_time, String location, String description,LatLng latLng,String userId,String city,String district) {
+    public TrackPoint(String date_time, String location, String description,LatLng latLng,int userId,String city,String district) {
         this.date_time = date_time;
         this.location = location;
         this.description = description;
@@ -70,11 +70,11 @@ public class TrackPoint {
         this.latLng = latLng;
     }
 
-    public String getUserId() {
+    public int getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(int userId) {
         this.userId = userId;
     }
 }

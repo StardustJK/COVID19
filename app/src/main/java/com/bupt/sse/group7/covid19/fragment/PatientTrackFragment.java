@@ -69,7 +69,7 @@ public class PatientTrackFragment extends Fragment {
     private static final String TAG = "PatientTrackFragment";
     private View view;
 
-    String mp_id;
+    int mp_id;
     MapView mapView;
     BaiduMap baiduMap;
     BitmapDescriptor bitmap;
@@ -175,7 +175,7 @@ public class PatientTrackFragment extends Fragment {
 
     private void initBusTrack() {
         Map<String, String> args = new HashMap<>();
-        args.put("userId", patient.getId());
+        args.put("userId", patient.getId()+"");
         Call<ResponseBody> data = DBConnector.dao.executeGet("track/busTrack", args);
         data.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -324,7 +324,7 @@ public class PatientTrackFragment extends Fragment {
 
 
 
-    public void setMp_id(String mp_id) {
+    public void setMp_id(int mp_id) {
         this.mp_id = mp_id;
     }
 }

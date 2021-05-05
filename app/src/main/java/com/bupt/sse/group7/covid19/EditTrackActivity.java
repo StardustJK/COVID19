@@ -118,7 +118,7 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
     BitmapDescriptor bitmap;
     private Context mContext = this;
     private static final String TAG = "EditTrackActivity";
-    String p_id = CurrentUser.getCurrentUser().getUserId();
+    int p_id = CurrentUser.getCurrentUser().getUserId();
     //int p_id=5;
     private MapView mapView;
     private BaiduMap baiduMap;
