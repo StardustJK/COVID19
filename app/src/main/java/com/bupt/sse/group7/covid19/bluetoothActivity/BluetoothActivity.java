@@ -1,6 +1,7 @@
 package com.bupt.sse.group7.covid19.bluetoothActivity;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -65,6 +66,8 @@ public class BluetoothActivity extends AppCompatActivity implements View.OnClick
     public static final int GET_RISK_LEVEL_SUCCESSFUL = 6;
     public static final int GET_RISK_LEVEL_UNSUCCESSFUL = 7;
     public static final int GET_CHECK_RESULT = 8;
+    public static final int SHOW_WAITTING_DIALOG = 9;
+    public static final int DISMISS_WAITTING_DIALOG = 10;
 
 
     //自定义的假的用户id
@@ -93,6 +96,8 @@ public class BluetoothActivity extends AppCompatActivity implements View.OnClick
 
     //标记蓝牙扫描线程是否正在进行
     private boolean bluetoothThreadFlag;
+
+    private ProgressDialog waitingDialog;
 
     // handler用于线程通信
     @SuppressLint("HandlerLeak")
@@ -136,6 +141,12 @@ public class BluetoothActivity extends AppCompatActivity implements View.OnClick
                     Toast.makeText(BluetoothActivity.this,
                             "本地匹配完成，请查看", Toast.LENGTH_SHORT).show();
                     break;
+                case SHOW_WAITTING_DIALOG:
+                    waitingDialog.show();
+                    break;
+                case DISMISS_WAITTING_DIALOG:
+                    waitingDialog.dismiss();
+                    break;
             }
         }
     };
@@ -166,6 +177,7 @@ public class BluetoothActivity extends AppCompatActivity implements View.OnClick
         setContentView(R.layout.activity_bluetooth);
         Log.d(TAG, "onCreate:蓝牙活动创建");
 
+        // 获得此时的用户id
         if (CurrentUser.getCurrentUser() != null && CurrentUser.getCurrentUser().getUserId() != null)
             userid = Integer.parseInt(CurrentUser.getCurrentUser().getUserId());
         Log.d(TAG, "onCreate:用户id是：" + userid);
@@ -193,6 +205,13 @@ public class BluetoothActivity extends AppCompatActivity implements View.OnClick
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(BluetoothService.MY_ACTION_NAME);
         registerReceiver(receiver, intentFilter);
+
+        //创建dialog
+        waitingDialog= new ProgressDialog(this);
+        waitingDialog.setTitle("我是一个等待Dialog");
+        waitingDialog.setMessage("等待中...");
+        waitingDialog.setIndeterminate(true);
+        waitingDialog.setCancelable(false);
 
         //启动FirstWork服务
         startFirstWorkService();
@@ -602,8 +621,10 @@ public class BluetoothActivity extends AppCompatActivity implements View.OnClick
      */
     private void saveCheckResult(int checkResult) {
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(BluetoothActivity.this).edit();
-        editor.putFloat("checkResult", checkResult);
+        editor.putInt("matchResult", checkResult);
         editor.apply();
     }
+
+
 
 }

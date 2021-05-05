@@ -42,7 +42,7 @@ public class ShowHealthInfoHistoryActivity extends AppCompatActivity {
     private List<HealthInfo> healthInfoList = new ArrayList<>();
     private HealthInfoHistoryAdapter adapter;
     private RecyclerView recyclerView;
-    SharedPreferences pref;
+    private SharedPreferences pref;
 
 
     // handler用于线程通信

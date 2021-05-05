@@ -28,7 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="30dp"
-        android:layout_marginVertical="80dp"
+        android:layout_marginVertical="30dp"
         app:cardCornerRadius="15dp"
         app:cardElevation="10dp">
 
@@ -121,7 +121,7 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="70dp"
+                    android:layout_height="120dp"
                     android:background="@drawable/edit_background_green"
                     android:padding="1dp">
 

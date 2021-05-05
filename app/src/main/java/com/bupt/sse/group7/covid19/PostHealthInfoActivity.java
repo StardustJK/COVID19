@@ -1,9 +1,15 @@
 package com.bupt.sse.group7.covid19;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
+import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -33,12 +39,34 @@ public class PostHealthInfoActivity extends AppCompatActivity {
     //    private static final String API_URL = "http://39.97.212.229:3030/";
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
+    public static final int SUBMIT_SUCCESSFUL = 0;
+    public static final int SUBMIT_UNSUCCESSFUL = 1;
 
     String[] healthInfoType = {};
     TextView typeText;
     Spinner typeItems;
     EditText contentText;
     CardView submitCard;
+    ProgressDialog waitingDialog;
+
+    // handler用于线程通信
+    @SuppressLint("HandlerLeak")
+    public Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case SUBMIT_SUCCESSFUL:
+                    waitingDialog.dismiss();
+                    showSuccessfulDialog();
+                    break;
+                case SUBMIT_UNSUCCESSFUL:
+                    waitingDialog.dismiss();
+                    showFailureDialog();
+                    break;
+            }
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +85,8 @@ public class PostHealthInfoActivity extends AppCompatActivity {
         typeItems = findViewById(R.id.healthInfo_type_spinner);
         contentText = findViewById(R.id.healthInfo_content);
         submitCard = findViewById(R.id.healthInfo_submit);
+
+        waitingDialog= new ProgressDialog(this);
 
         //获取array中定义的值
         healthInfoType = getResources().getStringArray(R.array.healthInfoType);
@@ -80,6 +110,7 @@ public class PostHealthInfoActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: 点击提交按钮");
+                showWaitingDialog();
                 postHealthInfo();
             }
         });
@@ -110,14 +141,50 @@ public class PostHealthInfoActivity extends AppCompatActivity {
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 e.printStackTrace();
                 Log.d(TAG, "onFailure: 上传健康信息失败");
+                handler.sendEmptyMessage(SUBMIT_UNSUCCESSFUL);
             }
 
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 Log.d(TAG, "onResponse: 上传健康信息成功");
+                handler.sendEmptyMessage(SUBMIT_SUCCESSFUL);
             }
         });
 
+    }
+
+    private void showSuccessfulDialog(){
+        AlertDialog alertDialog = new AlertDialog.Builder(this)
+                .setMessage("已成功提交健康信息。")//内容
+                .setPositiveButton("确定", new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.d(TAG, "onClick: 成功并确定");
+                        PostHealthInfoActivity.this.finish();
+                    }
+                })
+                .create();
+        alertDialog.show();
+    }
+
+    private void showFailureDialog(){
+        AlertDialog alertDialog = new AlertDialog.Builder(this)
+                .setMessage("提交健康信息失败，请稍后再试。")//内容
+                .setPositiveButton("确定",null )
+                .create();
+        alertDialog.show();
+    }
+
+    private void showWaitingDialog() {
+        /* 等待Dialog具有屏蔽其他控件的交互能力
+         * @setCancelable 为使屏幕不可点击，设置为不可取消(false)
+         * 下载等事件完成后，主动调用函数关闭该Dialog
+         */
+        waitingDialog.setTitle("我是一个等待Dialog");
+        waitingDialog.setMessage("等待中...");
+        waitingDialog.setIndeterminate(true);
+        waitingDialog.setCancelable(false);
+        waitingDialog.show();
     }
 
 }
