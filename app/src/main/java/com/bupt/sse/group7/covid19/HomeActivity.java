@@ -100,7 +100,7 @@ public class HomeActivity extends AppCompatActivity {
                         if (data.get("success").getAsBoolean()) {
                             JsonObject user = data.getAsJsonObject("data");
                             CurrentUser currentUser = new CurrentUser(
-                                    user.get("id").getAsString(),
+                                    user.get("id").getAsInt(),
                                     user.get("phone").getAsString(),
                                     user.get("name").getAsString(),
                                     user.get("status").getAsInt(),

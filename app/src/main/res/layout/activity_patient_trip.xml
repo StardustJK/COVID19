@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/cardGreen"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     tools:context=".PatientTripActivity">
+
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -22,77 +23,40 @@
             tools:targetApi="p" />
 
     </com.google.android.material.appbar.AppBarLayout>
+
     <RelativeLayout
-        android:background="@drawable/bordernoline"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginRight="5dp"
-        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/tab_bar"/>
+
         <LinearLayout
-            android:id="@+id/des"
-            android:layout_marginBottom="20dp"
-            android:layout_marginStart="20dp"
-            android:orientation="vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <TextView
-                style="@style/trip_text"
-                android:text="查询地区"/>
-            <TextView
-                style="@style/trip_text"
-                android:text="交通方式"/>
-            <TextView
-                style="@style/trip_text"
-                android:text="车次/航班"
-                />
-            <TextView
-                style="@style/trip_text"
-                android:text="日期区间"
-                />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_toRightOf="@id/des"
-            android:layout_marginBottom="20dp"
-            android:layout_marginStart="30dp"
-            android:layout_marginEnd="30dp"
-            android:orientation="vertical"
+            android:id="@+id/tab_bar"
+            android:orientation="horizontal"
+            android:layout_alignParentBottom="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <EditText
-                android:background="@null"
-                style="@style/trip_text"
-                android:hint="如:北京、成都"/>
-            <RelativeLayout
-                android:id="@+id/type_layout"
-                android:gravity="center_vertical"
-                android:layout_marginTop="@dimen/trip_margin"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/trip_height">
-                <TextView
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:id="@+id/type"
-                    android:textSize="@dimen/trip_text_size"
-                    android:text="全部"/>
-                <ImageView
-                    android:src="@drawable/ic_baseline_arrow_forward"
-                    android:layout_alignParentRight="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-            </RelativeLayout>
-
-            <EditText
-                android:background="@null"
-                style="@style/trip_text"
-                android:hint="如:G308、632路"/>
-            <EditText
-                android:background="@null"
-                style="@style/trip_text"
-                android:hint="如:北京、成都"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/query_btn"
+                android:text="查询"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="记录"
+                android:id="@+id/record_btn"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="风险"
+                android:id="@+id/risk_btn"/>
         </LinearLayout>
+
     </RelativeLayout>
+
 
 </LinearLayout>

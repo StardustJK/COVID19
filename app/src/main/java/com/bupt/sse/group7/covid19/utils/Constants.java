@@ -29,4 +29,18 @@ public class Constants {
         statuses.put(0, "健康");
     }
 
+    public static String types[] = {"全部", "飞机", "火车", "地铁", "公交车", "出租车", "轮船"};
+    public static Map<String,Integer> typeMap;
+    static {
+        typeMap =new HashMap<>();
+        typeMap.put("飞机",1);
+        typeMap.put("火车",2);
+        typeMap.put("地铁",3);
+        typeMap.put("大巴",4);
+        typeMap.put("公交车",5);
+        typeMap.put("出租车",6);
+        typeMap.put("轮船",7);
+        typeMap.put("其他",8);
+    }
+
 }

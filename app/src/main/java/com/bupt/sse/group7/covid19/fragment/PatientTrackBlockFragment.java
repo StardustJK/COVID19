@@ -26,7 +26,7 @@ public class PatientTrackBlockFragment extends Fragment {
     PatientTrackFragment patientTrackFragment;
     TrackLineFragment trackLineFragment;
     JsonArray tracks;
-    String id;
+    int id;
 
     @Nullable
     @Override
@@ -63,7 +63,7 @@ public class PatientTrackBlockFragment extends Fragment {
         trackLineTran.commit();
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 

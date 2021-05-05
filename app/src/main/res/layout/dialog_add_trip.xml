@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@drawable/bordernoline"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:id="@+id/des"
+            android:layout_marginBottom="20dp"
+            android:layout_marginStart="20dp"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                style="@style/trip_text"
+                android:text="交通方式"/>
+            <TextView
+                style="@style/trip_text"
+                android:text="车次/航班"
+                />
+            <TextView
+                style="@style/trip_text"
+                android:text="日期"
+                />
+            <TextView
+                style="@style/trip_text"
+                android:text="出发站"/>
+            <TextView
+                style="@style/trip_text"
+                android:text="终点站"/>
+            <TextView
+                style="@style/trip_text"
+                android:text="车厢号"/>
+            <TextView
+                style="@style/trip_text"
+                android:text="备注"/>
+
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_toRightOf="@id/des"
+            android:layout_marginBottom="20dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:id="@+id/type_layout"
+                android:gravity="center_vertical"
+                android:layout_marginTop="@dimen/trip_margin"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/trip_height">
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:id="@+id/type"
+                    android:textSize="@dimen/trip_text_size"
+                    android:text="必填"/>
+                <ImageView
+                    android:src="@drawable/ic_baseline_arrow_forward"
+                    android:layout_alignParentRight="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </RelativeLayout>
+
+            <EditText
+                android:id="@+id/no"
+                android:background="@null"
+                style="@style/trip_text"
+                android:gravity="center_vertical"
+                android:hint="(必填) 如:G308"/>
+            <LinearLayout
+                android:gravity="center_vertical"
+                android:layout_marginTop="@dimen/trip_margin"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/trip_height">
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:id="@+id/date"
+                    android:textSize="20sp"
+                    android:text="2021-12-28"/>
+
+
+            </LinearLayout>
+            <EditText
+                android:id="@+id/pos_start"
+                android:background="@null"
+                style="@style/trip_text"
+                android:gravity="center_vertical"
+                android:hint="如：北京"/>
+            <EditText
+                android:id="@+id/pos_end"
+                android:background="@null"
+                style="@style/trip_text"
+                android:gravity="center_vertical"
+                android:hint="如：成都"/>
+            <EditText
+                android:id="@+id/no_sub"
+                android:background="@null"
+                style="@style/trip_text"
+                android:gravity="center_vertical"
+                android:hint="如：7号车厢"/>
+            <EditText
+                android:id="@+id/memo"
+                android:background="@null"
+                style="@style/trip_text"
+                android:gravity="center_vertical"
+                android:hint="(非必填) "/>
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cancel"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="60dp"
+            android:layout_marginBottom="15dp"
+            app:cardBackgroundColor="@color/cardGreen"
+            app:cardElevation="3dp"
+            app:cardCornerRadius="15dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="取消"
+                android:textSize="@dimen/trip_text_size"
+                android:layout_gravity="center"
+                android:textColor="@color/colorPrimary"
+                android:textStyle="bold" />
+
+        </androidx.cardview.widget.CardView>
+        <androidx.cardview.widget.CardView
+            android:id="@+id/yes"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginRight="60dp"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:layout_marginBottom="15dp"
+            app:cardBackgroundColor="@color/cardGreen"
+            app:cardElevation="3dp"
+            app:cardCornerRadius="15dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="添加"
+                android:textSize="@dimen/trip_text_size"
+                android:layout_gravity="center"
+                android:textColor="@color/colorPrimary"
+                android:textStyle="bold" />
+
+        </androidx.cardview.widget.CardView>
+    </RelativeLayout>
+</LinearLayout>

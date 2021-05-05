@@ -178,7 +178,7 @@ public class RegisterFragment extends Fragment {
                 //登录成功
                 if (info.get("success").getAsBoolean()) {
                     JsonObject data = info.get("data").getAsJsonObject();
-                    CurrentUser currentUser = new CurrentUser(data.get("id").getAsString(),
+                    CurrentUser currentUser = new CurrentUser(data.get("id").getAsInt(),
                             data.get("phone").getAsString(),
                             data.get("name").getAsString(),
                             data.get("status").getAsInt(),

@@ -469,7 +469,7 @@ public class ShowMapActivity extends AppCompatActivity implements IAreaSelection
                             jsonObject.get("location").getAsString(),
                             jsonObject.get("description").getAsString(),
                             new LatLng(jsonObject.get("latitude").getAsDouble(),jsonObject.get("longitude").getAsDouble()),
-                            jsonObject.get("userId").getAsString(),
+                            jsonObject.get("userId").getAsInt(),
                             jsonObject.get("city").getAsString(),
                             jsonObject.get("district").getAsString()
                             );
@@ -534,7 +534,7 @@ public class ShowMapActivity extends AppCompatActivity implements IAreaSelection
             public boolean onMarkerClick(Marker marker) {
                 Log.i("hcccc", "marker onclicked");
                 Bundle bundle = marker.getExtraInfo();
-                String userId = bundle.getString("userId");
+                int userId = bundle.getInt("userId");
                 PatientPresenter.getInstance().setPatientId(userId);
                 Intent intent = new Intent(ShowMapActivity.this, PatientMainPageActivity.class);
                 startActivity(intent);
@@ -580,7 +580,7 @@ public class ShowMapActivity extends AppCompatActivity implements IAreaSelection
             public boolean onPolylineClick(Polyline polyline) {
                 Log.i("hcccc", "marker onclicked");
                 Bundle bundle = polyline.getExtraInfo();
-                String userId = bundle.getString("userId");
+                int userId = bundle.getInt("userId");
                 Intent intent = new Intent(ShowMapActivity.this, PatientMainPageActivity.class);
                 PatientPresenter.getInstance().setPatientId(userId);
                 startActivity(intent);

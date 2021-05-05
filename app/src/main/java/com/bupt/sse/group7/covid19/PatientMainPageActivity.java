@@ -35,7 +35,7 @@ public class PatientMainPageActivity extends AppCompatActivity implements IPatie
     private StatusLineFragment statusLineFragment;
     private PatientTrackBlockFragment patientTrackBlockFragment;
     private NotAvailable notAvailable;
-    private String id;
+    private int id;
     public TextView busTrackTv;
     public LinearLayout busTrackLayout;
 
@@ -64,7 +64,7 @@ public class PatientMainPageActivity extends AppCompatActivity implements IPatie
         switch (item.getItemId()) {
             case R.id.action_update_track:
                 CurrentUser currentUser = CurrentUser.getCurrentUser();
-                if (currentUser.getUserId().equals(this.id)) {
+                if (currentUser.getUserId()==this.id) {
                     Intent intent = new Intent(PatientMainPageActivity.this, EditTrackActivity.class);
                     startActivity(intent);
                     finish();
