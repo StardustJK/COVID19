@@ -1,8 +1,10 @@
 package com.bupt.sse.group7.covid19.fragment;
 
 import android.content.Intent;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +43,8 @@ import retrofit2.Response;
 
 public class PatientTripRecordFragment extends Fragment implements IUserTripViewCallBack {
 
+    private static String TAG="PatientTripRecordFragment";
+
     ImageView addBtn;
     TextView title;
     RecyclerView history;
@@ -49,6 +53,7 @@ public class PatientTripRecordFragment extends Fragment implements IUserTripView
 
     CurrentUser currentUser;
     UserTripPresenter userTripPresenter;
+    List<UserTrip> mTripList=new ArrayList<>();
     private UserTripHistoryAdapter userTripHistoryAdapter;
 
     @Override
@@ -90,6 +95,8 @@ public class PatientTripRecordFragment extends Fragment implements IUserTripView
                         @Override
                         public void onYesClick(UserTrip userTrip) {
                             addTrip(userTrip);
+                            mTripList.add(userTrip);
+                            userTripHistoryAdapter.notifyDataSetChanged();
                             addTripDialog.dismiss();
 
                         }
@@ -106,7 +113,15 @@ public class PatientTripRecordFragment extends Fragment implements IUserTripView
 
         history = view.findViewById(R.id.history_rv);
         history.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
-
+        userTripHistoryAdapter = new UserTripHistoryAdapter(mTripList);
+        userTripHistoryAdapter.setOnDeleteClickListener(new UserTripHistoryAdapter.OnDeleteClickListener() {
+            @Override
+            public void onDeleteClick(UserTrip userTrip) {
+                mTripList.remove(userTrip);
+                deleteTrip(userTrip);
+                userTripHistoryAdapter.notifyDataSetChanged();
+            }
+        });
         initHistoryView();
 
 
@@ -140,6 +155,27 @@ public class PatientTripRecordFragment extends Fragment implements IUserTripView
 
     }
 
+    private void deleteTrip(UserTrip userTrip){
+        Map<String,String> map=new HashMap<>();
+        map.put("id",userTrip.getId()+"");
+        Call<String> post = DBConnector.dao.Get("trip/delete", map);
+        post.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                JsonObject jsonObject= (JsonObject) JsonParser.parseString(response.body());
+                Toast.makeText(getActivity(),jsonObject.get("message").getAsString(),Toast.LENGTH_LONG).show();
+
+
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Toast.makeText(getActivity(),"网络错误，请稍后重试",Toast.LENGTH_LONG).show();
+            }
+        });
+
+    }
+
     private void initHistoryView() {
 
         if (currentUser != null) {
@@ -152,8 +188,10 @@ public class PatientTripRecordFragment extends Fragment implements IUserTripView
 
     @Override
     public void onUserTripInfoReturned(List<UserTrip> tripList) {
-        userTripHistoryAdapter = new UserTripHistoryAdapter(tripList);
+        mTripList.clear();
+        mTripList.addAll(tripList);
         history.setAdapter(userTripHistoryAdapter);
+        userTripHistoryAdapter.notifyDataSetChanged();
     }
 
     @Override
