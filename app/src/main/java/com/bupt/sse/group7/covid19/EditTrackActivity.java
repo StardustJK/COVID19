@@ -139,6 +139,7 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
     private CardView btn_confirmTime, btn_edit, btn_bus,btn_wifi;
     List<String> datelist = new ArrayList<>();
     private BusBaseFragment fragment;
+    boolean busTimePick=false;
 
     //将坐标转换为地址
     private GeoCoder geoCoder;
@@ -236,19 +237,8 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
                                 et_des.setText("");
 
                                 //date
-                                String date = datePickerStart.getYear() + "-";
-                                if (datePickerStart.getMonth() + 1 < 10) date += "0";
-                                date += (datePickerStart.getMonth() + 1) + "-";
-                                if (datePickerStart.getDayOfMonth() < 10) date += "0";
-                                date += datePickerStart.getDayOfMonth();
 
-                                //time
-                                date += " ";
-                                if (timePickerStart.getHour() < 10) date += "0";
-                                date += timePickerStart.getHour() + ":";
-                                if (timePickerStart.getMinute() < 10) date += "0";
-                                date += timePickerStart.getMinute() + ":00";
-                                myMarker.setDate(date);
+                                myMarker.setDate(getDate());
 
                                 //is_confirmed=true;
                                 myMarker.setRecord(true);
@@ -283,7 +273,17 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
                 Log.i("hcccccc", "选择的时间是：" + (datePickerStart.getMonth() + 1) + "-" + datePickerStart.getDayOfMonth()
                         + " " + timePickerStart.getHour() + ":" + timePickerStart.getMinute());
                 date_time_picker.dismiss();
-                desDialog.show();
+                if(busTimePick){
+                    Window dialogWindow = bus_picker.getWindow();
+                    dialogWindow.setBackgroundDrawableResource(android.R.color.transparent);
+                    bus_picker.show();
+                    bus_picker.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+                    bus_picker.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+                }
+                else{
+                    desDialog.show();
+                }
+
             }
         });
 
@@ -396,6 +396,24 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private String getDate() {
+        String date = datePickerStart.getYear() + "-";
+        if (datePickerStart.getMonth() + 1 < 10) date += "0";
+        date += (datePickerStart.getMonth() + 1) + "-";
+        if (datePickerStart.getDayOfMonth() < 10) date += "0";
+        date += datePickerStart.getDayOfMonth();
+
+        //time
+        date += " ";
+        if (timePickerStart.getHour() < 10) date += "0";
+        date += timePickerStart.getHour() + ":";
+        if (timePickerStart.getMinute() < 10) date += "0";
+        date += timePickerStart.getMinute() + ":00";
+
+        return date;
+    }
+
     private void deleteAllMarkers(){
         baiduMap.hideInfoWindow();
         Log.i(TAG, "deleall");
@@ -468,11 +486,12 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
         btn_bus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Window dialogWindow = bus_picker.getWindow();
+                //选择时间
+                busTimePick=true;
+                Window dialogWindow = date_time_picker.getWindow();
                 dialogWindow.setBackgroundDrawableResource(android.R.color.transparent);
-                bus_picker.show();
-                bus_picker.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
-                bus_picker.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+                date_time_picker.show();
+
             }
         });
 
@@ -983,6 +1002,7 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     public void updateBusView(String startStation, String endStation) {
         BusLineOverlay overlay = new BusLineOverlay(baiduMap);
         overlay.setData(getChosenStations(startStation, endStation, mBusLineResult));
@@ -992,15 +1012,15 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
     }
 
     //保存列表，submit再提交到数据库
+    @RequiresApi(api = Build.VERSION_CODES.M)
     public void saveBusLine(String startStation, String endStation) {
         JsonObject busLineJO = new JsonObject();
-        busLineJO.add("id", new JsonPrimitive(busLineSelected));
+        busLineJO.add("busId", new JsonPrimitive(busLineSelected));
         busLineJO.add("name", new JsonPrimitive(busKeyword));
         busLineJO.add("userId", new JsonPrimitive(p_id));
         busLineJO.add("start", new JsonPrimitive(startStation));
         busLineJO.add("end", new JsonPrimitive(endStation));
-        //TODO 改时间
-        busLineJO.add("dateTime", new JsonPrimitive("2020-06-09 13:13:13"));
+        busLineJO.add("dateTime", new JsonPrimitive(getDate()));
         busTrackList.add(busLineJO);
 
 
@@ -1125,6 +1145,7 @@ public class EditTrackActivity extends AppCompatActivity implements OnGetGeoCode
     public void editMarker() {
         Window dialogWindow = date_time_picker.getWindow();
         dialogWindow.setBackgroundDrawableResource(android.R.color.transparent);
+        busTimePick=false;
         date_time_picker.show();
 
     }

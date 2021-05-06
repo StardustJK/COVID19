@@ -196,7 +196,7 @@ public class PatientTrackFragment extends Fragment {
                         for (int i = 0; i < busTracks.size(); i++) {
                             JsonObject jsonObject = busTracks.get(i).getAsJsonObject();
                             BusTrack busTrack = new BusTrack(
-                                    jsonObject.get("id").getAsString(),
+                                    jsonObject.get("busId").getAsString(),
                                     jsonObject.get("userId").getAsString(),
                                     jsonObject.get("name").getAsString(),
                                     jsonObject.get("start").getAsString(),
@@ -261,7 +261,7 @@ public class PatientTrackFragment extends Fragment {
         //TODO 需要获取正确的线路uid来测试
         mBusLineSearch.searchBusLine(new BusLineSearchOption()
                 .city(city)
-                .uid(busTrack.getId()));
+                .uid(busTrack.getBusId()));
 
 
     }
