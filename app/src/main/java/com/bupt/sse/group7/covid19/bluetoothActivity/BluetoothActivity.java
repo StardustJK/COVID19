@@ -54,8 +54,8 @@ import okhttp3.Response;
 public class BluetoothActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = "BluetoothActivity";
-//    private static final String API_URL = "http://192.168.43.129:3030/";
-    private static final String API_URL = "http://39.97.212.229:3030/";
+    private static final String API_URL = "http://192.168.43.129:3030/";
+//    private static final String API_URL = "http://39.97.212.229:3030/";
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     public static final int POST_SECRET_KEY_SUCCESSFUL = 0;
     public static final int POST_SECRET_KEY_UNSUCCESSFUL = 1;
@@ -97,7 +97,12 @@ public class BluetoothActivity extends AppCompatActivity implements View.OnClick
     //标记蓝牙扫描线程是否正在进行
     private boolean bluetoothThreadFlag;
 
+    //等待dialog
     private ProgressDialog waitingDialog;
+
+    //用于获取存储的本地匹配结果和蓝牙感染风险等级
+    private SharedPreferences pref;
+
 
     // handler用于线程通信
     @SuppressLint("HandlerLeak")
@@ -133,7 +138,9 @@ public class BluetoothActivity extends AppCompatActivity implements View.OnClick
                     break;
                 case GET_RISK_LEVEL_SUCCESSFUL:
                     waitingDialog.dismiss();
-                    showResponseDialog("获得感染风险评估等级成功，请到个人主页查看");
+                    int bluetoothRiskLevel = pref.getInt("BluetoothRiskLevel", 0);
+                    String message1 = "您的蓝牙感染风险等级是：" + bluetoothRiskLevel + "级。";
+                    showResponseDialog(message1);
                     break;
                 case GET_RISK_LEVEL_UNSUCCESSFUL:
                     waitingDialog.dismiss();
@@ -141,7 +148,9 @@ public class BluetoothActivity extends AppCompatActivity implements View.OnClick
                     break;
                 case GET_CHECK_RESULT:
                     waitingDialog.dismiss();
-                    showResponseDialog("本地匹配完成，请到个人主页查看");
+                    int bluetoothMatchResult = pref.getInt("matchResult", 0);
+                    String message2 = "您本地匹配成功的蓝牙扫描记录有：" + bluetoothMatchResult + "条。";
+                    showResponseDialog(message2);
                     break;
                 case SHOW_WAITTING_DIALOG:
                     waitingDialog.show();
@@ -215,24 +224,11 @@ public class BluetoothActivity extends AppCompatActivity implements View.OnClick
         waitingDialog.setIndeterminate(true);
         waitingDialog.setCancelable(false);
 
+        //创建sharepreference
+        pref = PreferenceManager.getDefaultSharedPreferences(this);
+
         //启动FirstWork服务
         startFirstWorkService();
-
-//        //获得并存储14天内的广播键集
-//        getAndSaveOtherSK();
-//
-//        //进行广播键集和本地蓝牙扫描信息的匹配
-//        int result = 0;
-//        try {
-//            result = AlgUtil.getCheckResult();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-
-        //存储用户的userid
-//        saveMyUserid(userid);
-
-
     }
 
     @Override
@@ -341,7 +337,7 @@ public class BluetoothActivity extends AppCompatActivity implements View.OnClick
                             .create();
                     alertDialog.show();
                 } else {
-                    postBluetoothInfo();
+                    postBluetoothInfo(0);
                 }
                 break;
             case R.id.get_otherSecretKey_button:
@@ -374,7 +370,7 @@ public class BluetoothActivity extends AppCompatActivity implements View.OnClick
                             .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    postBluetoothInfo();
+                                    postBluetoothInfo(1);
                                     findRiskLevelByUserid();
                                 }
                             })
@@ -450,8 +446,9 @@ public class BluetoothActivity extends AppCompatActivity implements View.OnClick
 
     /**
      * 上传蓝牙扫描信息
+     * @param flag 为0表示正常上传，为1表示上传后要触发“获得感染风险等级”
      */
-    private void postBluetoothInfo() {
+    private void postBluetoothInfo(int flag) {
         handler.sendEmptyMessage(SHOW_WAITTING_DIALOG);
         String url = API_URL + "api/Bluetooth/postBluetoothInfoList";
 
@@ -482,6 +479,8 @@ public class BluetoothActivity extends AppCompatActivity implements View.OnClick
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
                 handler.sendEmptyMessage(POST_BLUETOOTH_INFO_UNSUCCESSFUL);
+                if(flag == 1)
+                    handler.sendEmptyMessage(GET_RISK_LEVEL_UNSUCCESSFUL);
                 Log.d(TAG, "onFailure: 上传蓝牙扫描信息失败");
             }
 
@@ -492,6 +491,8 @@ public class BluetoothActivity extends AppCompatActivity implements View.OnClick
                     bluetoothInfo.save();
                 }
                 handler.sendEmptyMessage(POST_BLUETOOTH_INFO_SUCCESSFUL);
+                if(flag == 1)
+                    findRiskLevelByUserid();
                 Log.d(TAG, "onResponse: 上传蓝牙扫描信息成功，上传数量：" + n);
             }
         });
@@ -630,6 +631,10 @@ public class BluetoothActivity extends AppCompatActivity implements View.OnClick
         editor.apply();
     }
 
+    /**
+     * 显示网络响应结果的dialog
+     * @param message
+     */
     private void showResponseDialog(String message){
         AlertDialog alertDialog = new AlertDialog.Builder(this)
 //                .setTitle("提示")//标题
@@ -639,6 +644,4 @@ public class BluetoothActivity extends AppCompatActivity implements View.OnClick
                 .create();
         alertDialog.show();
     }
-
-
 }

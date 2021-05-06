@@ -44,7 +44,6 @@ public class PatientMainPageActivity extends AppCompatActivity implements IPatie
     private int id;
     public TextView busTrackTv;
     public LinearLayout busTrackLayout;
-    private SharedPreferences pref;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -63,8 +62,6 @@ public class PatientMainPageActivity extends AppCompatActivity implements IPatie
         patientPresenter.registerCallBack(this);
         busTrackLayout = findViewById(R.id.busTrackLayout);
         busTrackTv = findViewById(R.id.busTrackTv);
-
-        pref = PreferenceManager.getDefaultSharedPreferences(this);
 
     }
 
@@ -91,12 +88,6 @@ public class PatientMainPageActivity extends AppCompatActivity implements IPatie
                 Intent intent2 = new Intent(PatientMainPageActivity.this, ShowHealthInfoHistoryActivity.class);
                 startActivity(intent2);
                 finish();
-                return true;
-            case R.id.action_show_riskLevel:
-                showRiskLevel();
-                return true;
-            case R.id.action_show_matchResult:
-                showMatchResult();
                 return true;
             case R.id.action_auth:
                 return true;
@@ -157,40 +148,5 @@ public class PatientMainPageActivity extends AppCompatActivity implements IPatie
         Toast.makeText(this, "当前网络不可用，请检查你的网络", Toast.LENGTH_SHORT).show();
 
     }
-
-    /**
-     * 显示感染风险等级的dialog
-     */
-    public void showRiskLevel(){
-        int bluetoothRiskLevel = pref.getInt("BluetoothRiskLevel", 0);
-        int wifiRiskLevel = 0;
-        String message = "您的WiFi感染风险等级是：" + wifiRiskLevel + "级。\n"+
-                "您的蓝牙感染风险等级是：" + bluetoothRiskLevel + "级。";
-        AlertDialog alertDialog = new AlertDialog.Builder(this)
-                .setTitle("感染风险等级")//标题
-                .setMessage(message)//内容
-                .setIcon(R.mipmap.ic_launcher)//图标
-                .setPositiveButton("我知道了",null )
-                .create();
-        alertDialog.show();
-    }
-
-    /**
-     * 显示本地匹配结果的dialog
-     */
-    public void showMatchResult(){
-        int bluetoothMatchResult = pref.getInt("matchResult", 0);
-        int wifiMatchResult = 0;
-        String message = "您本地匹配成功的WiFi扫描记录有：" + wifiMatchResult + "条。\n"+
-                "您本地匹配成功的蓝牙扫描记录有：" + bluetoothMatchResult + "条。";
-        AlertDialog alertDialog = new AlertDialog.Builder(this)
-                .setTitle("本地匹配结果")//标题
-                .setMessage(message)//内容
-                .setIcon(R.mipmap.ic_launcher)//图标
-                .setPositiveButton("我知道了",null )
-                .create();
-        alertDialog.show();
-    }
-
 
 }

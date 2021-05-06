@@ -20,19 +20,6 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_show_matchResult"
-        android:orderInCategory="1"
-        android:title="查看本地匹配结果"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/action_show_riskLevel"
-        android:orderInCategory="1"
-        android:title="查看感染风险等级"
-        app:showAsAction="never" />
-
-
-    <item
         android:id="@+id/action_auth"
         android:orderInCategory="1"
         android:title="身份认证"
