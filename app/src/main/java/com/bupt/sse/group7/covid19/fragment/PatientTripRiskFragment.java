@@ -3,12 +3,14 @@ package com.bupt.sse.group7.covid19.fragment;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
@@ -32,8 +34,11 @@ import com.google.gson.JsonParser;
 
 import org.json.JSONArray;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -43,12 +48,14 @@ import retrofit2.Response;
 
 public class PatientTripRiskFragment extends Fragment implements IUserTripViewCallBack {
 
+    private static final String TAG = "PatientTripRiskFragment";
     RecyclerView riskRv;
     TextView safe;
     UserTripPresenter  userTripPresenter;
     CardView login_btn;
     LinearLayout not_login;
     ImageView toggle;
+    CurrentUser currentUser=CurrentUser.getCurrentUser();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -67,20 +74,72 @@ public class PatientTripRiskFragment extends Fragment implements IUserTripViewCa
         riskRv=view.findViewById(R.id.risk_rv);
         riskRv.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
         toggle=view.findViewById(R.id.toggle);
-        //TODo 获取初始状态
-        toggle.setImageResource(R.drawable.switch_open);
-        toggle.setTag("open");
+
+        if(currentUser.isShowTripRisk()){
+            toggle.setImageResource(R.drawable.switch_open);
+            toggle.setTag("open");
+        }else {
+            toggle.setImageResource(R.drawable.switch_close);
+            toggle.setTag("close");
+        }
 
         toggle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(toggle.getTag().equals("open")){
-                    toggle.setImageResource(R.drawable.switch_close);
-                    toggle.setTag("close");
+                    Map<String,String> param=new HashMap<>();
+                    param.put("user_id",currentUser.getUserId()+"");
+                    param.put("show","false");
+                    Call<String> get = DBConnector.dao.Get("user/updateShowTripRisk", param);
+                    get.enqueue(new Callback<String>() {
+                        @Override
+                        public void onResponse(Call<String> call, Response<String> response) {
+                            JsonObject jsonObject= (JsonObject) JsonParser.parseString(response.body());
+                            if(jsonObject.get("success").getAsBoolean()){
+                                toggle.setImageResource(R.drawable.switch_close);
+                                toggle.setTag("close");
+                                currentUser.setShowTripRisk(false);
+                            }
+                            else {
+                                Log.i(TAG,"关闭失败");
+                                Toast.makeText(getActivity(),"关闭失败,请稍后重试",Toast.LENGTH_LONG).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<String> call, Throwable t) {
+                            Log.i(TAG,"关闭失败");
+                            Toast.makeText(getActivity(),"关闭失败,请稍后重试",Toast.LENGTH_LONG).show();
+                        }
+                    });
+
                 }
                 else{
-                    toggle.setImageResource(R.drawable.switch_open);
-                    toggle.setTag("open");
+                    Map<String,String> param=new HashMap<>();
+                    param.put("user_id",currentUser.getUserId()+"");
+                    param.put("show","true");
+                    Call<String> get = DBConnector.dao.Get("user/updateShowTripRisk", param);
+                    get.enqueue(new Callback<String>() {
+                        @Override
+                        public void onResponse(Call<String> call, Response<String> response) {
+                            JsonObject jsonObject= (JsonObject) JsonParser.parseString(response.body());
+                            if(jsonObject.get("success").getAsBoolean()){
+                                toggle.setImageResource(R.drawable.switch_open);
+                                toggle.setTag("open");
+                                currentUser.setShowTripRisk(true);
+                            }
+                            else {
+                                Log.i(TAG,"打开失败");
+                                Toast.makeText(getActivity(),"打开失败,请稍后重试",Toast.LENGTH_LONG).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<String> call, Throwable t) {
+                            Log.i(TAG,"打开失败");
+                            Toast.makeText(getActivity(),"打开失败,请稍后重试",Toast.LENGTH_LONG).show();
+                        }
+                    });
 
                 }
             }

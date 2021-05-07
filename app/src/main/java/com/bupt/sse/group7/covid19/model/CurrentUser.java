@@ -44,14 +44,24 @@ public class CurrentUser {
     private int status;
     private int role;
     private boolean auth;
+    private boolean showTripRisk;
 
-    public CurrentUser(int userId, String phone, String name, int status, int role,boolean auth) {
+    public boolean isShowTripRisk() {
+        return showTripRisk;
+    }
+
+    public void setShowTripRisk(boolean showTripRisk) {
+        this.showTripRisk = showTripRisk;
+    }
+
+    public CurrentUser(int userId, String phone, String name, int status, int role, boolean auth,boolean showTripRisk) {
         this.userId = userId;
         this.phone = phone;
         this.name = name;
         this.status = status;
         this.role = role;
         this.auth=auth;
+        this.showTripRisk=showTripRisk;
     }
 
     public boolean isAuth() {

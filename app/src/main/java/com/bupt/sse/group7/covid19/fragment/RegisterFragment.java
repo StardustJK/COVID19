@@ -183,7 +183,8 @@ public class RegisterFragment extends Fragment {
                             data.get("name").getAsString(),
                             data.get("status").getAsInt(),
                             data.get("role").getAsInt(),
-                            data.get("auth").getAsBoolean());
+                            data.get("auth").getAsBoolean(),
+                            data.get("showTripRisk").getAsBoolean());
                     CurrentUser.setCurrentUser(currentUser);
                     SharedPreferences sharedPreferences=getContext().getSharedPreferences("Current_User", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor=sharedPreferences.edit();

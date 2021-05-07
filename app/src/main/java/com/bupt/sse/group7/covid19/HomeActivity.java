@@ -120,7 +120,8 @@ public class HomeActivity extends AppCompatActivity implements IUserTripViewCall
                                     user.get("name").getAsString(),
                                     user.get("status").getAsInt(),
                                     user.get("role").getAsInt(),
-                                    user.get("auth").getAsBoolean()
+                                    user.get("auth").getAsBoolean(),
+                                    user.get("showTripRisk").getAsBoolean()
                             );
                             CurrentUser.setCurrentUser(currentUser);
 
