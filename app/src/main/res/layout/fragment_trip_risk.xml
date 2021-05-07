@@ -2,11 +2,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
+    android:background="@color/cardGreen"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <RelativeLayout
-        android:background="@color/cardGreen"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -21,12 +21,37 @@
             android:textStyle="bold"
             android:textSize="22sp"
             android:textColor="@color/colorPrimary"/>
+        <LinearLayout
+            android:gravity="center_vertical"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_marginRight="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorPrimary"
+                android:text="风险提示"
+                />
+            <ImageView
+                android:id="@+id/toggle"
+                android:layout_width="50dp"
+                android:layout_height="40dp"
+                android:src="@drawable/switch_open"/>
+        </LinearLayout>
+
 
     </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/not_login"
-        android:background="@color/colorPrimary"
+        android:background="@drawable/bordernoline"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">

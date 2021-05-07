@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -22,7 +23,7 @@ import org.w3c.dom.Text;
 
 public class PatientTripActivity extends AppCompatActivity{
 
-TextView query,record,risk;
+LinearLayout query,record,risk;
 ViewPager2 viewPager;
 
 PatientTripPagerAdapter mAdapter;

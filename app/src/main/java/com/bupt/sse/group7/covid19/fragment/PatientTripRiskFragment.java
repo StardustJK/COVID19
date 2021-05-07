@@ -1,10 +1,12 @@
 package com.bupt.sse.group7.covid19.fragment;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -46,6 +48,7 @@ public class PatientTripRiskFragment extends Fragment implements IUserTripViewCa
     UserTripPresenter  userTripPresenter;
     CardView login_btn;
     LinearLayout not_login;
+    ImageView toggle;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -63,6 +66,26 @@ public class PatientTripRiskFragment extends Fragment implements IUserTripViewCa
         safe=view.findViewById(R.id.safe);
         riskRv=view.findViewById(R.id.risk_rv);
         riskRv.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
+        toggle=view.findViewById(R.id.toggle);
+        //TODo 获取初始状态
+        toggle.setImageResource(R.drawable.switch_open);
+        toggle.setTag("open");
+
+        toggle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(toggle.getTag().equals("open")){
+                    toggle.setImageResource(R.drawable.switch_close);
+                    toggle.setTag("close");
+                }
+                else{
+                    toggle.setImageResource(R.drawable.switch_open);
+                    toggle.setTag("open");
+
+                }
+            }
+        });
+
         userTripPresenter=UserTripPresenter.getInstance();
         userTripPresenter.registerCallBack(this);
 
