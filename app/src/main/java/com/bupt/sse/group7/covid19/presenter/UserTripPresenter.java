@@ -1,5 +1,8 @@
 package com.bupt.sse.group7.covid19.presenter;
 
+import android.util.Log;
+import android.widget.Toast;
+
 import com.bupt.sse.group7.covid19.interfaces.IUserTripViewCallBack;
 import com.bupt.sse.group7.covid19.model.UserTrip;
 import com.bupt.sse.group7.covid19.utils.DBConnector;
@@ -17,18 +20,20 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class UserTripPresenter {
+    private static final String TAG = "UserTripPresenter";
     private static String typeArray[] = {" ", "火车", "地铁", "公交车", "出租车", "轮船"};
 
-    private static UserTripPresenter instance=new UserTripPresenter();
+    private static UserTripPresenter instance = new UserTripPresenter();
 
-    private List<IUserTripViewCallBack> callBacks=new ArrayList<>();
+    private List<IUserTripViewCallBack> callBacks = new ArrayList<>();
 
     List<UserTrip> userTripList;
 
 
-    public static UserTripPresenter getInstance(){
+    public static UserTripPresenter getInstance() {
         return instance;
     }
+
     public void registerCallBack(IUserTripViewCallBack callBack) {
         if (callBacks != null && !callBacks.contains(callBack)) {
             callBacks.add(callBack);
@@ -40,7 +45,35 @@ public class UserTripPresenter {
             callBacks.remove(callBack);
         }
     }
-    public void getUserTripById(int userId){
+
+    public void getRisk(int userId) {
+
+        //TODO 可能设置risk字段
+        Map<String, String> args = new HashMap();
+        args.put("user_id", userId + "");
+        Call<String> data = DBConnector.dao.Get("trip/riskNotify", args);
+        data.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                JsonObject result = (JsonObject) JsonParser.parseString(response.body());
+                if (result.get("success").getAsBoolean()) {
+                    handleRisk();
+                } else {
+                    Log.i(TAG, "getRisk " + result.get("message").getAsString());
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.i(TAG, "getRisk onFailure");
+
+            }
+        });
+
+    }
+
+    public void getUserTripById(int userId) {
 
         Map<String, String> args = new HashMap();
         args.put("user_id", userId + "");
@@ -67,7 +100,7 @@ public class UserTripPresenter {
                         userTripList.add(userTrip);
                     }
 
-                   handleUserTripInfoReturned();
+                    handleUserTripInfoReturned();
 
                 } else {
                     handleGetDataFailed("无历史出行记录");
@@ -85,14 +118,22 @@ public class UserTripPresenter {
 
     }
 
-    private void handleUserTripInfoReturned(){
-        for(IUserTripViewCallBack callBack:callBacks){
+    private void handleRisk() {
+        for (IUserTripViewCallBack callBack : callBacks) {
+            callBack.onRisk();
+        }
+
+
+    }
+
+    private void handleUserTripInfoReturned() {
+        for (IUserTripViewCallBack callBack : callBacks) {
             callBack.onUserTripInfoReturned(userTripList);
         }
     }
 
-    private void handleGetDataFailed(String msg){
-        for (IUserTripViewCallBack callBack:callBacks){
+    private void handleGetDataFailed(String msg) {
+        for (IUserTripViewCallBack callBack : callBacks) {
             callBack.onGetZeroData(msg);
         }
     }

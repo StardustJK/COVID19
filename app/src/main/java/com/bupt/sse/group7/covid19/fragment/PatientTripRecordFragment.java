@@ -199,4 +199,9 @@ public class PatientTripRecordFragment extends Fragment implements IUserTripView
         title.setText(msg);
 
     }
+
+    @Override
+    public void onRisk() {
+
+    }
 }
