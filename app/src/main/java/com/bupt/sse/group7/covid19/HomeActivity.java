@@ -71,7 +71,7 @@ public class HomeActivity extends AppCompatActivity implements IUserTripViewCall
     private Context context = this;
     private JsonObject statistics;
     private UserTripPresenter userTripPresenter;
-    private boolean notified=false;
+    private boolean notified = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -302,7 +302,7 @@ public class HomeActivity extends AppCompatActivity implements IUserTripViewCall
     }
 
 
-    public void notification(int id,String content, PendingIntent intent) {
+    public void notification(int id, String content, PendingIntent intent) {
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         String channelId = "Covid";
         String name = "CovidChannel";
@@ -338,17 +338,13 @@ public class HomeActivity extends AppCompatActivity implements IUserTripViewCall
 
     @Override
     public void onRisk() {
-        if(notified){
-            return;
-        }
-        else {
-            //用于跳转Activity
-            Intent intent=new Intent(this,PatientTripActivity.class);
-            PendingIntent pendingIntent = PendingIntent.getActivity(context, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-            notification(1,"您有行程风险，点击查看",pendingIntent);
-            notified=true;
-        }
+        //用于跳转Activity
+        Intent intent = new Intent(this, PatientTripActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        notification(1, "您有行程风险，点击查看", pendingIntent);
+
 
     }
 }
