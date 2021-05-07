@@ -130,7 +130,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/edit_background_white"
-                        android:hint="45字以内"
+                        android:hint="100字以内"
+                        android:maxLength="100"
                         android:inputType="textMultiLine"
                         android:padding="10dp"
                         android:textSize="16dp" />

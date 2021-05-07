@@ -1,5 +1,6 @@
 package com.bupt.sse.group7.covid19;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -10,14 +11,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
-import android.widget.Toast;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 
 import com.bupt.sse.group7.covid19.adapter.HealthInfoHistoryAdapter;
-import com.bupt.sse.group7.covid19.bluetoothActivity.BluetoothActivity;
 import com.bupt.sse.group7.covid19.model.CurrentUser;
 import com.bupt.sse.group7.covid19.model.HealthInfo;
-import com.bupt.sse.group7.covid19.model.Status;
 import com.bupt.sse.group7.covid19.utils.bluetoothModule.HttpUtil;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -34,15 +36,24 @@ import okhttp3.Response;
 
 public class ShowHealthInfoHistoryActivity extends AppCompatActivity {
     private static final String TAG = "ShowHealthInfoHistory";
-//    private static final String API_URL = "http://192.168.43.129:3030/";
+    //    private static final String API_URL = "http://192.168.43.129:3030/";
     private static final String API_URL = "http://39.97.212.229:3030/";
     private static final int UPDATE_RE_VIEW = 1;
+    private static final int SHOW_DETAIL_DIALOG = 2;
 
 
     private List<HealthInfo> healthInfoList = new ArrayList<>();
-    private HealthInfoHistoryAdapter adapter;
+    private HealthInfoHistoryAdapter mAdapter;
     private RecyclerView recyclerView;
     private SharedPreferences pref;
+    private int myPosition = 0;
+
+    TextView typeDetailText;
+    TextView submitTimeDetailText;
+    TextView auditStatusDetailText;
+    TextView contentDetailText;
+    TextView auditOpinionDetailText;
+    TextView auditTimeDetailText;
 
 
     // handler用于线程通信
@@ -56,9 +67,13 @@ public class ShowHealthInfoHistoryActivity extends AppCompatActivity {
                     Gson gson = new Gson();
                     healthInfoList.clear();
                     healthInfoList.addAll(gson.fromJson(healthInfoListString,
-                            new TypeToken<List<HealthInfo>>() {}.getType()));
-                    adapter.notifyDataSetChanged();
+                            new TypeToken<List<HealthInfo>>() {
+                            }.getType()));
+                    mAdapter.notifyDataSetChanged();
                     Log.d(TAG, "handleMessage: 已更新健康信息记录");
+                    break;
+                case SHOW_DETAIL_DIALOG:
+//                    showHealthInfoDetailDialog();
                     break;
             }
         }
@@ -70,14 +85,23 @@ public class ShowHealthInfoHistoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_health_info_history);
 
-        adapter = new HealthInfoHistoryAdapter(this.healthInfoList);
+        mAdapter = new HealthInfoHistoryAdapter(this.healthInfoList);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView = (RecyclerView) findViewById(R.id.healthInfo_recycler_view);
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(adapter);
+        recyclerView.setAdapter(mAdapter);
 
         pref = PreferenceManager.getDefaultSharedPreferences(this);
         getHealthInfoHistory();
+
+        mAdapter.setOnItemClickListener(new HealthInfoHistoryAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                myPosition = position;
+                showHealthInfoDetailDialog();
+            }
+        });
+
     }
 
     @Override
@@ -113,7 +137,41 @@ public class ShowHealthInfoHistoryActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * 展示用户健康信息详情的dialog
+     */
+    private void showHealthInfoDetailDialog() {
+        Log.d(TAG, "showHealthInfoDetailDialog: 显示细节dialog");
+        HealthInfo healthInfo = healthInfoList.get(myPosition);
 
+        AlertDialog.Builder detailDialog =
+                new AlertDialog.Builder(this);
+        final View dialogView = LayoutInflater.from(this)
+                .inflate(R.layout.healthinfo_history_detail, null);
+        detailDialog.setView(dialogView);
+        detailDialog.setPositiveButton("确定", null);
+//        detailDialog.setNeutralButton("确定", null);
+
+        //通过控件所在的view调用findViewById方法，才可以获取到正确的控件，否则会出现为空的情况
+        typeDetailText = dialogView.findViewById(R.id.typeDetailText);
+        submitTimeDetailText = dialogView.findViewById(R.id.submitTimeDetailText);
+        auditStatusDetailText = dialogView.findViewById(R.id.auditStatusDetailText);
+        contentDetailText = dialogView.findViewById(R.id.contentDetailText);
+        auditOpinionDetailText = dialogView.findViewById(R.id.auditOpinionDetailText);
+        auditTimeDetailText = dialogView.findViewById(R.id.auditTimeDetailText);
+
+        typeDetailText.setText(healthInfo.getType());
+        submitTimeDetailText.setText(healthInfo.getSubmitTime());
+        contentDetailText.setText(healthInfo.getContent());
+        auditStatusDetailText.setText(healthInfo.getAuditStatus());
+        auditTimeDetailText.setText(healthInfo.getAuditTime());
+        auditOpinionDetailText.setText(healthInfo.getAuditOpinion());
+
+        contentDetailText.setMovementMethod(ScrollingMovementMethod.getInstance());
+        auditOpinionDetailText.setMovementMethod(ScrollingMovementMethod.getInstance());
+
+        detailDialog.show();
+    }
 
 
 }
