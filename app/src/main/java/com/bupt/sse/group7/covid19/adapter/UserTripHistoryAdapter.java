@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -18,15 +19,16 @@ import com.bupt.sse.group7.covid19.utils.Constants;
 
 import java.util.List;
 
-public class UserTripHistoryAdapter extends RecyclerView.Adapter<UserTripHistoryAdapter.MyViewHolder> {
+public class UserTripHistoryAdapter extends RecyclerView.Adapter<UserTripHistoryAdapter.MyViewHolder>{
     private List<UserTrip> userTripList;
-
-    public void setUserTripList(List<UserTrip> userTripList) {
-        this.userTripList = userTripList;
-    }
 
     public UserTripHistoryAdapter(List<UserTrip> userTrips) {
         userTripList = userTrips;
+    }
+
+    private OnDeleteClickListener onDeleteClickListener;
+    public void setOnDeleteClickListener(OnDeleteClickListener onDeleteClickListener){
+        this.onDeleteClickListener = onDeleteClickListener;
     }
 
     @NonNull
@@ -39,6 +41,14 @@ public class UserTripHistoryAdapter extends RecyclerView.Adapter<UserTripHistory
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         UserTrip userTrip = userTripList.get(position);
+        holder.delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(onDeleteClickListener!=null){
+                    onDeleteClickListener.onDeleteClick(userTrip);
+                }
+            }
+        });
         holder.date.setText(userTrip.getDate());
         holder.typeNo.setText(Constants.types[userTrip.getType()]+userTrip.getNo());
         //非必填
@@ -77,11 +87,14 @@ public class UserTripHistoryAdapter extends RecyclerView.Adapter<UserTripHistory
         return userTripList.size();
     }
 
+
+
     class MyViewHolder extends RecyclerView.ViewHolder {
 
         TextView date, typeNo, subNo, startPos, endPos, who, memo;
         RelativeLayout start_end;
         LinearLayout who_layout,memo_layout,layout;
+        ImageView delete;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -96,8 +109,14 @@ public class UserTripHistoryAdapter extends RecyclerView.Adapter<UserTripHistory
             who_layout=itemView.findViewById(R.id.who_layout);
             who_layout.setVisibility(View.GONE);
             layout=itemView.findViewById(R.id.layout);
+            delete=itemView.findViewById(R.id.delete);
+
 
         }
     }
-
+    public interface OnDeleteClickListener{
+        //参数（父组件，当前单击的View,单击的View的位置，数据）
+        void onDeleteClick(UserTrip userTrip);
+    }
 }
+

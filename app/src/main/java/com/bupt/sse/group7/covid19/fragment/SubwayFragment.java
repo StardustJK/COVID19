@@ -1,7 +1,10 @@
 package com.bupt.sse.group7.covid19.fragment;
 
+import android.os.Build;
 import android.util.Log;
 import android.view.View;
+
+import androidx.annotation.RequiresApi;
 
 import com.bupt.sse.group7.covid19.EditTrackActivity;
 
@@ -19,6 +22,7 @@ public class SubwayFragment extends BusBaseFragment {
         });
 
         submitBtn.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onClick(View v) {
                 Log.d("lyj", "地铁 " + busLineAdapter.getUid() + " " + startAdapter.getChosenName() + " " + endAdapter.getChosenName());

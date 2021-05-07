@@ -1,7 +1,7 @@
 package com.bupt.sse.group7.covid19.model;
 
 public class BusTrack {
-    String id;
+    String busId;
     String userId;
     String name;
     String start;
@@ -9,7 +9,7 @@ public class BusTrack {
     String dateTime;
 
     public BusTrack(String id, String userId, String name, String start, String end, String dateTime) {
-        this.id = id;
+        this.busId = id;
         this.userId = userId;
         this.name = name;
         this.start = start;
@@ -17,12 +17,12 @@ public class BusTrack {
         this.dateTime = dateTime;
     }
 
-    public String getId() {
-        return id;
+    public String getBusId() {
+        return busId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setBusId(String busId) {
+        this.busId = busId;
     }
 
     public String getUserId() {

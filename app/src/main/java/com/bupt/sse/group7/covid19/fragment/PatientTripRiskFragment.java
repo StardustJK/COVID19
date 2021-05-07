@@ -155,4 +155,9 @@ public class PatientTripRiskFragment extends Fragment implements IUserTripViewCa
         noRisk();
 
     }
+
+    @Override
+    public void onRisk() {
+
+    }
 }

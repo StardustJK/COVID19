@@ -7,5 +7,6 @@ import java.util.List;
 public interface IUserTripViewCallBack {
     void onUserTripInfoReturned(List<UserTrip> tripList);
     void onGetZeroData(String msg);
+    void onRisk();
 
 }

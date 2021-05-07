@@ -1,6 +1,10 @@
 package com.bupt.sse.group7.covid19;
 
 import android.Manifest;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -21,13 +25,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
 import com.baidu.mapapi.SDKInitializer;
 import com.bupt.sse.group7.covid19.bluetoothActivity.BluetoothActivity;
+import com.bupt.sse.group7.covid19.interfaces.IUserTripViewCallBack;
 import com.bupt.sse.group7.covid19.model.CurrentUser;
+import com.bupt.sse.group7.covid19.model.UserTrip;
 import com.bupt.sse.group7.covid19.presenter.HospitalPresenter;
 import com.bupt.sse.group7.covid19.presenter.PatientPresenter;
+import com.bupt.sse.group7.covid19.presenter.UserTripPresenter;
 import com.bupt.sse.group7.covid19.utils.Constants;
 import com.bupt.sse.group7.covid19.utils.DBConnector;
 import com.bupt.sse.group7.covid19.utils.JsonUtils;
@@ -36,6 +44,7 @@ import com.google.gson.JsonParser;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import okhttp3.ResponseBody;
@@ -47,7 +56,7 @@ import retrofit2.Response;
 /**
  * 主页
  */
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity implements IUserTripViewCallBack {
     private static String TAG = "HomeActivity";
     private CardView hospitalCard;
     private CardView authCard;
@@ -61,6 +70,8 @@ public class HomeActivity extends AppCompatActivity {
 
     private Context context = this;
     private JsonObject statistics;
+    private UserTripPresenter userTripPresenter;
+    private boolean notified = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -76,6 +87,10 @@ public class HomeActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         }
+
+
+        userTripPresenter = UserTripPresenter.getInstance();
+        userTripPresenter.registerCallBack(this);
         initView();
         checkPermission();
         initCurrentUser();
@@ -108,6 +123,8 @@ public class HomeActivity extends AppCompatActivity {
                                     user.get("auth").getAsBoolean()
                             );
                             CurrentUser.setCurrentUser(currentUser);
+
+                            userTripPresenter.getRisk(currentUser.getUserId());
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -124,11 +141,6 @@ public class HomeActivity extends AppCompatActivity {
     }
 
 
-
-
-
-
-
     private void initView() {
         pageCard = findViewById(R.id.page_card);
         hospitalCard = findViewById(R.id.hospital_card);
@@ -136,7 +148,7 @@ public class HomeActivity extends AppCompatActivity {
         authCard = findViewById(R.id.auth_card);
         wifiCard = findViewById(R.id.wifi_card);
         bluetoothCard = findViewById(R.id.bluetooth_card);
-        patientTripCard=findViewById(R.id.patient_trip);
+        patientTripCard = findViewById(R.id.patient_trip);
 
 
         hospitalCard.setOnClickListener(new View.OnClickListener() {
@@ -182,7 +194,7 @@ public class HomeActivity extends AppCompatActivity {
                     startActivity(auth);
                     Toast.makeText(HomeActivity.this, "请先登录", Toast.LENGTH_LONG).show();
                 } else {
-                    Intent intent=new Intent(HomeActivity.this,PatientMainPageActivity.class);
+                    Intent intent = new Intent(HomeActivity.this, PatientMainPageActivity.class);
                     PatientPresenter.getInstance().setPatientId(CurrentUser.getCurrentUser().getUserId());
                     startActivity(intent);
                 }
@@ -213,8 +225,6 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-
 
 
     }
@@ -289,5 +299,52 @@ public class HomeActivity extends AppCompatActivity {
                 //MyDialog("提示", "某些权限未开启,请手动开启", 1) ;
             }
         }
+    }
+
+
+    public void notification(int id, String content, PendingIntent intent) {
+        NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        String channelId = "Covid";
+        String name = "CovidChannel";
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel mChannel = new NotificationChannel(channelId, name, NotificationManager.IMPORTANCE_DEFAULT);
+            mChannel.enableVibration(true);
+            mChannel.enableLights(true);
+            manager.createNotificationChannel(mChannel);
+        }
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelId)
+                .setContentTitle("Covid")
+                .setContentText(content)
+                .setAutoCancel(true)
+                .setContentIntent(intent)
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setSmallIcon(R.drawable.appicon);
+
+
+        Notification notification = builder.build();
+        manager.notify(id, notification);
+    }
+
+    @Override
+    public void onUserTripInfoReturned(List<UserTrip> tripList) {
+
+    }
+
+    @Override
+    public void onGetZeroData(String msg) {
+
+    }
+
+    @Override
+    public void onRisk() {
+
+        //用于跳转Activity
+        Intent intent = new Intent(this, PatientTripActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        notification(1, "您有行程风险，点击查看", pendingIntent);
+
+
     }
 }
