@@ -13,14 +13,21 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
@@ -38,6 +45,8 @@ import com.baidu.mapapi.search.geocode.GeoCodeResult;
 import com.baidu.mapapi.search.geocode.GeoCoder;
 import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
+import com.baidu.mapapi.utils.DistanceUtil;
+import com.bupt.sse.group7.covid19.adapter.ShowMapListAdapter;
 import com.bupt.sse.group7.covid19.interfaces.IAreaSelectionCallBack;
 import com.bupt.sse.group7.covid19.model.Area;
 import com.bupt.sse.group7.covid19.model.TrackPoint;
@@ -60,6 +69,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -85,7 +96,7 @@ public class ShowMapActivity extends AppCompatActivity implements IAreaSelection
     private final float mZoom = 15.0f;
     private MapView mapView;
     private BaiduMap baiduMap;
-    private List<List<TrackPoint> >trackList = new ArrayList<>();
+    private List<List<TrackPoint>> trackList = new ArrayList<>();
 
     private int sYear, sMonth, sDay, eYear, eMonth, eDay;
     private Calendar calendar = Calendar.getInstance();
@@ -108,6 +119,10 @@ public class ShowMapActivity extends AppCompatActivity implements IAreaSelection
     private androidx.appcompat.app.AlertDialog.Builder builder;
     WifiManager wifiManager;
 
+    //map list
+    CardView mapListBtn;
+    ListView mapList;
+    PopupWindow popupWindow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,17 +151,16 @@ public class ShowMapActivity extends AppCompatActivity implements IAreaSelection
     }
 
     @Override
-    public void onPause(){
+    public void onPause() {
         super.onPause();
         locationClient.stop();
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         locationClient.start();
     }
-
 
 
     @Override
@@ -172,7 +186,64 @@ public class ShowMapActivity extends AppCompatActivity implements IAreaSelection
         }
     }
 
+    void showPopWindow() {
+        View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.popwindow_map_list, null);
+        popupWindow = new PopupWindow(view, Toolbar.LayoutParams.WRAP_CONTENT, 1500, true);
+        popupWindow.setOutsideTouchable(true);
+        popupWindow.showAtLocation(this.getWindow().getDecorView(), Gravity.CENTER, 0, 0);
+
+
+        TextView title = view.findViewById(R.id.title);
+
+        if (trackList == null || trackList.size() == 0) {
+            title.setText("该条件下无轨迹列表");
+            return;
+        }
+
+        mapList = view.findViewById(R.id.map_listview);
+        //对tracklist按照距离用户的远近进行排序
+        Collections.sort(trackList, new Comparator<List<TrackPoint>>() {
+            LatLng cur = new LatLng(mCurrentLoc.getLatitude(), mCurrentLoc.getLongitude());
+
+            @Override
+            public int compare(List<TrackPoint> o1, List<TrackPoint> o2) {
+
+                double distance1 = DistanceUtil.getDistance(o1.get(0).getLatLng(), cur);
+                double distance2 = DistanceUtil.getDistance(o2.get(0).getLatLng(), cur);
+                if (distance1 == distance2) {
+                    return 0;
+                } else {
+                    return distance1 > distance2 ? 1 : -1;
+                }
+            }
+        });
+        mapList.setAdapter(new ShowMapListAdapter(getApplicationContext(), trackList));
+        mapList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (trackList != null && trackList.size() > 0) {
+                    List<TrackPoint> points = trackList.get(position);
+                    if (points.size() > 0) {
+                        PatientPresenter.getInstance().setPatientId(points.get(0).getUserId());
+                        Intent intent = new Intent(ShowMapActivity.this, PatientMainPageActivity.class);
+                        startActivity(intent);
+
+                    }
+                }
+            }
+        });
+
+    }
+
     private void initView() {
+
+        mapListBtn = findViewById(R.id.map_list);
+        mapListBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPopWindow();
+            }
+        });
         tv_start = findViewById(R.id.tv_start);
         tv_start.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
         tv_end = findViewById(R.id.tv_end);
@@ -201,11 +272,10 @@ public class ShowMapActivity extends AppCompatActivity implements IAreaSelection
             public void onClick(View v) {
                 SharedPreferences sharedPreferences = getSharedPreferences("Current_User", Context.MODE_PRIVATE);
                 String currentUserId = sharedPreferences.getString("userId", "0");
-                if(currentUserId.equals("0"))
-                    {
-                        Toast.makeText(ShowMapActivity.this, "尚未登录无法关注wifi节点", Toast.LENGTH_LONG).show();
-                        return;
-                    }
+                if (currentUserId.equals("0")) {
+                    Toast.makeText(ShowMapActivity.this, "尚未登录无法关注wifi节点", Toast.LENGTH_LONG).show();
+                    return;
+                }
                 showMultiSelect();
             }
         });
@@ -249,7 +319,7 @@ public class ShowMapActivity extends AppCompatActivity implements IAreaSelection
 //可选，默认gcj02，设置返回的定位结果坐标系，如果配合百度地图使用，建议设置为bd09ll;
         locationOption.setCoorType("bd09ll");
 //可选，默认0，即仅定位一次，设置发起连续定位请求的间隔需要大于等于1000ms才是有效的
-        locationOption.setScanSpan(10*1000);
+        locationOption.setScanSpan(10 * 1000);
 //可选，设置是否需要设备方向结果
         locationOption.setNeedDeviceDirect(false);
 //可选，默认true，定位SDK内部是一个SERVICE，并放到了独立进程，设置是否在stop的时候杀死这个进程，默认不杀死
@@ -324,7 +394,7 @@ public class ShowMapActivity extends AppCompatActivity implements IAreaSelection
             String town = location.getTown();    //获取乡镇信息
             String locationDescribe = location.getLocationDescribe();    //获取位置描述信息
 
-            Log.d("addr",addr+"  "+locationDescribe);
+            Log.d("addr", addr + "  " + locationDescribe);
 
             //获取纬度信息
             double latitude = location.getLatitude();
@@ -393,14 +463,14 @@ public class ShowMapActivity extends AppCompatActivity implements IAreaSelection
                 new Runnable() {
                     @Override
                     public void run() {
-                       // allPatientId = DBConnector.getTrackIds();
+                        // allPatientId = DBConnector.getTrackIds();
                         Call<String> data = DBConnector.dao.Get("track/userIds");
                         try {
                             String body = data.execute().body();
                             JsonObject rawData = (JsonObject) JsonParser.parseString(body);
                             JsonArray dataAsJsonArray = rawData.getAsJsonArray("data");
-                            for(int i=0;i<dataAsJsonArray.size();i++){
-                                String userId=dataAsJsonArray.get(i).getAsString();
+                            for (int i = 0; i < dataAsJsonArray.size(); i++) {
+                                String userId = dataAsJsonArray.get(i).getAsString();
                                 getTrackInfo(userId);
                             }
                         } catch (IOException e) {
@@ -428,7 +498,11 @@ public class ShowMapActivity extends AppCompatActivity implements IAreaSelection
                     new Runnable() {
                         @Override
                         public void run() {
-                            trackList.add(getTrackByCity(args));
+                            List<TrackPoint> trackByCity = getTrackByCity(args);
+                            if (trackByCity.size() > 0) {
+                                trackList.add(trackByCity);
+
+                            }
                         }
                     }
             );
@@ -438,7 +512,11 @@ public class ShowMapActivity extends AppCompatActivity implements IAreaSelection
                     new Runnable() {
                         @Override
                         public void run() {
-                            trackList.add(getTrackByDistrict(args));
+                            List<TrackPoint> trackByDistrict = getTrackByDistrict(args);
+                            if (trackByDistrict.size() > 0) {
+                                trackList.add(trackByDistrict);
+
+                            }
                         }
                     }
             );
@@ -452,27 +530,27 @@ public class ShowMapActivity extends AppCompatActivity implements IAreaSelection
     }
 
 
-    private List<TrackPoint> getTrackByCity(Map param){
-        Call<String> call= DBConnector.dao.Get("track/trackByDateAndCity",param);
-        List<TrackPoint> trackPoints=new ArrayList<>();
+    private List<TrackPoint> getTrackByCity(Map param) {
+        Call<String> call = DBConnector.dao.Get("track/trackByDateAndCity", param);
+        List<TrackPoint> trackPoints = new ArrayList<>();
 
         try {
             String body = call.execute().body();
-            JsonObject rawData= (JsonObject) JsonParser.parseString(body);
+            JsonObject rawData = (JsonObject) JsonParser.parseString(body);
 
-            if(rawData.get("success").getAsBoolean()){
+            if (rawData.get("success").getAsBoolean()) {
                 JsonArray jsonArray = rawData.get("data").getAsJsonArray();
-                for(int i=0;i<jsonArray.size();i++){
-                    JsonObject jsonObject=jsonArray.get(i).getAsJsonObject();
-                    TrackPoint trackPoint=new TrackPoint(
+                for (int i = 0; i < jsonArray.size(); i++) {
+                    JsonObject jsonObject = jsonArray.get(i).getAsJsonObject();
+                    TrackPoint trackPoint = new TrackPoint(
                             jsonObject.get("dateTime").getAsString(),
                             jsonObject.get("location").getAsString(),
                             jsonObject.get("description").getAsString(),
-                            new LatLng(jsonObject.get("latitude").getAsDouble(),jsonObject.get("longitude").getAsDouble()),
+                            new LatLng(jsonObject.get("latitude").getAsDouble(), jsonObject.get("longitude").getAsDouble()),
                             jsonObject.get("userId").getAsInt(),
                             jsonObject.get("city").getAsString(),
                             jsonObject.get("district").getAsString()
-                            );
+                    );
                     trackPoints.add(trackPoint);
                 }
 
@@ -484,8 +562,9 @@ public class ShowMapActivity extends AppCompatActivity implements IAreaSelection
         return trackPoints;
 
     }
-    private List<TrackPoint> getTrackByDistrict(Map param){
-        Call<String> call= DBConnector.dao.Get("track/trackByDateAndDistrict",param);
+
+    private List<TrackPoint> getTrackByDistrict(Map param) {
+        Call<String> call = DBConnector.dao.Get("track/trackByDateAndDistrict", param);
         try {
             String body = call.execute().body();
         } catch (IOException e) {
@@ -495,6 +574,7 @@ public class ShowMapActivity extends AppCompatActivity implements IAreaSelection
         return null;
 
     }
+
     private void bindEvents() {
         tv_start.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -642,24 +722,23 @@ public class ShowMapActivity extends AppCompatActivity implements IAreaSelection
 
             JSONArray jsonArray = new JSONArray();
             try {
-                int count=0;
-                for(ScanResult item:scanlist)
-                {
+                int count = 0;
+                for (ScanResult item : scanlist) {
                     JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("mac",item.BSSID);
-                    jsonObject.put("name",item.SSID);
-                    jsonObject.put("registerUser",currentUserId);
-                    jsonObject.put("longitude",mCurrentLoc.getLongitude());
-                    jsonObject.put("lantitude",mCurrentLoc.getLatitude());
-                    jsonObject.put("city",mCurrentLoc.getCity());
-                    jsonObject.put("district",mCurrentLoc.getDistrict());
-                    jsonObject.put("street",mCurrentLoc.getStreet());
-                    jsonObject.put("adressinfo",mCurrentLoc.getLocationDescribe()+"");
+                    jsonObject.put("mac", item.BSSID);
+                    jsonObject.put("name", item.SSID);
+                    jsonObject.put("registerUser", currentUserId);
+                    jsonObject.put("longitude", mCurrentLoc.getLongitude());
+                    jsonObject.put("lantitude", mCurrentLoc.getLatitude());
+                    jsonObject.put("city", mCurrentLoc.getCity());
+                    jsonObject.put("district", mCurrentLoc.getDistrict());
+                    jsonObject.put("street", mCurrentLoc.getStreet());
+                    jsonObject.put("adressinfo", mCurrentLoc.getLocationDescribe() + "");
                     jsonObject.put("registerTime", WIFIConnection.DateToString(new Date()));
                     // 返回一个JSONArray对象
-                    jsonArray.put(count,jsonObject);
+                    jsonArray.put(count, jsonObject);
                     count++;
-                    Log.i("jsonArray",jsonArray.toString());
+                    Log.i("jsonArray", jsonArray.toString());
                 }
 
             } catch (JSONException e) {
@@ -682,9 +761,11 @@ public class ShowMapActivity extends AppCompatActivity implements IAreaSelection
                 @Override
                 public void onResponse(@NotNull okhttp3.Call call, @NotNull Response response) throws IOException {
                     String s = response.body().string();
-                    if(Integer.parseInt(s)==0)
-                    { Log.d("UploadWifiConnection", "上传成功");}
-                    else{Log.d("UploadWifiConnection", "上传失败");}
+                    if (Integer.parseInt(s) == 0) {
+                        Log.d("UploadWifiConnection", "上传成功");
+                    } else {
+                        Log.d("UploadWifiConnection", "上传失败");
+                    }
                     //Toast.makeText(getActivity().getBaseContext(),"上传蓝牙连接ID:"+newbt.ID, Toast.LENGTH_SHORT).show();
                 }
             });
@@ -711,7 +792,7 @@ public class ShowMapActivity extends AppCompatActivity implements IAreaSelection
                     }
                 }
             }
-        }else {
+        } else {
             Log.e("运行", "没有搜索到wifi");
         }
         return wifiList;
@@ -720,20 +801,18 @@ public class ShowMapActivity extends AppCompatActivity implements IAreaSelection
     private boolean initDevice() {
         wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
         //获取WIFIManager
-        if(!testWIFI()) return false;
+        if (!testWIFI()) return false;
         //addPairedDevice();
-        return  true;
+        return true;
     }
 
-    private Boolean testWIFI()
-    {
+    private Boolean testWIFI() {
         if (wifiManager == null) {
             Toast.makeText(getBaseContext(), "您的机器上没有发现WIFI适配器，本程序将不能运行!", Toast.LENGTH_SHORT).show();
             return false;
         }
 
-        if (wifiManager.getWifiState() != WifiManager.WIFI_STATE_ENABLED)
-        {// 如果WIFI还没开启
+        if (wifiManager.getWifiState() != WifiManager.WIFI_STATE_ENABLED) {// 如果WIFI还没开启
             Toast.makeText(getBaseContext(), "请先开启WIFI", Toast.LENGTH_SHORT).show();
             return false;
         }
