@@ -90,6 +90,9 @@ public class PatientMainPageActivity extends AppCompatActivity implements IPatie
                 finish();
                 return true;
             case R.id.action_auth:
+                Intent intent=new Intent(PatientMainPageActivity.this,IdentityActivity.class);
+                startActivity(intent);
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

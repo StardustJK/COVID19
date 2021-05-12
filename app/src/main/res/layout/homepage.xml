@@ -38,7 +38,7 @@
             <androidx.cardview.widget.CardView
                 android:id="@+id/page_card"
                 style="@style/home_card"
-                app:cardBackgroundColor="@color/cardLightBlue"
+                app:cardBackgroundColor="#0ab7b2"
                 app:cardCornerRadius="10dp"
                 app:cardElevation="6dp">
 
@@ -74,98 +74,10 @@
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/hospital_card"
-                style="@style/home_card"
-                app:cardBackgroundColor="@color/cardGreen"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="6dp">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginHorizontal="20dp"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:src="@drawable/statistic"/>
-
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="0dp"
-                        android:layout_gravity="center_vertical"
-                        android:orientation="vertical">
-
-                            <TextView
-                                style="@style/home_card_title"
-                                android:text="实时疫情"/>
-
-                            <TextView
-                                style="@style/home_card_desc"
-                                android:text="查看全国最新疫情数据"/>
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
-
-        </LinearLayout>
-
-        <LinearLayout
-            style="@style/home_row">
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/track_card"
-                style="@style/home_card"
-                app:cardBackgroundColor="@color/cardBlue"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="6dp">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginHorizontal="20dp"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:src="@drawable/track"/>
-
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="0dp"
-                        android:layout_gravity="center_vertical"
-                        android:orientation="vertical">
-
-                        <TextView
-                            style="@style/home_card_title"
-                            android:text="@string/track"/>
-
-                        <TextView
-                            style="@style/home_card_desc"
-                            android:text="@string/track_desc"/>
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
-
             <androidx.cardview.widget.CardView
                 android:id="@+id/auth_card"
                 style="@style/home_card"
-                app:cardBackgroundColor="@color/cardDarkGreen"
+                app:cardBackgroundColor="#01b4c2"
                 app:cardCornerRadius="10dp"
                 app:cardElevation="6dp">
 
@@ -203,13 +115,14 @@
             </androidx.cardview.widget.CardView>
 
         </LinearLayout>
+
         <LinearLayout
             style="@style/home_row">
 
             <androidx.cardview.widget.CardView
-                android:id="@+id/patient_trip"
+                android:id="@+id/track_card"
                 style="@style/home_card"
-                app:cardBackgroundColor="@color/cardBlue"
+                app:cardBackgroundColor="#0DB8AC"
                 app:cardCornerRadius="10dp"
                 app:cardElevation="6dp">
 
@@ -223,7 +136,7 @@
                     <ImageView
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        android:src="@drawable/patient_trip"/>
+                        android:src="@drawable/track"/>
 
 
                     <LinearLayout
@@ -235,11 +148,51 @@
 
                         <TextView
                             style="@style/home_card_title"
-                            android:text="出行风险"/>
+                            android:text="@string/track"/>
 
                         <TextView
                             style="@style/home_card_desc"
-                            android:text="确诊患者同行程查询"/>
+                            android:text="@string/track_desc"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+            <androidx.cardview.widget.CardView
+                android:id="@+id/hospital_card"
+                style="@style/home_card"
+                app:cardBackgroundColor="#18bbc8"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="6dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginHorizontal="20dp"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/statistic"/>
+
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="0dp"
+                        android:layout_gravity="center_vertical"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/home_card_title"
+                            android:text="实时疫情"/>
+
+                        <TextView
+                            style="@style/home_card_desc"
+                            android:text="查看全国最新疫情数据"/>
 
                     </LinearLayout>
 
@@ -247,13 +200,10 @@
 
             </androidx.cardview.widget.CardView>
 
-            <androidx.cardview.widget.CardView
-                style="@style/home_card">
 
-
-            </androidx.cardview.widget.CardView>
 
         </LinearLayout>
+
 
         <LinearLayout
             style="@style/home_row">
@@ -261,7 +211,7 @@
             <androidx.cardview.widget.CardView
                 android:id="@+id/wifi_card"
                 style="@style/home_card"
-                app:cardBackgroundColor="@color/cardBlue"
+                app:cardBackgroundColor="#19B29D"
                 app:cardCornerRadius="10dp"
                 app:cardElevation="6dp">
 
@@ -302,7 +252,7 @@
             <androidx.cardview.widget.CardView
                 android:id="@+id/bluetooth_card"
                 style="@style/home_card"
-                app:cardBackgroundColor="@color/cardDarkGreen"
+                app:cardBackgroundColor="#2dc1cd"
                 app:cardCornerRadius="10dp"
                 app:cardElevation="6dp">
 
@@ -338,6 +288,56 @@
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+        <LinearLayout
+            style="@style/home_row">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/patient_trip"
+                style="@style/home_card"
+                app:cardBackgroundColor="#17A28F"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="6dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginHorizontal="20dp"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/patient_trip"/>
+
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="0dp"
+                        android:layout_gravity="center_vertical"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/home_card_title"
+                            android:text="出行风险"/>
+
+                        <TextView
+                            style="@style/home_card_desc"
+                            android:text="确诊患者同行程查询"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <LinearLayout
+                android:layout_width="170dp"
+                android:layout_height="120dp"
+                android:layout_margin="8dp"/>
 
         </LinearLayout>
 

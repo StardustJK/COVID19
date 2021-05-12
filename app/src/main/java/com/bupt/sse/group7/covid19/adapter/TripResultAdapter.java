@@ -24,7 +24,7 @@ public class TripResultAdapter extends RecyclerView.Adapter<TripResultAdapter.My
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_trip_result, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_trip_patient, parent, false);
         return new MyViewHolder(view);
     }
 
