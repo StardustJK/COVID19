@@ -2,6 +2,7 @@ package com.bupt.sse.group7.covid19;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -84,6 +85,9 @@ public class ShowHealthInfoHistoryActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate:活动创建");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_health_info_history);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         mAdapter = new HealthInfoHistoryAdapter(this.healthInfoList);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);

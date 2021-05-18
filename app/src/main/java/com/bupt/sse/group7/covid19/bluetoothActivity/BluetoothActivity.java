@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.bupt.sse.group7.covid19.R;
 import com.bupt.sse.group7.covid19.bluetoothDataEntity.BluetoothInfo;
@@ -186,6 +187,9 @@ public class BluetoothActivity extends AppCompatActivity implements View.OnClick
         super.onCreate(savedInstanceState);
         LitePal.initialize(this);
         setContentView(R.layout.activity_bluetooth);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         Log.d(TAG, "onCreate:蓝牙活动创建");
 
         // 获得此时的用户id
